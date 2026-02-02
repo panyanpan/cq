@@ -61,6 +61,7 @@ DateUtil.getTimeStrHMS(gd.boss.arpgBossTimeDic[8030]);
 
 //version1.5   aoto go to map and fight
 let innerPY = false;
+const intervalIdPYKuafu = 0;
 const intervalIdPY = setInterval(async () => {
     const nowHourPY = new Date().getHours() * 100 + new Date().getMinutes();
     console.log("logTime:"+new Date().toLocaleString());
@@ -89,27 +90,29 @@ const intervalIdPY = setInterval(async () => {
         //Logic.deliverToFindNpc(800211);  //wuxianshilian2  5614
     }  
     if(nowHourPY >= 1930 && nowHourPY <= 1949 && gd.map.curMapId != 700 && !innerPY){
-        innerPY = true;
         console.log("gotoMapTimeKuafu:"+new Date().toLocaleString());
         net.CrazebattleModel.ins().send7(3);
         await new Promise(resolve => setTimeout(resolve, 400));
         gd.inst.sendReqEnterArpgMapMessaged(700);//Kuafu
-        const intervalIdPYKuafu = setInterval(async () => {//Kuafu
-            if(emIns.firstPlayer.fighterObject.delayhp == 0){
-                await new Promise(resolve => setTimeout(resolve, 400));	        
-                clickCanvasAt(1206,400); 
-            }
-            if(gd.arpgInst.autoFightType==3){    
-                await new Promise(resolve => setTimeout(resolve, 100));	    
-                gd.arpgInst.setAutoFight(1);
-            }
-            if(new Date().getHours() * 100 + new Date().getMinutes() > 1950)  {
-                clearInterval(intervalIdPYKuafu);
-                console.log("clearIntervalTime:"+new Date().toLocaleString());                
-            }
-        }, 1000);
+        if(gd.map.curMapId == 700){
+            innerPY = true;        
+            intervalIdPYKuafu = setInterval(async () => {//Kuafu
+                if(emIns.firstPlayer.fighterObject.delayhp == 0){
+                    await new Promise(resolve => setTimeout(resolve, 400));	        
+                    clickCanvasAt(1206,400); 
+                }
+                if(gd.arpgInst.autoFightType==3){    
+                    await new Promise(resolve => setTimeout(resolve, 100));	    
+                    gd.arpgInst.setAutoFight(1);
+                }
+                if(new Date().getHours() * 100 + new Date().getMinutes() > 1950)  {
+                    clearInterval(intervalIdPYKuafu);
+                    console.log("clearIntervalTime:"+new Date().toLocaleString());                
+                }
+            }, 1000);
+        }
     }
-    if(nowHourPY >= 2000 && nowHourPY < 2159 && gd.map.curMapId != 7129){
+    if(nowHourPY >= 2000 && nowHourPY < 2200 && gd.map.curMapId != 7129){
         //console.log("gotoMapTimeBaidu:"+new Date().toLocaleString());
         //Logic.deliverToFindNpc(600177);  //shengdi6  7129
     }     
