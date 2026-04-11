@@ -355,8 +355,8 @@
         para_intervalIdYiji = setInterval(async () => {
             var p_option_yji1 = document.getElementById("selectdivText");
             if (p_option_yji1 && p_option_yji1.innerHTML != "请选择") {
-                para_yiji = p_option_yji1.innerHTML.split('，');
-                para_yiji_mapid = document.getElementById("selectdivValue").innerHTML.split('，');
+                para_yiji = p_option_yji1.innerHTML.split(',');
+                para_yiji_mapid = document.getElementById("selectdivValue").innerHTML.split(',');
             }
             console.log("time-para_intervalIdYiji:" + para_intervalIdYiji);
             if (emIns.firstPlayer.fighterObject.delayhp == 0) {
@@ -769,8 +769,8 @@
         function updateSelectedText() {
             const selected = checkboxList.filter(cb => cb.checked).map(cb => cb.nextElementSibling.innerText);
             const selected1 = checkboxList.filter(cb => cb.checked).map(cb => cb.value);
-            inputBox.innerText = selected.length ? selected.join("，") : "请选择";
-            inputBox1.innerText = selected1.length ? selected1.join("，") : "";
+            inputBox.innerText = selected.length ? selected.join(",") : "请选择";
+            inputBox1.innerText = selected1.length ? selected1.join(",") : "";
 
             saveYijiConfig();
             //GM_setValue("p_YijiijiConfig", selected1);
@@ -810,8 +810,8 @@
                 }
             });
         });
-        document.getElementById("selectdivText").innerHTML= config.map(item => item.text).join("，");
-        document.getElementById("selectdivValue").innerHTML= config.map(item => item.value).join("，");
+        document.getElementById("selectdivText").innerHTML= config.map(item => item.text).join(",");
+        document.getElementById("selectdivValue").innerHTML= config.map(item => item.value).join(",");
     }
     loadYijiConfig();
 
