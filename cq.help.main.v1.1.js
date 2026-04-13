@@ -125,14 +125,16 @@
     //main-ui----------------------------------------------------------------------------------------------------
     const p_timeList = [
         { time: "00:00-11:00" },
+        { time: "11:00-11:45" },
         { time: "12:30-14:30" },
         { time: "14:30-15:00" },
         { time: "15:00-18:00" },
+        { time: "18:00-19:00" },
         { time: "19:00-19:30" },
         { time: "20:00-23:59" }
     ];
     const p_mapList = [
-        { name: "比奇", mapId: 600300, deliverId: 14961 },
+        { name: "比奇", mapId: 81, deliverId: 600300 },
         { name: "无尽", mapId: 200090, deliverId: 200090 },
         { name: "盘恒", mapId: 200056, deliverId: 600100 },
         { name: "铜台", mapId: 200059, deliverId: 600103 },
@@ -810,8 +812,8 @@
                 }
             });
         });
-        document.getElementById("selectdivText").innerHTML= config.map(item => item.text).join(",");
-        document.getElementById("selectdivValue").innerHTML= config.map(item => item.value).join(",");
+        document.getElementById("selectdivText").innerHTML = config.map(item => item.text).join(",");
+        document.getElementById("selectdivValue").innerHTML = config.map(item => item.value).join(",");
     }
     loadYijiConfig();
 
@@ -849,7 +851,9 @@
         config.forEach((item, index) => {
             const p_time = item.time.split('-');
             const p_vaule = item.value.split(';');
-            code += `if (nowHourPY >= ${p_time[0]} && nowHourPY < ${p_time[1]} && gd.map.curMapId != ${p_vaule[0]}) {Logic.deliverToFindNpc(${p_vaule[1]});}`;
+            if (p_vaule[0] != "81") {
+                code += `if (nowHourPY >= ${p_time[0]} && nowHourPY < ${p_time[1]} && gd.map.curMapId != ${p_vaule[0]}) {Logic.deliverToFindNpc(${p_vaule[1]});}`;
+            }
         });
         return code;
     }
