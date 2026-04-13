@@ -627,16 +627,17 @@
         return null;
     }
     function findMochao_Occupy() {//auto occupy MoChao(Shentai)
+        // net.MochaoModel.ins().send1();//------debug test  update???
+        //gd.mochao  t.sendNotif(984);  --- ---  ---------------------------------------
         var para_mc = gd.mochao.getMyMoChaoData();
-        console.log("logServerTime:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
-        if (!para_mc || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)
-            //||(gd.mochao.moChaoRecored && gd.mochao.moChaoRecored[1][gd.mochao.moChaoRecored[1].length-1].attackName!="夏玉刚")
-        ) {
-            // var para_Shentai = findMochao(704, 751) || findMochao(804, 999);
-            var para_Shentai = findMochao(840, 999);
+        if (!para_mc || Object.keys(para_mc).length > 0) {
+            console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
+        }
+        if (!para_mc || Object.keys(para_mc).length === 0 || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)) {
+            var para_Shentai = findMochao(950, 999);//findMochao(704, 751) || findMochao(804, 999);
             if (para_Shentai) {
                 net.MochaoModel.ins().send3(para_Shentai, 0);
-                console.log("moChaoTime:" + new Date().toLocaleString());
+                console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
             }
         }
     }
