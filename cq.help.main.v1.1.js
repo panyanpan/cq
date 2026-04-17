@@ -14,6 +14,14 @@
 (function () {
     'use strict';
 
+
+    //GameSceneManager.Instance.curInstance.relive(para_Relive);     //new ARPGInstanceBase
+    //GameObserverManager.Instance.arpgControl.curInstance     //ARPGEntityControl
+    //uim.uiPoint[992]  //AlertReliveDialog
+    //uim.uiCreateTimeDic[]
+    //uim._views[t]
+
+
     //--------//--------//--------//--------//--------//--------//--------//--------
     var obj_timer = {
         para_intervalIdMain: null,
@@ -40,6 +48,15 @@
         }, 5000);
     }
 
+    // 全局日志开关（生产环境改为 false）
+    const GLOBAL_LOG_ENABLE = true;
+    const originalConsoleLog = console.log;
+    console.log = function (...args) {
+        if (GLOBAL_LOG_ENABLE) {
+            originalConsoleLog.apply(console, args);
+        }
+    };
+
     //begin main--------------------------------------------------------------------------------------------------------------------------------------------------------------------
     console.log("cq.help.main.logTime:" + new Date().toLocaleString());
     var intervalIdPYMain = null;
@@ -52,6 +69,7 @@
             p_alert_success('运行中...');
             return;
         }
+
         intervalIdPYMain = setInterval(async () => {
             console.log("time-intervalIdPYMain:" + intervalIdPYMain);
             if (para_globalBool) {
@@ -248,7 +266,10 @@
             if ((nowDate > 1200 && nowDate < 1230) && para_IntervalId_wzzb != null) {
                 // if((nowDate > 2100 && nowDate < 2130) && para_IntervalId_wzzb != null){
                 if (gd.map.curMapId != 3601) {
-                    uim.show(318);//wzzb
+                    uim.show(318);
+                }
+                else {
+                    uim.hide(318);
                 }
                 await new Promise(resolve => setTimeout(resolve, 400));
                 if (gd.map.curMapId != 3601 && gd.honourbattle.wzzbCountInfo.leftCount > 0) {//&& gd.honourbattle.wzzbCountInfo.matchState == 0
@@ -378,7 +399,10 @@
                 if (timeRelive == 0) { net.PlayModel.ins().send9(36); }
                 if (para_globalBool && timeRelive < 30 && gd.map.curMapId != para_yiji_mapid[i]) {
                     net.PlayModel.ins().send3(para_yiji_mapid[i]);
-                    para_globalBool = false;
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                    if (gd.map.curMapId == para_yiji_mapid[i]) {
+                        para_globalBool = false;
+                    }
                     break;
                 }
                 if (timeRelive > 300 && gd.map.curMapId == para_yiji_mapid[i]) {// > 5 min
@@ -433,6 +457,7 @@
                 console.log("clearIntervalTime-Sifang:" + new Date().toLocaleString());
             }
         }, 1000);
+        p_alert_success('开始辅助（四方）');
     }
     function stopTimer_f_Sifang() {
         if (para_intervalIdSifang) {
@@ -476,6 +501,7 @@
             //     }
             // }
         }, 10000);
+        p_alert_success('开始辅助（刺激）');
     }
 
     function stopTimer_f_Cjzc() {
@@ -503,15 +529,15 @@
         para_intervalIdShenmo = setInterval(async () => {//21:30  curMapId=53001
             if (gd.map.curMapId == 53001 && emIns.firstPlayer.fighterObject.delayhp == 0) {
                 await new Promise(resolve => setTimeout(resolve, 3200));
-                clickCanvasAt(1212, 400);
+                clickCanvasAt(1206, 400);
                 await new Promise(resolve => setTimeout(resolve, 500));
                 gd.map.gotoStagePoint(63, 68, gd.map.curMapId, false);//center xy
             }
             p_iCount++;
             if (p_iCount % 30 == 0) {
                 clickCanvasAt(222, 247);//get reward
-                para_nowX = emIns.firstPlayer.fighterObject.gridX;
-                para_nowY = emIns.firstPlayer.fighterObject.gridY;
+                var para_nowX = emIns.firstPlayer.fighterObject.gridX;
+                var para_nowY = emIns.firstPlayer.fighterObject.gridY;
                 if (para_nowX == para_lastX && para_nowY == para_lastY) {
                     await new Promise(resolve => setTimeout(resolve, 500));
                     gd.map.gotoStagePoint(63, 68, gd.map.curMapId, false);//center xy
@@ -527,6 +553,7 @@
                 console.log("clearIntervalTime-Sifang:" + new Date().toLocaleString());
             }
         }, 1000);
+        p_alert_success('开始辅助（神魔）');
     }
     function stopTimer_f_Shenmo() {
         if (para_intervalIdShenmo != null) {
@@ -556,7 +583,7 @@
                     clickCanvasAt(1130, 400);
                 }
                 if (gd.map.curMapId == 4001) {//King
-                    clickCanvasAt(1213, 398);
+                    clickCanvasAt(1206, 400);
                 }
                 await new Promise(resolve => setTimeout(resolve, 500));
                 gd.map.gotoStagePoint(90, 84, gd.map.curMapId, false);
@@ -569,6 +596,7 @@
                 console.log("clearIntervalTime-Qunxiong:" + new Date().toLocaleString());
             }
         }, 1000);
+        p_alert_success('开始辅助（群雄）');
     }
     function stopTimer_f_Qunxiong() {
         if (para_intervalIdQunxiong) {
@@ -607,6 +635,7 @@
                 gd.arpgInst.setAutoFight(1);
             }
         }, 10000);
+        p_alert_success('开始辅助（焰火）');
     }
     function stopTimer_f_Yanhuo() {
         if (para_IntervalId_yanhuo) {
@@ -693,7 +722,7 @@
     f_CreateButton(5, 5, "关闭", stopTimer);
     f_CreateButton(30, 5, "关闭", stopTimer_f_Yiji);
     f_CreateButton(55, 5, "关闭", stopTimer_f_Common);
-    f_CreateButton(80, 5, "relive", f_globalRelive);
+    // f_CreateButton(80, 5, "relive", f_globalRelive);
 
     f_CreateButton(5, 40, "开始", beginTimer);
     f_CreateButton(30, 40, "遗迹", beginTimer_f_Yiji);
@@ -867,8 +896,10 @@
             return;
         }
         const rect = canvas.getBoundingClientRect();
-        x = f_ConvertXY(x, y, canvas.width, canvas.height).x;
-        y = f_ConvertXY(x, y, canvas.width, canvas.height).y;
+        // x = f_ConvertXY(x, y, canvas.width, canvas.height).x;
+        // y = f_ConvertXY(x, y, canvas.width, canvas.height).y;
+        // if (x == 1130) { x = 800; y = 300; } //1024*768  tencent001 
+        // if (x == 1206) { x = 845; y = 300; } //1024*768  tencent001
         const clientX = rect.left + x;
         const clientY = rect.top + y;
         canvas.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX, clientY }));
@@ -888,11 +919,22 @@
 
     //aoto relive-------------------------------------------------------------------------------------------------------------testtesttesttest
     function f_globalRelive() {
+        var para_Relive;
+        if (!para_Relive) {
+            para_Relive = {//var myEntity = emIns.getEntity("1610424320_2128603008");
+                lid: emIns.firstPlayer.fighterObject.id._string,
+                hp: emIns.firstPlayer.fighterObject.maxHp,
+                inner: emIns.firstPlayer.fighterObject.maxInner,
+                x: 78,
+                y: 16
+            };
+        }
         var e = para_Relive;
+        // GameSceneManager.Instance.curInstance.relive(para_Relive);
         var t = emIns.getEntity(e.lid.toString());
         if (t && t.fighterObject) {
             t.fighterObject.isDead = false;
-            t.fighterObject.delayhp = t.fighterObject.truehp = e.hp.toNumber();
+            t.fighterObject.delayhp = t.fighterObject.truehp = e.hp;//e.hp.toNumber();
             t.fighterObject.maxInner = t.fighterObject.delayInner = t.fighterObject.trueInner = e.inner;
             t._entityAI.relive(t);
             t.x = e.x * GameDefine.MAP_GRID_WIDTH + 0.5 * GameDefine.MAP_GRID_WIDTH;
@@ -935,13 +977,6 @@
             }
         }
     }
-    var para_Relive = {//var myEntity = emIns.getEntity("1610424320_2128603008");
-        lid: 1610424320_2128603008,  //emIns.firstPlayer.fighterObject.id._string
-        hp: 533724645,//emIns.firstPlayer.fighterObject.maxHp,
-        inner: 35691100,//emIns.firstPlayer.fighterObject.maxInner,
-        x: 78,
-        y: 16
-    };
 
     /*监听点击事件
     function listenCanvasClick(canvas) {// 监听点击事件（真正可用的方法）
@@ -952,7 +987,7 @@
                 const rect = canvas.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                console.log('Canvas 点击位置：'+'X:'+'Y:', x.toFixed(0)+','+y.toFixed(0));
+                console.log('time-Canvas 点击位置：'+'X:'+'Y:', x.toFixed(0)+','+y.toFixed(0));
             }
         }, true); //关键：true = 最高优先级捕获
     }
@@ -978,6 +1013,4 @@
     */
 
 })();
-
-
 
