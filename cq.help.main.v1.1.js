@@ -111,7 +111,7 @@
                     }
                 }
 
-                if (nowHourPY >= 1200 && nowHourPY < 1230 && para_IntervalId_wzzb != null) {
+                if (nowHourPY >= 1200 && nowHourPY < 1230 && para_IntervalId_wzzb != null && para_IntervalId_wzzb !== undefined) {
                     beginTimer_f_Wzzb();
                 }
 
@@ -527,6 +527,9 @@
             return;
         }
         para_intervalIdShenmo = setInterval(async () => {//21:30  curMapId=53001
+            if (para_globalBool == true) {
+                para_globalBool = false;  //全局优先
+            }
             if (gd.map.curMapId == 53001 && emIns.firstPlayer.fighterObject.delayhp == 0) {
                 await new Promise(resolve => setTimeout(resolve, 3200));
                 clickCanvasAt(1206, 400);
@@ -563,6 +566,7 @@
         } else {
             console.log('暂无运行中的定时器time-Shemo:' + new Date().toLocaleString());
         }
+        para_globalBool = true;
         p_alert_success('已关闭');
     }
 
