@@ -81,8 +81,8 @@
                     await new Promise(resolve => setTimeout(resolve, 2000));
                     console.log("deadClickTime:" + new Date().toLocaleString());
                 }
-                if (emIns.firstPlayer.fighterObject.delayhp < emIns.firstPlayer.fighterObject.maxHp / 2
-                    && [200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {//biqi 2+
+                if (emIns.firstPlayer.fighterObject.delayhp < emIns.firstPlayer.fighterObject.maxHp * 0.9
+                    && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {//biqi 2+
                     Logic.deliverToFindNpc(600300);//biqi1
                     await new Promise(resolve => setTimeout(resolve, 1000));
                     gd.map.gotoStagePoint(137, 120, gd.map.curMapId, false);
@@ -156,23 +156,23 @@
         { name: "无尽", mapId: 200090, deliverId: 200090 },
         { name: "盘恒", mapId: 200056, deliverId: 600100 },
         { name: "铜台", mapId: 200059, deliverId: 600103 },
-        { name: "降妖13", mapId: 200080, deliverId: 600182 },
         { name: "降妖14", mapId: 200081, deliverId: 600183 },
         { name: "降妖15", mapId: 200082, deliverId: 600184 },
         { name: "降妖20", mapId: 200087, deliverId: 600189 },
-        { name: "圣地5", mapId: 7128, deliverId: 600176 },
-        { name: "圣地6", mapId: 7129, deliverId: 600177 },
-        { name: "圣地5el", mapId: 7155, deliverId: 600276 },
-        { name: "圣地6el", mapId: 7156, deliverId: 600277 },
+        { name: "喜魄1", mapId: 6126, deliverId: 400104 },
+        { name: "怒魄1", mapId: 6127, deliverId: 400105 },
         { name: "无限试炼1", mapId: 5613, deliverId: 800210 },
         { name: "无限试炼2", mapId: 5614, deliverId: 800211 },
         { name: "镇狱1", mapId: 6122, deliverId: 400101 },
         { name: "镇狱2", mapId: 6123, deliverId: 400102 },
-        { name: "喜魄1", mapId: 6126, deliverId: 400104 },
         { name: "福地1", mapId: 200072, deliverId: 600141 },
         { name: "福地2", mapId: 200074, deliverId: 600143 },
         { name: "白骨1", mapId: 60, deliverId: 600027 },
-        { name: "白骨2", mapId: 600, deliverId: 600136 }
+        { name: "白骨2", mapId: 600, deliverId: 600136 },
+        { name: "圣地5", mapId: 7128, deliverId: 600176 },
+        { name: "圣地6", mapId: 7129, deliverId: 600177 },
+        { name: "圣地5el", mapId: 7155, deliverId: 600276 },
+        { name: "圣地6el", mapId: 7156, deliverId: 600277 }
     ];
     let p_selectElements = [];
     function saveMapConfig() {
@@ -662,6 +662,11 @@
     function findMochao_Occupy() {//auto occupy MoChao(Shentai)
         // net.MochaoModel.ins().send1();//------debug test  update???
         //gd.mochao  t.sendNotif(984);  --- ---  ---------------------------------------
+        // if (new Date().getDay() == 1 && new Date().toLocaleTimeString() > '10:00:00' && new Date().toLocaleTimeString() < '10:02:00') {
+        //     var para_Shentai = findMochao(950, 999);
+        //     net.MochaoModel.ins().send3(para_Shentai, 0);
+        //     console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
+        // }
         var para_mc = gd.mochao.getMyMoChaoData();
         if (!para_mc || Object.keys(para_mc).length > 0) {
             console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
