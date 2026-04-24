@@ -328,8 +328,11 @@
                 }
             }
             if (nowHourPY >= 1930 && nowHourPY <= 1949 && gd.map.curMapId == 700 && para_IntervalId == null) {
-                para_globalBool = true;
+                para_globalBool = false;
                 f_Child_Blood();
+            }
+            if (nowHourPY > 1950) {
+                stopTimer_f_Blood();
             }
         }, 30000);
         p_alert_success('开始辅助（血火）');
@@ -360,6 +363,7 @@
         } else {
             console.log('暂无运行中的定时器time-Blood:' + new Date().toLocaleString());
         }
+        para_globalBool = true;
         p_alert_success('已关闭');
     }
 
