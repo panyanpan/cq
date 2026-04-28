@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         cq.help.main.v1.1
 // @namespace    http://tampermonkey.net/
-// @version      2026-04-09
+// @version      1.01
 // @description  try to take over the world!
 // @author       pany
 // @match        *://rk.hlxy.db9x.com/*
@@ -143,7 +143,7 @@
     //main-ui----------------------------------------------------------------------------------------------------
     const p_timeList = [
         { time: "00:00-11:00" },
-        { time: "11:00-11:45" },
+        { time: "11:00-11:43" },
         { time: "12:30-14:30" },
         { time: "14:30-15:00" },
         { time: "15:00-18:00" },
@@ -153,16 +153,27 @@
     ];
     const p_mapList = [
         { name: "比奇", mapId: 81, deliverId: 600300 },
+        { name: "喜魄1", mapId: 6126, deliverId: 400104 },
+        { name: "怒魄1", mapId: 6127, deliverId: 400105 },
+        { name: "哀魄1", mapId: 6128, deliverId: 400106 },
+        { name: "惧魄1", mapId: 6129, deliverId: 400107 },
+        { name: "爱魄1", mapId: 6130, deliverId: 400108 },
+        { name: "恶魄1", mapId: 6131, deliverId: 400109 },
         { name: "无尽", mapId: 200090, deliverId: 200090 },
         { name: "盘恒", mapId: 200056, deliverId: 600100 },
         { name: "铜台", mapId: 200059, deliverId: 600103 },
+        { name: "降妖12", mapId: 200079, deliverId: 600181 },
+        { name: "降妖13", mapId: 200080, deliverId: 600182 },
         { name: "降妖14", mapId: 200081, deliverId: 600183 },
         { name: "降妖15", mapId: 200082, deliverId: 600184 },
+        { name: "降妖16", mapId: 200083, deliverId: 600185 },
+        { name: "降妖17", mapId: 200084, deliverId: 600186 },
+        { name: "降妖18", mapId: 200085, deliverId: 600187 },
+        { name: "降妖19", mapId: 200086, deliverId: 600188 },
         { name: "降妖20", mapId: 200087, deliverId: 600189 },
-        { name: "喜魄1", mapId: 6126, deliverId: 400104 },
-        { name: "怒魄1", mapId: 6127, deliverId: 400105 },
         { name: "无限试炼1", mapId: 5613, deliverId: 800210 },
         { name: "无限试炼2", mapId: 5614, deliverId: 800211 },
+        { name: "无限试炼3", mapId: 5615, deliverId: 800212 },
         { name: "镇狱1", mapId: 6122, deliverId: 400101 },
         { name: "镇狱2", mapId: 6123, deliverId: 400102 },
         { name: "福地1", mapId: 200072, deliverId: 600141 },
