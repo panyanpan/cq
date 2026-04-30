@@ -110,8 +110,11 @@
                         console.log("gotoMapTime-yabiao:" + new Date().toLocaleString());
                     }
                 }
+                if((nowHourPY > 1155 || nowHourPY < 1145) && para_yabiaoCount != 0){
+                    para_yabiaoCount = 0;
+                }
 
-                if (nowHourPY >= 1200 && nowHourPY < 1230 && para_IntervalId_wzzb != null && para_IntervalId_wzzb !== undefined) {
+                if (nowHourPY >= 1200 && nowHourPY < 1230 && para_IntervalId_wzzb == null) {
                     beginTimer_f_Wzzb();
                 }
 
