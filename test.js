@@ -2,7 +2,7 @@
 //gd.arpgInst = new ArpgInstanceData,
 //gd.arpgInst.relive(e);
 //console.log("e 的名称：", e.name);          // 类名
-// console.log("e 完整对象：", e);              // 构造函数
+//console.log("e 完整对象：", e);              // 构造函数
 //console.log("e 的原型：", e.prototype);      // 原型
 //console.log("e 继承自：", Object.getPrototypeOf(e)); // 父类
 

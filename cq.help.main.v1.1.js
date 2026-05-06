@@ -159,9 +159,9 @@
         { name: "喜魄1", mapId: 6126, deliverId: 400104 },
         { name: "怒魄1", mapId: 6127, deliverId: 400105 },
         { name: "哀魄1", mapId: 6128, deliverId: 400106 },
-        { name: "惧魄1", mapId: 6129, deliverId: 400107 },
-        { name: "爱魄1", mapId: 6130, deliverId: 400108 },
-        { name: "恶魄1", mapId: 6131, deliverId: 400109 },
+        { name: "惧魄1", mapId: 6133, deliverId: 400111 },        
+        { name: "爱魄1", mapId: 6134, deliverId: 400112 },
+        { name: "恶魄1", mapId: 6135, deliverId: 400113 },
         { name: "无尽", mapId: 200090, deliverId: 200090 },
         { name: "盘恒", mapId: 200056, deliverId: 600100 },
         { name: "铜台", mapId: 200059, deliverId: 600103 },
@@ -497,27 +497,27 @@
             p_alert_success('运行中...');
             return;
         }
-        para_IntervalId_cjzc = setInterval(async () => {//wzzb 16:00-16:30    18:30-19:00
-            // var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
-            // if((nowDate > 1830 && nowDate < 1900) && para_IntervalId_cjzc != null){
-            //     if(gd.map.curMapId != 3601){//-------------
-            //         uim.show(318, new UIData(null, 6));//cjzc
-            //     }
-            //     await new Promise(resolve => setTimeout(resolve, 400));
-            //     if(gd.map.curMapId != 3601 && gd.honourbattle.dfData.leftCount > 0){//-------------
-            //         await new Promise(resolve => setTimeout(resolve, 400));
-            //         net.GamepvpModel.ins().send1(DaKuafuType.dfzc);
-            //     }
-            //     if(gd.arpgInst.autoFightType==3){
-            //         await new Promise(resolve => setTimeout(resolve, 100));
-            //         gd.arpgInst.setAutoFight(1);
-            //     }
-            //     if(new Date().getHours() * 100 + new Date().getMinutes() > 1230){
-            //         clearInterval(para_IntervalId_cjzc);
-            //         uim.hide(318);//cjzc
-            //         console.log("clearIntervalTime-Cjzc:" + new Date().toLocaleString());
-            //     }
-            // }
+        para_IntervalId_cjzc = setInterval(async () => {//cjzc 16:00-16:30    18:30-19:00
+            var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
+            if((nowDate > 1830 && nowDate < 1900) && para_IntervalId_cjzc != null){
+                if(gd.map.curMapId != 37001){
+                    uim.show(318, new UIData(null, 6));//cjzc
+                }
+                await new Promise(resolve => setTimeout(resolve, 400));
+                if(gd.map.curMapId != 37001 && gd.honourbattle.dfData.leftCount > 0){
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                    net.GamepvpModel.ins().send1(DaKuafuType.dfzc);            
+                }
+                if(gd.arpgInst.autoFightType==3){
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    gd.arpgInst.setAutoFight(1);
+                }
+                if(new Date().getHours() * 100 + new Date().getMinutes() > 1900){
+                    clearInterval(para_IntervalId_cjzc);
+                    uim.hide(318);//cjzc
+                    console.log("clearIntervalTime-Cjzc:" + new Date().toLocaleString());
+                }
+            }
         }, 10000);
         p_alert_success('开始辅助（刺激）');
     }
