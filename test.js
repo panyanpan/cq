@@ -5,8 +5,10 @@
 //console.log("e 完整对象：", e);              // 构造函数
 //console.log("e 的原型：", e.prototype);      // 原型
 //console.log("e 继承自：", Object.getPrototypeOf(e)); // 父类
+//e.constructor.name   // 2. 看构造函数名
 
 
+// t.prototype.useItem = function(e) {
 
     // e.prototype.initMapData = function() {
     //     var e = cm.mapDatas[this.mapConfig.data];
