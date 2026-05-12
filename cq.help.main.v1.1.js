@@ -302,7 +302,7 @@
                     console.log("clearIntervalTime-Wzzb:" + new Date().toLocaleString());
                 }
             }
-        }, 10000);
+        }, 5000);
         p_alert_success('开始辅助（王者）');
     }
     function stopTimer_f_Wzzb() {
@@ -519,7 +519,7 @@
                     console.log("clearIntervalTime-Cjzc:" + new Date().toLocaleString());
                 }
             }
-        }, 10000);
+        }, 5000);
         p_alert_success('开始辅助（刺激）');
     }
 
@@ -681,7 +681,7 @@
     function findMochao_Occupy() {//auto occupy MoChao(Shentai)
         // net.MochaoModel.ins().send1();//------debug test  update???
         //gd.mochao  t.sendNotif(984);  --- ---  ---------------------------------------
-        // if (new Date().getDay() == 1 && new Date().toLocaleTimeString() > '10:00:00' && new Date().toLocaleTimeString() < '10:02:00') {
+        // if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
         //     var para_Shentai = findMochao(950, 999);
         //     net.MochaoModel.ins().send3(para_Shentai, 0);
         //     console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
@@ -928,6 +928,8 @@
         // y = f_ConvertXY(x, y, canvas.width, canvas.height).y;
         // if (x == 1130) { x = 800; y = 300; } //1024*768  tencent001 
         // if (x == 1206) { x = 845; y = 300; } //1024*768  tencent001
+        // if (x == 1130) { x = 815; y = 305; } //1024*768  aliyun001-linux
+        // if (x == 1206) { x = 860; y = 305; } //1024*768  aliyun001-linux
         const clientX = rect.left + x;
         const clientY = rect.top + y;
         canvas.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX, clientY }));

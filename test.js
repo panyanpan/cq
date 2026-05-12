@@ -10,11 +10,62 @@
 
 // t.prototype.useItem = function(e) {
 
-    // e.prototype.initMapData = function() {
-    //     var e = cm.mapDatas[this.mapConfig.data];
-    //     e.position = 0,
-    //     gd.map.readData(e)
-    // }
+// e.prototype.initMapData = function() {
+//     var e = cm.mapDatas[this.mapConfig.data];
+//     e.position = 0,
+//     gd.map.readData(e)
+// }
+
+
+if (nowHourPY >= 2000 && nowHourPY < 2220) {
+    if (gd.map.curMapId != 4901) {
+        await new Promise(resolve => setTimeout(resolve, 400));
+        //Logic.deliverToFindNpc(600136);
+        await new Promise(resolve => setTimeout(resolve, 400));
+        gd.map.gotoStagePoint(55, 60, gd.map.curMapId, false);
+    }
+    if (para_intervalIdSifang == null) {
+        beginTimer_f_Sifang();
+    }
+}
+if (nowHourPY >= 2030 && nowHourPY < 2100) {
+    if (gd.map.curMapId != 4001 && gd.map.curMapId != 4002) {
+        await new Promise(resolve => setTimeout(resolve, 400));
+        //Logic.deliverToFindNpc(600136);
+        await new Promise(resolve => setTimeout(resolve, 400));
+        gd.map.gotoStagePoint(90, 84, gd.map.curMapId, false);
+    }
+    if (para_intervalIdQunxiong == null) {
+        beginTimer_f_Qunxiong();
+    }
+}
+
+if (nowHourPY >= 2130 && nowHourPY < 2140) {
+    if (gd.map.curMapId != 53001) {
+        await new Promise(resolve => setTimeout(resolve, 400));
+        // if (1 === gd.honourbattle.qzjdmatchState) {
+        //     net.GamepvpModel.ins().send3();
+        // }
+        net.GamepvpModel.ins().send1(DaKuafuType.qdjd);
+        await new Promise(resolve => setTimeout(resolve, 400));
+        gd.map.gotoStagePoint(63, 68, gd.map.curMapId, false);//center xy
+    }
+    if (para_intervalIdShenmo == null) {
+        beginTimer_f_Shenmo();      //var KuafuCaptureStrongholdPop = function(e) { //shenmodazhan
+    }
+}
+if (nowHourPY >= 2142 && nowHourPY < 2152) {
+    if (gd.map.curMapId != 53001) {
+        await new Promise(resolve => setTimeout(resolve, 400));
+        net.GamepvpModel.ins().send1(DaKuafuType.qdjd);
+        await new Promise(resolve => setTimeout(resolve, 400));
+        gd.map.gotoStagePoint(63, 68, gd.map.curMapId, false);//center xy
+    }
+    if (para_intervalIdShenmo == null) {
+        beginTimer_f_Shenmo();
+    }
+}
+
 
 function f_globalRelive(e) {
     var t = emIns.getEntity(e.lid.toString());
