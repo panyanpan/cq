@@ -16,11 +16,26 @@
 //     gd.map.readData(e)
 // }
 
+//t.prototype.updatekillinfo = function() {  //shenmo  reward ???
+    // case i.btn_get:
+    //         i.nowcfg && net.CanyonHegemonyModel.ins().send16(i.nowcfg.needKill);
 
+//var HonourBattleData = function(e) {      //sifang\qunxiong\shenmodazhan
+//  t.prototype.updateQzjdGetReward = function(e) {//shenmo
+//         this.qzjdgetkillnum = e,
+//         this.sendNotif(486)
+//     }
+// t.prototype.updateQxzlGetRewardList = function(e) {//qunxiong
+//         this.qxzlGetRewardArr = e,
+//         this.sendNotif(667)
+//     }
+
+// else if (t.data.id === NpcId.sfmz)
+//                     net.PlayModel.ins().send3(4901)
 if (nowHourPY >= 2000 && nowHourPY < 2220) {
     if (gd.map.curMapId != 4901) {
         await new Promise(resolve => setTimeout(resolve, 400));
-        //Logic.deliverToFindNpc(600136);
+        net.PlayModel.ins().send3(4901);
         await new Promise(resolve => setTimeout(resolve, 400));
         gd.map.gotoStagePoint(55, 60, gd.map.curMapId, false);
     }
@@ -29,9 +44,9 @@ if (nowHourPY >= 2000 && nowHourPY < 2220) {
     }
 }
 if (nowHourPY >= 2030 && nowHourPY < 2100) {
-    if (gd.map.curMapId != 4001 && gd.map.curMapId != 4002) {
+    if (gd.map.curMapId != 4001 || gd.map.curMapId != 4002) {
         await new Promise(resolve => setTimeout(resolve, 400));
-        //Logic.deliverToFindNpc(600136);
+        net.PlayModel.ins().send3(4002);
         await new Promise(resolve => setTimeout(resolve, 400));
         gd.map.gotoStagePoint(90, 84, gd.map.curMapId, false);
     }

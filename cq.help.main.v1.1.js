@@ -110,7 +110,7 @@
                         console.log("gotoMapTime-yabiao:" + new Date().toLocaleString());
                     }
                 }
-                if((nowHourPY > 1155 || nowHourPY < 1145) && para_yabiaoCount != 0){
+                if ((nowHourPY > 1155 || nowHourPY < 1145) && para_yabiaoCount != 0) {
                     para_yabiaoCount = 0;
                 }
 
@@ -160,7 +160,7 @@
         { name: "喜魄1", mapId: 6126, deliverId: 400104 },
         { name: "怒魄1", mapId: 6127, deliverId: 400105 },
         { name: "哀魄1", mapId: 6128, deliverId: 400106 },
-        { name: "惧魄1", mapId: 6133, deliverId: 400111 },        
+        { name: "惧魄1", mapId: 6133, deliverId: 400111 },
         { name: "爱魄1", mapId: 6134, deliverId: 400112 },
         { name: "恶魄1", mapId: 6135, deliverId: 400113 },
         { name: "无尽", mapId: 200090, deliverId: 200090 },
@@ -462,6 +462,13 @@
             return;
         }
         para_intervalIdSifang = setInterval(async () => {//20:00  curMapId=4901
+            const nowHourPY = new Date(DateUtil.serverNow()).getHours() * 100 + new Date(DateUtil.serverNow()).getMinutes();
+            if (nowHourPY >= 2000 && nowHourPY < 2220 && gd.map.curMapId != 4901) {
+                await new Promise(resolve => setTimeout(resolve, 400));
+                net.PlayModel.ins().send3(4901);    //gotomap
+                await new Promise(resolve => setTimeout(resolve, 400));
+                gd.map.gotoStagePoint(55, 60, gd.map.curMapId, false);
+            }
             if (gd.map.curMapId == 4901 && emIns.firstPlayer.fighterObject.delayhp == 0) {
                 await new Promise(resolve => setTimeout(resolve, 10200));
                 clickCanvasAt(1130, 400);
@@ -500,20 +507,20 @@
         }
         para_IntervalId_cjzc = setInterval(async () => {//cjzc 16:00-16:30    18:30-19:00
             var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
-            if((nowDate > 1830 && nowDate < 1900) && para_IntervalId_cjzc != null){
-                if(gd.map.curMapId != 37001){
+            if ((nowDate > 1830 && nowDate < 1900) && para_IntervalId_cjzc != null) {
+                if (gd.map.curMapId != 37001) {
                     uim.show(318, new UIData(null, 6));//cjzc
                 }
                 await new Promise(resolve => setTimeout(resolve, 400));
-                if(gd.map.curMapId != 37001 && gd.honourbattle.dfData.leftCount > 0){
+                if (gd.map.curMapId != 37001 && gd.honourbattle.dfData.leftCount > 0) {
                     await new Promise(resolve => setTimeout(resolve, 400));
-                    net.GamepvpModel.ins().send1(DaKuafuType.dfzc);            
+                    net.GamepvpModel.ins().send1(DaKuafuType.dfzc);
                 }
-                if(gd.arpgInst.autoFightType==3){
+                if (gd.arpgInst.autoFightType == 3) {
                     await new Promise(resolve => setTimeout(resolve, 100));
                     gd.arpgInst.setAutoFight(1);
                 }
-                if(new Date().getHours() * 100 + new Date().getMinutes() > 1900){
+                if (new Date().getHours() * 100 + new Date().getMinutes() > 1900) {
                     clearInterval(para_IntervalId_cjzc);
                     uim.hide(318);//cjzc
                     console.log("clearIntervalTime-Cjzc:" + new Date().toLocaleString());
@@ -549,6 +556,19 @@
             if (para_globalBool == true) {
                 para_globalBool = false;  //全局优先
             }
+            const nowHourPY = new Date(DateUtil.serverNow()).getHours() * 100 + new Date(DateUtil.serverNow()).getMinutes();
+            if (nowHourPY >= 2131 && nowHourPY < 2141 && gd.map.curMapId != 53001) {
+                await new Promise(resolve => setTimeout(resolve, 400));
+                net.GamepvpModel.ins().send1(DaKuafuType.qdjd); //gotomap
+                await new Promise(resolve => setTimeout(resolve, 400));
+                gd.map.gotoStagePoint(63, 68, gd.map.curMapId, false);//center xy
+            }
+            if (nowHourPY >= 2143 && nowHourPY < 2153 && gd.map.curMapId != 53001) {
+                await new Promise(resolve => setTimeout(resolve, 400));
+                net.GamepvpModel.ins().send1(DaKuafuType.qdjd); //gotomap
+                await new Promise(resolve => setTimeout(resolve, 400));
+                gd.map.gotoStagePoint(63, 68, gd.map.curMapId, false);//center xy
+            }
             if (gd.map.curMapId == 53001 && emIns.firstPlayer.fighterObject.delayhp == 0) {
                 await new Promise(resolve => setTimeout(resolve, 3200));
                 clickCanvasAt(1206, 400);
@@ -570,9 +590,9 @@
             if (gd.arpgInst.autoFightType == 3) {
                 gd.arpgInst.setAutoFight(1);
             }
-            if (new Date().getHours() * 100 + new Date().getMinutes() > 2215) {
+            if (new Date().getHours() * 100 + new Date().getMinutes() > 2200) {
                 clearInterval(para_intervalIdShenmo);
-                console.log("clearIntervalTime-Sifang:" + new Date().toLocaleString());
+                console.log("clearIntervalTime-Shenmo:" + new Date().toLocaleString());
             }
         }, 1000);
         p_alert_success('开始辅助（神魔）');
@@ -598,7 +618,14 @@
             p_alert_success('运行中...');
             return;
         }
-        para_intervalIdQunxiong = setInterval(async () => {//20:00  curMapId=4002,4001
+        para_intervalIdQunxiong = setInterval(async () => {//20:30  curMapId=4002,4001
+            // const nowHourPY = new Date(DateUtil.serverNow()).getHours() * 100 + new Date(DateUtil.serverNow()).getMinutes();
+            // if (nowHourPY >= 2030 && nowHourPY < 2100 && (gd.map.curMapId != 4001 || gd.map.curMapId != 4002)) {
+            //     await new Promise(resolve => setTimeout(resolve, 400));
+            //     net.PlayModel.ins().send3(4002);    //gotomap
+            //     await new Promise(resolve => setTimeout(resolve, 400));
+            //     gd.map.gotoStagePoint(55, 60, gd.map.curMapId, false);
+            // }
             if (emIns.firstPlayer.fighterObject.delayhp == 0) {
                 console.log("ClickTime:" + new Date().toLocaleString());
                 await new Promise(resolve => setTimeout(resolve, 5200));
@@ -926,10 +953,11 @@
         const rect = canvas.getBoundingClientRect();
         // x = f_ConvertXY(x, y, canvas.width, canvas.height).x;
         // y = f_ConvertXY(x, y, canvas.width, canvas.height).y;
-        // if (x == 1130) { x = 800; y = 300; } //1024*768  tencent001 
-        // if (x == 1206) { x = 845; y = 300; } //1024*768  tencent001
+        // if (x == 1130) { x = 800; y = 300; } //1024*768  tencent001-windows 
+        // if (x == 1206) { x = 845; y = 300; } //1024*768  tencent001-windows
         // if (x == 1130) { x = 815; y = 305; } //1024*768  aliyun001-linux
         // if (x == 1206) { x = 860; y = 305; } //1024*768  aliyun001-linux
+        // if (x == 222) { x = 860; y = 305; } //1024*768  aliyun001-linux  reward
         const clientX = rect.left + x;
         const clientY = rect.top + y;
         canvas.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX, clientY }));
