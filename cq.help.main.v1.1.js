@@ -553,7 +553,7 @@
             return;
         }
         para_intervalIdShenmo = setInterval(async () => {//21:30  curMapId=53001
-            if (para_globalBool == true) {
+            if (para_globalBool == true && gd.map.curMapId == 53001) {
                 para_globalBool = false;  //全局优先
             }
             const nowHourPY = new Date(DateUtil.serverNow()).getHours() * 100 + new Date(DateUtil.serverNow()).getMinutes();
@@ -576,8 +576,16 @@
                 gd.map.gotoStagePoint(63, 68, gd.map.curMapId, false);//center xy
             }
             p_iCount++;
-            if (p_iCount % 30 == 0) {
-                clickCanvasAt(222, 247);//get reward
+            if (p_iCount % 15 == 0 && gd.map.curMapId == 53001) {
+                // clickCanvasAt(222, 247);//get reward
+                const rewardNum = 0;
+                if (gd.honourbattle.nowqzjdkillnum > 9 && gd.honourbattle.nowqzjdkillnum % 2 != 0) {
+                    rewardNum = gd.honourbattle.nowqzjdkillnum - 1;
+                } else {
+                    rewardNum = gd.honourbattle.nowqzjdkillnum;
+                }
+                net.CanyonHegemonyModel.ins().send16(rewardNum);//get reward
+
                 var para_nowX = emIns.firstPlayer.fighterObject.gridX;
                 var para_nowY = emIns.firstPlayer.fighterObject.gridY;
                 if (para_nowX == para_lastX && para_nowY == para_lastY) {
@@ -590,7 +598,7 @@
             if (gd.arpgInst.autoFightType == 3) {
                 gd.arpgInst.setAutoFight(1);
             }
-            if (new Date().getHours() * 100 + new Date().getMinutes() > 2200) {
+            if (new Date().getHours() * 100 + new Date().getMinutes() > 2155) {
                 clearInterval(para_intervalIdShenmo);
                 console.log("clearIntervalTime-Shenmo:" + new Date().toLocaleString());
             }
@@ -619,13 +627,13 @@
             return;
         }
         para_intervalIdQunxiong = setInterval(async () => {//20:30  curMapId=4002,4001
-            // const nowHourPY = new Date(DateUtil.serverNow()).getHours() * 100 + new Date(DateUtil.serverNow()).getMinutes();
-            // if (nowHourPY >= 2030 && nowHourPY < 2100 && (gd.map.curMapId != 4001 || gd.map.curMapId != 4002)) {
-            //     await new Promise(resolve => setTimeout(resolve, 400));
-            //     net.PlayModel.ins().send3(4002);    //gotomap
-            //     await new Promise(resolve => setTimeout(resolve, 400));
-            //     gd.map.gotoStagePoint(55, 60, gd.map.curMapId, false);
-            // }
+            const nowHourPY = new Date(DateUtil.serverNow()).getHours() * 100 + new Date(DateUtil.serverNow()).getMinutes();
+            if (nowHourPY >= 2000 && nowHourPY < 2030 && (gd.map.curMapId != 4001 || gd.map.curMapId != 4002)) {
+                await new Promise(resolve => setTimeout(resolve, 400));
+                net.PvpShabakeModel.ins().send4();    //gotomap
+                await new Promise(resolve => setTimeout(resolve, 400));
+                gd.map.gotoStagePoint(55, 60, gd.map.curMapId, false);
+            }
             if (emIns.firstPlayer.fighterObject.delayhp == 0) {
                 console.log("ClickTime:" + new Date().toLocaleString());
                 await new Promise(resolve => setTimeout(resolve, 5200));

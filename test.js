@@ -16,22 +16,38 @@
 //     gd.map.readData(e)
 // }
 
-//t.prototype.updatekillinfo = function() {  //shenmo  reward ???
+
+// else if (t.data.id === NpcId.sfmz)
+//                     net.PlayModel.ins().send3(4901)
+//var BiqiRewardDialog = function(e) {    //sifang reward ???
+
+
+
+//t.prototype.updatekillinfo = function() {  //shenmo  reward
     // case i.btn_get:
-    //         i.nowcfg && net.CanyonHegemonyModel.ins().send16(i.nowcfg.needKill);
+    //gd.honourbattle.nowqzjdkillnum
+    //         i.nowcfg && net.CanyonHegemonyModel.ins().send16(i.nowcfg.needKill);  //gd.honourbattle.nowqzjdkillnum
+
 
 //var HonourBattleData = function(e) {      //sifang\qunxiong\shenmodazhan
 //  t.prototype.updateQzjdGetReward = function(e) {//shenmo
 //         this.qzjdgetkillnum = e,
 //         this.sendNotif(486)
 //     }
+
+
+//var KuafuQXZLPop = function(e) {
+//var H5HomeSbkCtrl = function(e) {    //qunxiong
+// case this.btn_get:
+//  this.curCfg && (t.kfcheck ? net.CrossShabakeModel.ins().send3(this.curCfg.id) : net.ShobakModel.ins().send8(this.curCfg.id));  //reward
+//  1 == t.nowstate ? net.PvpShabakeModel.ins().send1() : 2 == t.nowstate ? net.PvpShabakeModel.ins().send2() : 3 == t.nowstate && net.PvpShabakeModel.ins().send4();
+
 // t.prototype.updateQxzlGetRewardList = function(e) {//qunxiong
 //         this.qxzlGetRewardArr = e,
 //         this.sendNotif(667)
 //     }
 
-// else if (t.data.id === NpcId.sfmz)
-//                     net.PlayModel.ins().send3(4901)
+
 if (nowHourPY >= 2000 && nowHourPY < 2220) {
     if (gd.map.curMapId != 4901) {
         await new Promise(resolve => setTimeout(resolve, 400));
@@ -43,10 +59,10 @@ if (nowHourPY >= 2000 && nowHourPY < 2220) {
         beginTimer_f_Sifang();
     }
 }
-if (nowHourPY >= 2030 && nowHourPY < 2100) {
+if (nowHourPY >= 2000 && nowHourPY < 2000) {
     if (gd.map.curMapId != 4001 || gd.map.curMapId != 4002) {
         await new Promise(resolve => setTimeout(resolve, 400));
-        net.PlayModel.ins().send3(4002);
+        net.PvpShabakeModel.ins().send4();    //gotomap
         await new Promise(resolve => setTimeout(resolve, 400));
         gd.map.gotoStagePoint(90, 84, gd.map.curMapId, false);
     }
