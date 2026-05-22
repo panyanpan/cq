@@ -14,33 +14,6 @@
 (function () {
     'use strict';
 
-
-    //GameSceneManager.Instance.curInstance.relive(para_Relive);     //new ARPGInstanceBase
-    //GameObserverManager.Instance.arpgControl.curInstance     //ARPGEntityControl
-    //uim.uiPoint[992]  //AlertReliveDialog
-    //uim.uiCreateTimeDic[]
-    //uim._views[t]
-
-
-    //--------//--------//--------//--------//--------//--------//--------//--------
-    var obj_timer = {
-        para_intervalIdMain: null,
-        para_intervalIdBlood: null,
-        para_IntervalId: null
-    };
-    //-------------------------------------------------------------testtesttesttest
-    function stopTimerID(propName) {//Object.keys(obj_timer)[0]
-        if (obj_timer[propName] != null) {
-            clearInterval(obj_timer[propName]);
-            obj_timer[propName] = null;
-            console.log(`timer定时器已关闭 [${propName}] [${new Date().toLocaleString()}]`);
-        } else {
-            console.log(`timer暂无运行中的定时器 [${propName}] [${new Date().toLocaleString()}]`);
-        }
-        p_alert_success('已关闭');
-    }
-    //--------//--------//--------//--------//--------//--------//--------//--------
-
     if (window.location.href.includes('sdk.zwnet.cn')) {
         setTimeout(() => {
             const iframe = document.querySelector('iframe');
@@ -62,6 +35,7 @@
     var intervalIdPYMain = null;
     var para_globalBool = true;
     let para_yabiaoCount = 0;
+    var para_mochaoCount = 0;
     function beginTimer() {
         console.log("benginTime-Main" + new Date().toLocaleString());
         if (intervalIdPYMain != null) {
@@ -75,7 +49,16 @@
             if (para_globalBool) {
                 const nowHourPY = new Date(DateUtil.serverNow()).getHours() * 100 + new Date(DateUtil.serverNow()).getMinutes();
                 console.log("logServerTime:" + new Date(DateUtil.serverNow()).toLocaleString());
-                try { findMochao_Occupy(); } catch (error) { }  //auto occupy MoChao
+                try {
+                    para_mochaoCount++;
+                    if (para_mochaoCount % 10 == 0) {
+                        uim.show(503, new UIData(null, 3));
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        uim.hide(503);
+                    }
+                    findMochao_Occupy();
+                }
+                catch (error) { }  //auto occupy MoChao
                 if (emIns.firstPlayer.fighterObject.delayhp == 0) {
                     clickCanvasAt(1130, 400);
                     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -145,14 +128,16 @@
 
     //main-ui----------------------------------------------------------------------------------------------------
     const p_timeList = [
-        { time: "00:00-11:00" },
+        { time: "00:00-10:00" },
+        { time: "10:00-11:00" },
         { time: "11:00-11:43" },
-        { time: "12:30-14:30" },
+        { time: "12:20-14:30" },
         { time: "14:30-15:00" },
         { time: "15:00-18:00" },
-        { time: "18:00-19:00" },
+        { time: "18:00-18:45" },
         { time: "19:00-19:30" },
-        { time: "20:00-21:59" },
+        { time: "20:00-20:30" },
+        { time: "20:30-21:59" },
         { time: "22:00-23:59" }
     ];
     const p_mapList = [
@@ -178,6 +163,11 @@
         { name: "无限试炼1", mapId: 5613, deliverId: 800210 },
         { name: "无限试炼2", mapId: 5614, deliverId: 800211 },
         { name: "无限试炼3", mapId: 5615, deliverId: 800212 },
+        // { name: "木仙1", mapId: 31001, deliverId: 6101 },
+        // { name: "木仙2", mapId: 31002, deliverId: 6102 },
+        // { name: "木仙3", mapId: 31003, deliverId: 6103 },
+        // { name: "木仙4", mapId: 31004, deliverId: 6104 },
+        // { name: "炽热1", mapId: 31005, deliverId: 6105 },//???
         { name: "镇狱1", mapId: 6122, deliverId: 400101 },
         { name: "镇狱2", mapId: 6123, deliverId: 400102 },
         { name: "福地1", mapId: 200072, deliverId: 600141 },
@@ -187,7 +177,14 @@
         { name: "圣地5", mapId: 7128, deliverId: 600176 },
         { name: "圣地6", mapId: 7129, deliverId: 600177 },
         { name: "圣地5el", mapId: 7155, deliverId: 600276 },
-        { name: "圣地6el", mapId: 7156, deliverId: 600277 }
+        { name: "圣地6el", mapId: 7156, deliverId: 600277 },
+        // { name: "造化1", mapId: 1621, deliverId: 600147 },//???
+        // { name: "造化2", mapId: 1621, deliverId: 600148 },//???
+        // { name: "造化3", mapId: 1621, deliverId: 600149 },//???
+        // { name: "造化4", mapId: 1621, deliverId: 600150 },//???
+        { name: "灵魂1", mapId: 1621, deliverId: 1497 },
+        { name: "灵魂2", mapId: 1622, deliverId: 1498 },
+        { name: "灵魂3", mapId: 1623, deliverId: 1499 }
     ];
     let p_selectElements = [];
     function saveMapConfig() {
@@ -302,7 +299,7 @@
                     console.log("clearIntervalTime-Wzzb:" + new Date().toLocaleString());
                 }
             }
-        }, 5000);
+        }, 3000);
         p_alert_success('开始辅助（王者）');
     }
     function stopTimer_f_Wzzb() {
@@ -482,7 +479,7 @@
                 clearInterval(para_intervalIdSifang);
                 console.log("clearIntervalTime-Sifang:" + new Date().toLocaleString());
             }
-        }, 1000);
+        }, 2000);
         p_alert_success('开始辅助（四方）');
     }
     function stopTimer_f_Sifang() {
@@ -507,7 +504,7 @@
         }
         para_IntervalId_cjzc = setInterval(async () => {//cjzc 16:00-16:30    18:30-19:00
             var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
-            if ((nowDate > 1830 && nowDate < 1900) && para_IntervalId_cjzc != null) {
+            if ((nowDate > 1845 && nowDate < 1900) && para_IntervalId_cjzc != null) {
                 if (gd.map.curMapId != 37001) {
                     uim.show(318, new UIData(null, 6));//cjzc
                 }
@@ -526,7 +523,7 @@
                     console.log("clearIntervalTime-Cjzc:" + new Date().toLocaleString());
                 }
             }
-        }, 5000);
+        }, 3000);
         p_alert_success('开始辅助（刺激）');
     }
 
@@ -600,9 +597,10 @@
             }
             if (new Date().getHours() * 100 + new Date().getMinutes() > 2155) {
                 clearInterval(para_intervalIdShenmo);
+                para_globalBool = true;
                 console.log("clearIntervalTime-Shenmo:" + new Date().toLocaleString());
             }
-        }, 1000);
+        }, 2000);
         p_alert_success('开始辅助（神魔）');
     }
     function stopTimer_f_Shenmo() {
@@ -653,7 +651,7 @@
                 clearInterval(para_intervalIdQunxiong);
                 console.log("clearIntervalTime-Qunxiong:" + new Date().toLocaleString());
             }
-        }, 1000);
+        }, 2000);
         p_alert_success('开始辅助（群雄）');
     }
     function stopTimer_f_Qunxiong() {
@@ -706,6 +704,48 @@
         p_alert_success('已关闭');
     }
 
+    var para_IntervalId_Xian = null;
+    function beginTimer_f_Xian(mapid, deliverId) {
+        console.log("benginTime-xian:" + new Date().toLocaleString());
+        if (para_IntervalId_Xian != null) {
+            console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-xian");
+            p_alert_success('运行中...');
+            return;
+        }
+        para_IntervalId_Xian = setInterval(async () => {//xian 17:00-17:15
+            var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
+            if ((nowDate > 1700 && nowDate < 1715)) {
+                if (para_globalBool == true) {
+                    para_globalBool = false;
+                }
+                if (gd.map.curMapId != mapid) {
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    Logic.deliverToFindNpc(deliverId);
+                }
+            }
+            if (nowDate > 1715) {
+                clearInterval(para_IntervalId_Xian);
+                para_IntervalId_Xian = null;
+                para_globalBool = true;
+                console.log('定时器已关闭time-xian:' + new Date().toLocaleString());
+            }
+        }, 3000);
+        p_alert_success('开始辅助（xian）');
+    }
+
+    function stopTimer_f_Xian() {
+        if (para_IntervalId_Xian != null) {
+            clearInterval(para_IntervalId_Xian);
+            para_IntervalId_Xian = null;
+            para_globalBool = true;
+            console.log('定时器已关闭time-xian:' + new Date().toLocaleString());
+        } else {
+            console.log('暂无运行中的定时器time-xian:' + new Date().toLocaleString());
+        }
+        p_alert_success('已关闭');
+    }
+
+
     //child shentai mochao---------------------------------------------------------------------------------------------------
     function findMochao(start, end) {//auto-MoChao(Shentai)
         for (let i = start; i <= end; i++) {
@@ -713,23 +753,23 @@
         }
         return null;
     }
-    function findMochao_Occupy() {//auto occupy MoChao(Shentai)
-        // net.MochaoModel.ins().send1();//------debug test  update???
-        //gd.mochao  t.sendNotif(984);  --- ---  ---------------------------------------
+    function findMochao_Occupy() {//auto occupy MoChao(Shentai)              
         // if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
-        //     var para_Shentai = findMochao(950, 999);
-        //     net.MochaoModel.ins().send3(para_Shentai, 0);
+        //     var para_Shentai1 = findMochao(820, 999);
+        //     net.MochaoModel.ins().send3(para_Shentai1, 0);
         //     console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
         // }
-        var para_mc = gd.mochao.getMyMoChaoData();
-        if (!para_mc || Object.keys(para_mc).length > 0) {
-            console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
-        }
-        if (!para_mc || Object.keys(para_mc).length === 0 || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)) {
-            var para_Shentai = findMochao(950, 999);//findMochao(704, 751) || findMochao(804, 999);
-            if (para_Shentai) {
-                net.MochaoModel.ins().send3(para_Shentai, 0);
-                console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
+        if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:00:00')) {
+            var para_mc = gd.mochao.getMyMoChaoData();
+            if (!para_mc || Object.keys(para_mc).length > 0) {
+                console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
+            }
+            if (!para_mc || Object.keys(para_mc).length === 0 || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)) {
+                var para_Shentai = findMochao(950, 999);//findMochao(704, 751) || findMochao(804, 999);
+                if (para_Shentai) {
+                    net.MochaoModel.ins().send3(para_Shentai, 0);
+                    console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
+                }
             }
         }
     }
@@ -766,6 +806,11 @@
             case 4: stopTimer_f_Wzzb(); break;
             case 5: stopTimer_f_Yanhuo(); break;
             case 6: stopTimer_f_Cjzc(); break;
+
+            case 21: stopTimer_f_Xian(31001, 6101); break;
+            case 22: stopTimer_f_Xian(31002, 6102); break;
+            case 23: stopTimer_f_Xian(31003, 6103); break;
+            case 24: stopTimer_f_Xian(31004, 6104); break;
         }
     }
 
@@ -779,6 +824,11 @@
             case 4: beginTimer_f_Wzzb(); break;
             case 5: beginTimer_f_Yanhuo(); break;
             case 6: beginTimer_f_Cjzc(); break;
+
+            case 21: beginTimer_f_Xian(31001, 6101); break;
+            case 22: beginTimer_f_Xian(31002, 6102); break;
+            case 23: beginTimer_f_Xian(31003, 6103); break;
+            case 24: beginTimer_f_Xian(31004, 6104); break;
         }
     }
 
@@ -798,7 +848,15 @@
         { value: 3, text: '神魔' },
         { value: 4, text: '王者' },
         { value: 5, text: '焰火' },
-        { value: 6, text: '刺激' }
+        { value: 6, text: '刺激' },
+        // { value: 11, text: '猴1' },
+        // { value: 12, text: '猴2' },
+        // { value: 13, text: '猴3' },
+        // { value: 14, text: '猴4' },
+        { value: 21, text: '仙1' },
+        { value: 22, text: '仙2' },
+        { value: 23, text: '仙3' },
+        { value: 24, text: '仙4' }
     ];
     f_CreateSelect(57, 75, p_option1);
 

@@ -17,9 +17,17 @@
 // }
 
 
+//mochao   MoChaoPanel  uim.show(503);
+// var r = cm.tulu[e.tid];
+//                 uim.show(503, new UIData(r,2))
+// uim.show(503,new UIData(null,3));
+
+
+
 // else if (t.data.id === NpcId.sfmz)
 //                     net.PlayModel.ins().send3(4901)
-//var BiqiRewardDialog = function(e) {    //sifang reward ???
+// case this.btn_get:
+    // this.curCfg && net.PvpShabakeModel.ins().send7(this.curCfg.id);      //sifang reward ???
 
 
 
@@ -213,4 +221,38 @@ function funPYBlood() {
         }
     }, 3000);
 
+}
+
+
+function beginTimer_f_Xian_Child(mapid, deliverId) {
+    console.log("benginTime-xian:" + new Date().toLocaleString());
+    if (para_IntervalId_Xian != null) {
+        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-xian");
+        p_alert_success('运行中...');
+        return;
+    }
+    para_IntervalId_Xian = setInterval(async () => {//xian 17:00-17:15
+        var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
+        if ((nowDate > 1700 && nowDate < 1715) && para_IntervalId_Xian != null) {                                
+            if (gd.map.curMapId != 31002) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+                Logic.deliverToFindNpc(6102);
+            }
+        }
+        if(nowDate > 1715){
+            stopTimer_f_Xian();
+        }
+    }, 2000);
+    p_alert_success('开始辅助（xian）');
+}
+
+function stopTimer_f_Xian() {
+    if (para_IntervalId_Xian != null) {
+        clearInterval(para_IntervalId_Xian);
+        para_IntervalId_Xian = null;
+        console.log('定时器已关闭time-xian:' + new Date().toLocaleString());
+    } else {
+        console.log('暂无运行中的定时器time-xian:' + new Date().toLocaleString());
+    }
+    p_alert_success('已关闭');
 }
