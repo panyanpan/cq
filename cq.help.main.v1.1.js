@@ -128,7 +128,7 @@
 
     //main-ui----------------------------------------------------------------------------------------------------
     const p_timeList = [
-        { time: "00:00-10:00" },
+        { time: "0-10:00" },
         { time: "10:00-11:00" },
         { time: "11:00-11:43" },
         { time: "12:20-14:30" },
@@ -451,6 +451,7 @@
 
     //child sifang--------------------------------------------------------------------------------------------------------------
     var para_intervalIdSifang = null;
+    var rewardBool_Sifang = false;
     function beginTimer_f_Sifang() {
         console.log("benginTime-Sifang:" + new Date().toLocaleString());
         if (para_intervalIdSifang != null) {
@@ -474,6 +475,13 @@
             }
             if (gd.arpgInst.autoFightType == 3) {
                 gd.arpgInst.setAutoFight(1);
+            }
+            if (new Date().getHours() * 100 + new Date().getMinutes() > 2018 && !rewardBool_Sifang) {
+                for (i = 1; i < 11; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                    net.FairyislandModel.ins().send3(i); //reward  1-10
+                }
+                rewardBool_Sifang = true;
             }
             if (new Date().getHours() * 100 + new Date().getMinutes() > 2020) {
                 clearInterval(para_intervalIdSifang);
@@ -617,6 +625,7 @@
 
     //child qunxiong------------------------------------------------------------------------------------------------------
     var para_intervalIdQunxiong = null;
+    var rewardBool_Qunxiong = false;
     function beginTimer_f_Qunxiong() {
         console.log("benginTime-Qunxiong:" + new Date().toLocaleString());
         if (para_intervalIdQunxiong != null) {
@@ -626,11 +635,11 @@
         }
         para_intervalIdQunxiong = setInterval(async () => {//20:30  curMapId=4002,4001
             const nowHourPY = new Date(DateUtil.serverNow()).getHours() * 100 + new Date(DateUtil.serverNow()).getMinutes();
-            if (nowHourPY >= 2000 && nowHourPY < 2030 && (gd.map.curMapId != 4001 || gd.map.curMapId != 4002)) {
+            if (nowHourPY >= 2000 && nowHourPY < 2030 && (gd.map.curMapId != 4001 && gd.map.curMapId != 4002)) {
                 await new Promise(resolve => setTimeout(resolve, 400));
                 net.PvpShabakeModel.ins().send4();    //gotomap
                 await new Promise(resolve => setTimeout(resolve, 400));
-                gd.map.gotoStagePoint(55, 60, gd.map.curMapId, false);
+                gd.map.gotoStagePoint(90, 84, gd.map.curMapId, false);
             }
             if (emIns.firstPlayer.fighterObject.delayhp == 0) {
                 console.log("ClickTime:" + new Date().toLocaleString());
@@ -646,6 +655,14 @@
             }
             if (gd.arpgInst.autoFightType == 3) {
                 gd.arpgInst.setAutoFight(1);
+            }
+            let hasExecuted = false;
+            if (new Date().getHours() * 100 + new Date().getMinutes() > 2028 && !rewardBool_Qunxiong) {
+                for (i = 1; i < 12; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                    net.PvpShabakeModel.ins().send7(i); //reward  1-11
+                }
+                rewardBool_Qunxiong = true;
             }
             if (new Date().getHours() * 100 + new Date().getMinutes() > 2030) {
                 clearInterval(para_intervalIdQunxiong);
@@ -754,11 +771,11 @@
         return null;
     }
     function findMochao_Occupy() {//auto occupy MoChao(Shentai)              
-        // if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
-        //     var para_Shentai1 = findMochao(820, 999);
-        //     net.MochaoModel.ins().send3(para_Shentai1, 0);
-        //     console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
-        // }
+        if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
+            var para_Shentai1 = findMochao(820, 999);
+            net.MochaoModel.ins().send3(para_Shentai1, 0);
+            console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
+        }
         if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:00:00')) {
             var para_mc = gd.mochao.getMyMoChaoData();
             if (!para_mc || Object.keys(para_mc).length > 0) {

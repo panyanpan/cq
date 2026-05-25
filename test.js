@@ -9,7 +9,6 @@
 
 
 // t.prototype.useItem = function(e) {
-
 // e.prototype.initMapData = function() {
 //     var e = cm.mapDatas[this.mapConfig.data];
 //     e.position = 0,
@@ -23,33 +22,23 @@
 // uim.show(503,new UIData(null,3));
 
 
-
+//sifang----
 // else if (t.data.id === NpcId.sfmz)
-//                     net.PlayModel.ins().send3(4901)
-// case this.btn_get:
-    // this.curCfg && net.PvpShabakeModel.ins().send7(this.curCfg.id);      //sifang reward ???
+//net.PlayModel.ins().send3(4901)   // gotomap
+// net.FairyislandModel.ins().send3(n.id)  //reward 1-10
 
-
-
+//shenmo----
 //t.prototype.updatekillinfo = function() {  //shenmo  reward
-    // case i.btn_get:
-    //gd.honourbattle.nowqzjdkillnum
-    //         i.nowcfg && net.CanyonHegemonyModel.ins().send16(i.nowcfg.needKill);  //gd.honourbattle.nowqzjdkillnum
+//net.CanyonHegemonyModel.ins().send16(i.nowcfg.needKill);//gd.honourbattle.nowqzjdkillnum
 
 
-//var HonourBattleData = function(e) {      //sifang\qunxiong\shenmodazhan
-//  t.prototype.updateQzjdGetReward = function(e) {//shenmo
-//         this.qzjdgetkillnum = e,
-//         this.sendNotif(486)
-//     }
-
-
+//qunxiong----
 //var KuafuQXZLPop = function(e) {
-//var H5HomeSbkCtrl = function(e) {    //qunxiong
+//net.PvpShabakeModel.ins().send7(i); //reward 1-11
+//var H5HomeSbkCtrl = function(e) {//qunxiong
 // case this.btn_get:
 //  this.curCfg && (t.kfcheck ? net.CrossShabakeModel.ins().send3(this.curCfg.id) : net.ShobakModel.ins().send8(this.curCfg.id));  //reward
 //  1 == t.nowstate ? net.PvpShabakeModel.ins().send1() : 2 == t.nowstate ? net.PvpShabakeModel.ins().send2() : 3 == t.nowstate && net.PvpShabakeModel.ins().send4();
-
 // t.prototype.updateQxzlGetRewardList = function(e) {//qunxiong
 //         this.qxzlGetRewardArr = e,
 //         this.sendNotif(667)
@@ -233,13 +222,13 @@ function beginTimer_f_Xian_Child(mapid, deliverId) {
     }
     para_IntervalId_Xian = setInterval(async () => {//xian 17:00-17:15
         var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
-        if ((nowDate > 1700 && nowDate < 1715) && para_IntervalId_Xian != null) {                                
+        if ((nowDate > 1700 && nowDate < 1715) && para_IntervalId_Xian != null) {
             if (gd.map.curMapId != 31002) {
                 await new Promise(resolve => setTimeout(resolve, 200));
                 Logic.deliverToFindNpc(6102);
             }
         }
-        if(nowDate > 1715){
+        if (nowDate > 1715) {
             stopTimer_f_Xian();
         }
     }, 2000);
