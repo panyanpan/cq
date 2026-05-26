@@ -163,6 +163,9 @@
         { name: "无限试炼1", mapId: 5613, deliverId: 800210 },
         { name: "无限试炼2", mapId: 5614, deliverId: 800211 },
         { name: "无限试炼3", mapId: 5615, deliverId: 800212 },
+        { name: "造化2", mapId: 6268, deliverId: 600149 },
+        { name: "造化3", mapId: 5570, deliverId: 600150 },
+        { name: "造化4", mapId: 5568, deliverId: 600151 },
         // { name: "木仙1", mapId: 31001, deliverId: 6101 },
         // { name: "木仙2", mapId: 31002, deliverId: 6102 },
         // { name: "木仙3", mapId: 31003, deliverId: 6103 },
@@ -273,9 +276,9 @@
             p_alert_success('运行中...');
             return;
         }
-        para_IntervalId_wzzb = setInterval(async () => {//wzzb 12:00-12:30    21:00-21:30
+        para_IntervalId_wzzb = setInterval(async () => {//wzzb 12:00-12:20    21:00-21:30
             var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
-            if ((nowDate > 1200 && nowDate < 1230) && para_IntervalId_wzzb != null) {
+            if ((nowDate > 1200 && nowDate < 1220) && para_IntervalId_wzzb != null) {
                 // if((nowDate > 2100 && nowDate < 2130) && para_IntervalId_wzzb != null){
                 if (gd.map.curMapId != 3601) {
                     uim.show(318);
@@ -292,7 +295,7 @@
                     await new Promise(resolve => setTimeout(resolve, 100));
                     gd.arpgInst.setAutoFight(1);
                 }
-                if (new Date().getHours() * 100 + new Date().getMinutes() > 1230) {
+                if (new Date().getHours() * 100 + new Date().getMinutes() > 1220) {
                     // if(new Date().getHours() * 100 + new Date().getMinutes() > 2130){
                     clearInterval(para_IntervalId_wzzb);
                     uim.hide(318);//wzzb
@@ -656,7 +659,6 @@
             if (gd.arpgInst.autoFightType == 3) {
                 gd.arpgInst.setAutoFight(1);
             }
-            let hasExecuted = false;
             if (new Date().getHours() * 100 + new Date().getMinutes() > 2028 && !rewardBool_Qunxiong) {
                 for (i = 1; i < 12; i++) {
                     await new Promise(resolve => setTimeout(resolve, 400));
@@ -732,6 +734,11 @@
         para_IntervalId_Xian = setInterval(async () => {//xian 17:00-17:15
             var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
             if ((nowDate > 1700 && nowDate < 1715)) {
+                if (emIns.firstPlayer.fighterObject.delayhp == 0) {
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                    clickCanvasAt(1130, 400);
+                    //console.log("deadClickTime:" + new Date().toLocaleString());
+                }
                 if (para_globalBool == true) {
                     para_globalBool = false;
                 }
@@ -762,6 +769,58 @@
         p_alert_success('已关闭');
     }
 
+    function beginTimer_f_Ice3(mapid, deliverId) {
+        console.log("benginTime-Ice3:" + new Date().toLocaleString());
+        if (para_IntervalId_Ice3 != null) {
+            console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Ice3");
+            p_alert_success('运行中...');
+            return;
+        }
+        para_IntervalId_Ice3 = setInterval(async () => {//Ice3 11:30-11:45
+            var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
+            if ((nowDate > 1130 && nowDate < 1145) && para_IntervalId_Ice3 != null) {
+                if (emIns.firstPlayer.fighterObject.delayhp == 0) {
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                    clickCanvasAt(1130, 400);
+                    //console.log("deadClickTime:" + new Date().toLocaleString());
+                }
+                if (emIns.firstPlayer.fighterObject.delayhp < emIns.firstPlayer.fighterObject.maxHp * 0.9
+                    && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {
+                    Logic.deliverToFindNpc(600300);//biqi1  81
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    gd.map.gotoStagePoint(137, 120, gd.map.curMapId, false);
+                    await new Promise(resolve => setTimeout(resolve, 4000));
+                    net.CureModel.ins().send2(0);    //click cure
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    Logic.deliverToFindNpc(600089);      //bingong3  200052
+                    console.log("gotoMapTime:" + new Date().toLocaleString());
+                }
+                if (gd.map.curMapId != 200052) {
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    Logic.deliverToFindNpc(600089);
+                }
+                if (gd.arpgInst.autoFightType == 3) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    gd.arpgInst.setAutoFight(1);
+                }
+            }
+            if (nowDate > 1145) {
+                stopTimer_f_Ice3();
+            }
+        }, 2000);
+        p_alert_success('开始（Ice3）');
+    }
+
+    function stopTimer_f_Ice3() {
+        if (para_IntervalId_Ice3 != null) {
+            clearInterval(para_IntervalId_Ice3);
+            para_IntervalId_Ice3 = null;
+            console.log('定时器已关闭time-Ice3:' + new Date().toLocaleString());
+        } else {
+            console.log('暂无运行中的定时器time-Ice3:' + new Date().toLocaleString());
+        }
+        p_alert_success('已关闭');
+    }
 
     //child shentai mochao---------------------------------------------------------------------------------------------------
     function findMochao(start, end) {//auto-MoChao(Shentai)
@@ -770,9 +829,10 @@
         }
         return null;
     }
+    var rewardBool_Mochao = false;
     function findMochao_Occupy() {//auto occupy MoChao(Shentai)              
         if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
-            var para_Shentai1 = findMochao(820, 999);
+            var para_Shentai1 = findMochao(810, 999);
             net.MochaoModel.ins().send3(para_Shentai1, 0);
             console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
         }
@@ -782,11 +842,18 @@
                 console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
             }
             if (!para_mc || Object.keys(para_mc).length === 0 || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)) {
-                var para_Shentai = findMochao(950, 999);//findMochao(704, 751) || findMochao(804, 999);
+                var para_Shentai = findMochao(810, 999);//findMochao(704, 751) || findMochao(804, 999);
                 if (para_Shentai) {
                     net.MochaoModel.ins().send3(para_Shentai, 0);
                     console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
                 }
+            }
+            if (!rewardBool_Mochao && new Date().getDay() == 0 && new Date().toLocaleTimeString() >= '22:25:00') {
+                for (i = 1; i < 12; i++) {// i=n?
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                    //net.MochaoModel.ins().send11(t.info.id);  //reward 1-n
+                }
+                rewardBool_Mochao = true;
             }
         }
     }
@@ -823,6 +890,7 @@
             case 4: stopTimer_f_Wzzb(); break;
             case 5: stopTimer_f_Yanhuo(); break;
             case 6: stopTimer_f_Cjzc(); break;
+            case 7: stopTimer_f_Ice3(); break;
 
             case 21: stopTimer_f_Xian(31001, 6101); break;
             case 22: stopTimer_f_Xian(31002, 6102); break;
@@ -841,6 +909,7 @@
             case 4: beginTimer_f_Wzzb(); break;
             case 5: beginTimer_f_Yanhuo(); break;
             case 6: beginTimer_f_Cjzc(); break;
+            case 7: beginTimer_f_Ice3(); break;
 
             case 21: beginTimer_f_Xian(31001, 6101); break;
             case 22: beginTimer_f_Xian(31002, 6102); break;
@@ -866,6 +935,7 @@
         { value: 4, text: '王者' },
         { value: 5, text: '焰火' },
         { value: 6, text: '刺激' },
+        { value: 7, text: '冰宫3' },
         // { value: 11, text: '猴1' },
         // { value: 12, text: '猴2' },
         // { value: 13, text: '猴3' },

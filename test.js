@@ -1,3 +1,9 @@
+//cm.deliver[e.posData.deliverId].toMapId     
+//zaohua2  600149  6268
+//zaohua3  600150  5570
+//zaohua4  600151  5568
+//gd.map.tombInfo  //map boss time
+
 //f_globalRelive(emIns.getEntity("1610424320_2128603008"));  //test???   fighterObject
 //gd.arpgInst = new ArpgInstanceData,
 //gd.arpgInst.relive(e);
@@ -20,6 +26,7 @@
 // var r = cm.tulu[e.tid];
 //                 uim.show(503, new UIData(r,2))
 // uim.show(503,new UIData(null,3));
+//net.MochaoModel.ins().send11(t.info.id);  //reward 1-n
 
 
 //sifang----
@@ -213,7 +220,7 @@ function funPYBlood() {
 }
 
 
-function beginTimer_f_Xian_Child(mapid, deliverId) {
+function beginTimer_f_Xian(mapid, deliverId) {
     console.log("benginTime-xian:" + new Date().toLocaleString());
     if (para_IntervalId_Xian != null) {
         console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-xian");
@@ -232,7 +239,7 @@ function beginTimer_f_Xian_Child(mapid, deliverId) {
             stopTimer_f_Xian();
         }
     }, 2000);
-    p_alert_success('开始辅助（xian）');
+    p_alert_success('开始（xian）');
 }
 
 function stopTimer_f_Xian() {
@@ -242,6 +249,60 @@ function stopTimer_f_Xian() {
         console.log('定时器已关闭time-xian:' + new Date().toLocaleString());
     } else {
         console.log('暂无运行中的定时器time-xian:' + new Date().toLocaleString());
+    }
+    p_alert_success('已关闭');
+}
+
+
+function beginTimer_f_Ice3(mapid, deliverId) {
+    console.log("benginTime-Ice3:" + new Date().toLocaleString());
+    if (para_IntervalId_Ice3 != null) {
+        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Ice3");
+        p_alert_success('运行中...');
+        return;
+    }
+    para_IntervalId_Ice3 = setInterval(async () => {//Ice3 11:30-11:45
+        var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
+        if ((nowDate > 1130 && nowDate < 1145) && para_IntervalId_Ice3 != null) {
+            if (emIns.firstPlayer.fighterObject.delayhp == 0) {
+                await new Promise(resolve => setTimeout(resolve, 400));
+                clickCanvasAt(1130, 400);
+                console.log("deadClickTime:" + new Date().toLocaleString());
+            }
+            if (emIns.firstPlayer.fighterObject.delayhp < emIns.firstPlayer.fighterObject.maxHp * 0.9
+                && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {
+                Logic.deliverToFindNpc(600300);//biqi1  81
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                gd.map.gotoStagePoint(137, 120, gd.map.curMapId, false);
+                await new Promise(resolve => setTimeout(resolve, 4000));
+                net.CureModel.ins().send2(0);    //click cure
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                Logic.deliverToFindNpc(600089);      //bingong3  200052
+                console.log("gotoMapTime:" + new Date().toLocaleString());
+            }
+            if (gd.map.curMapId != 200052) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+                Logic.deliverToFindNpc(600089);
+            }
+            if (gd.arpgInst.autoFightType == 3) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                gd.arpgInst.setAutoFight(1);
+            }
+        }
+        if (nowDate > 1145) {
+            stopTimer_f_Ice3();
+        }
+    }, 2000);
+    p_alert_success('开始（Ice3）');
+}
+
+function stopTimer_f_Ice3() {
+    if (para_IntervalId_Ice3 != null) {
+        clearInterval(para_IntervalId_Ice3);
+        para_IntervalId_Ice3 = null;
+        console.log('定时器已关闭time-Ice3:' + new Date().toLocaleString());
+    } else {
+        console.log('暂无运行中的定时器time-Ice3:' + new Date().toLocaleString());
     }
     p_alert_success('已关闭');
 }
