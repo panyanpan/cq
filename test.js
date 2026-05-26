@@ -1,3 +1,4 @@
+//hot  ？？？
 //cm.deliver[e.posData.deliverId].toMapId     
 //zaohua2  600149  6268
 //zaohua3  600150  5570

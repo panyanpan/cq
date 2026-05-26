@@ -24,7 +24,7 @@
     }
 
     // 全局日志开关（生产环境改为 false）
-    const GLOBAL_LOG_ENABLE = true;
+    const GLOBAL_LOG_ENABLE = false;
     const originalConsoleLog = console.log;
     console.log = function (...args) {
         if (GLOBAL_LOG_ENABLE) {
@@ -1110,8 +1110,8 @@
         // y = f_ConvertXY(x, y, canvas.width, canvas.height).y;
         // if (x == 1130) { x = 800; y = 300; } //1024*768  tencent001-windows 
         // if (x == 1206) { x = 845; y = 300; } //1024*768  tencent001-windows
-        // if (x == 1130) { x = 815; y = 305; } //1024*768  aliyun001-linux
-        // if (x == 1206) { x = 860; y = 305; } //1024*768  aliyun001-linux
+        if (x == 1130) { x = 815; y = 305; } //1024*768  aliyun001-linux
+        if (x == 1206) { x = 860; y = 305; } //1024*768  aliyun001-linux
         const clientX = rect.left + x;
         const clientY = rect.top + y;
         canvas.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX, clientY }));
