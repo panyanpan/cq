@@ -1,4 +1,9 @@
-//hot  ？？？
+// if (new Date().getHours() * 100 + new Date().getMinutes() > 2017 && !rewardBool_Sifang) {
+// for (i = 1; i < 11; i++) {
+//     await new Promise(resolve => setTimeout(resolve, 400));
+//     net.FairyislandModel.ins().send3(i); //reward  1-10
+// }
+
 //cm.deliver[e.posData.deliverId].toMapId     
 //zaohua2  600149  6268
 //zaohua3  600150  5570
@@ -304,6 +309,63 @@ function stopTimer_f_Ice3() {
         console.log('定时器已关闭time-Ice3:' + new Date().toLocaleString());
     } else {
         console.log('暂无运行中的定时器time-Ice3:' + new Date().toLocaleString());
+    }
+    p_alert_success('已关闭');
+}
+
+
+function beginTimer_f_Hot(mapid, deliverId) {
+    console.log("benginTime-Hot:" + new Date().toLocaleString());
+    if (para_IntervalId_Hot != null) {
+        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Hot");
+        p_alert_success('运行中...');
+        return;
+    }
+    para_IntervalId_Hot = setInterval(async () => {//Hot 17:30-17:40
+        var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
+        if ((nowDate > 1729 && nowDate < 1740) && para_IntervalId_Hot != null) {
+            if (emIns.firstPlayer.fighterObject.delayhp == 0) {
+                await new Promise(resolve => setTimeout(resolve, 400));
+                clickCanvasAt(1130, 400);
+            }
+            if (emIns.firstPlayer.fighterObject.delayhp < emIns.firstPlayer.fighterObject.maxHp * 0.9
+                && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {
+                Logic.deliverToFindNpc(600300);//biqi1  81
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                gd.map.gotoStagePoint(137, 120, gd.map.curMapId, false);
+                await new Promise(resolve => setTimeout(resolve, 4000));
+                net.CureModel.ins().send2(0);    //click cure
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                net.PlayModel.ins().send3(5618);      //hot  5618  
+                await new Promise(resolve => setTimeout(resolve, 400));
+                gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
+            }
+            if (gd.map.curMapId != 5618) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+                net.PlayModel.ins().send3(5618);//5618 5618  
+                await new Promise(resolve => setTimeout(resolve, 400));
+                gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
+            }
+            if (gd.arpgInst.autoFightType == 3) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                gd.arpgInst.setAutoFight(1);
+            }
+        }
+        if (nowDate > 1740) {
+            stopTimer_f_Hot();
+        }
+    }, 6000);
+    p_alert_success('开始（Hot）');
+}
+
+function stopTimer_f_Hot() {
+    if (para_IntervalId_Hot != null) {
+        clearInterval(para_IntervalId_Hot);
+        para_IntervalId_Hot = null;
+        console.log('定时器已关闭time-Hot:' + new Date().toLocaleString());
+    } else {
+        console.log('暂无运行中的定时器time-Hot:' + new Date().toLocaleString());
     }
     p_alert_success('已关闭');
 }
