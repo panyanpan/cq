@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         cq.help.main.v1.1
 // @namespace    http://tampermonkey.net/
-// @version      1.01
+// @version      1.02
 // @description  try to take over the world!
 // @author       pany
 // @match        *://rk.hlxy.db9x.com/*
@@ -762,6 +762,7 @@
         p_alert_success('已关闭');
     }
 
+    var para_IntervalId_Ice3 = null;
     function beginTimer_f_Ice3(mapid, deliverId) {
         console.log("benginTime-Ice3:" + new Date().toLocaleString());
         if (para_IntervalId_Ice3 != null) {
@@ -901,10 +902,10 @@
                 }
             }
             if (!rewardBool_Mochao && new Date().getDay() == 0 && new Date().toLocaleTimeString() >= '22:25:00') {
-                for (i = 1; i < 12; i++) {// i=n?                    
-                    //net.MochaoModel.ins().send11(t.info.id);  //reward 1-n
-                }
                 rewardBool_Mochao = true;
+                for (i = 1; i < 12; i++) {                   
+                    //net.MochaoModel.ins().send11(i);  //reward 1-n
+                }                
             }
         }
     }

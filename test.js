@@ -1,8 +1,4 @@
-// if (new Date().getHours() * 100 + new Date().getMinutes() > 2017 && !rewardBool_Sifang) {
-// for (i = 1; i < 11; i++) {
-//     await new Promise(resolve => setTimeout(resolve, 400));
-//     net.FairyislandModel.ins().send3(i); //reward  1-10
-// }
+//this.tombDic[a.uid.toString()] = e.nextReliveTime   //gd.arpgInst
 
 //cm.deliver[e.posData.deliverId].toMapId     
 //zaohua2  600149  6268
@@ -345,6 +341,17 @@ function beginTimer_f_Hot(mapid, deliverId) {
                 await new Promise(resolve => setTimeout(resolve, 200));
                 net.PlayModel.ins().send3(5618);//5618 5618  
                 await new Promise(resolve => setTimeout(resolve, 400));
+                            
+                // if (1 == 2) {
+                //     uim.show(213);
+                //     foreach(gd.map.tombInfo, (item) => {
+                //         if (new Date(Number(item.reliveTime)) - new Date() < 30000) {
+                //             gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
+                //             break;
+                //         }
+                //     })
+                //     uim.hide(213);
+                // }                
                 gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
             }
             if (gd.arpgInst.autoFightType == 3) {
