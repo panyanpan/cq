@@ -142,7 +142,7 @@
         { time: "20:30-21:59" },
         { time: "22:00-23:59" }
     ];
-    const p_mapList = [
+    const p_mapList = [//cm.deliver[deliverId].toMapId
         { name: "比奇", mapId: 81, deliverId: 600300 },
         { name: "喜魄1", mapId: 6126, deliverId: 400104 },
         { name: "怒魄1", mapId: 6127, deliverId: 400105 },
@@ -151,7 +151,12 @@
         { name: "爱魄1", mapId: 6134, deliverId: 400112 },
         { name: "恶魄1", mapId: 6135, deliverId: 400113 },
         { name: "无尽", mapId: 200090, deliverId: 200090 },
+        { name: "狮驼", mapId: 200039, deliverId: 600059 },
+        { name: "清华", mapId: 200040, deliverId: 600060 },
+        { name: "无底", mapId: 200041, deliverId: 600061 },
         { name: "盘恒", mapId: 200056, deliverId: 600100 },
+        { name: "玄英", mapId: 200057, deliverId: 600101 },
+        { name: "毛颖", mapId: 200058, deliverId: 600102 },
         { name: "铜台", mapId: 200059, deliverId: 600103 },
         { name: "降妖12", mapId: 200079, deliverId: 600181 },
         { name: "降妖13", mapId: 200080, deliverId: 600182 },
@@ -168,6 +173,7 @@
         { name: "造化2", mapId: 6268, deliverId: 600149 },
         { name: "造化3", mapId: 5570, deliverId: 600150 },
         { name: "造化4", mapId: 5568, deliverId: 600151 },
+        { name: "黄金1", mapId: 200077, deliverId: 600159 },
         { name: "镇狱1", mapId: 6122, deliverId: 400101 },
         { name: "镇狱2", mapId: 6123, deliverId: 400102 },
         { name: "福地1", mapId: 200072, deliverId: 600141 },
@@ -886,7 +892,7 @@
     var rewardBool_Mochao = false;
     function findMochao_Occupy() {//auto occupy MoChao(Shentai)              
         if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
-            var para_Shentai1 = findMochao(810, 999);
+            var para_Shentai1 = findMochao(810, 850) || findMochao(910, 999);
             net.MochaoModel.ins().send3(para_Shentai1, 0);
             console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
         }
@@ -896,7 +902,7 @@
                 console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
             }
             if (!para_mc || Object.keys(para_mc).length === 0 || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)) {
-                var para_Shentai = findMochao(810, 999);//findMochao(704, 751) || findMochao(804, 999);
+                var para_Shentai = findMochao(810, 850) || findMochao(910, 999);//findMochao(704, 751) || findMochao(804, 999);
                 if (para_Shentai) {
                     net.MochaoModel.ins().send3(para_Shentai, 0);
                     console.log("moChaoTimeOccupy:" + new Date().toLocaleString());

@@ -1,10 +1,6 @@
 //this.tombDic[a.uid.toString()] = e.nextReliveTime   //gd.arpgInst
-
 //cm.deliver[e.posData.deliverId].toMapId     
-//zaohua2  600149  6268
-//zaohua3  600150  5570
-//zaohua4  600151  5568
-//gd.map.tombInfo  //map boss time
+//gd.map.tombInfo // .nextReliveTime  //map boss time 
 
 //f_globalRelive(emIns.getEntity("1610424320_2128603008"));  //test???   fighterObject
 //gd.arpgInst = new ArpgInstanceData,

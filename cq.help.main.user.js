@@ -886,7 +886,7 @@
     var rewardBool_Mochao = false;
     function findMochao_Occupy() {//auto occupy MoChao(Shentai)              
         if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
-            var para_Shentai1 = findMochao(810, 999);
+            var para_Shentai1 = findMochao(810, 850) || findMochao(910, 999);
             net.MochaoModel.ins().send3(para_Shentai1, 0);
             console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
         }
@@ -896,7 +896,7 @@
                 console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
             }
             if (!para_mc || Object.keys(para_mc).length === 0 || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)) {
-                var para_Shentai = findMochao(810, 999);//findMochao(704, 751) || findMochao(804, 999);
+                var para_Shentai = findMochao(810, 850) || findMochao(910, 999);//findMochao(704, 751) || findMochao(804, 999);
                 if (para_Shentai) {
                     net.MochaoModel.ins().send3(para_Shentai, 0);
                     console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
