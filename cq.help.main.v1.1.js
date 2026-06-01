@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         cq.help.main.v1.1
 // @namespace    http://tampermonkey.net/
-// @version      1.02
+// @version      1.03
 // @description  try to take over the world!
 // @author       pany
 // @match        *://rk.hlxy.db9x.com/*
@@ -30,6 +30,9 @@
         if (GLOBAL_LOG_ENABLE) {
             originalConsoleLog.apply(console, args);
         }
+    };
+    console.log1 = function (...args) {
+        originalConsoleLog.apply(console, args);
     };
 
     //begin main--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -60,7 +63,7 @@
                     }
                     findMochao_Occupy();
                 }
-                catch (error) { }  //auto occupy MoChao
+                catch (error) { console.log1("time-findMochao_Occupy-error:" + error); }  //auto occupy MoChao
                 if (emIns.firstPlayer.fighterObject.delayhp == 0) {
                     clickCanvasAt(1130, 400);
                     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -483,7 +486,7 @@
                 for (i = 1; i < 11; i++) {
                     await new Promise(resolve => setTimeout(resolve, 100));
                     net.FairyislandModel.ins().send3(i); //reward  1-10
-                }                
+                }
             }
             if (new Date().getHours() * 100 + new Date().getMinutes() > 2020) {
                 clearInterval(para_intervalIdSifang);
@@ -663,7 +666,7 @@
                 for (i = 1; i < 12; i++) {
                     await new Promise(resolve => setTimeout(resolve, 100));
                     net.PvpShabakeModel.ins().send7(i); //reward  1-11
-                }                
+                }
             }
             if (new Date().getHours() * 100 + new Date().getMinutes() > 2030) {
                 clearInterval(para_intervalIdQunxiong);
@@ -891,17 +894,17 @@
     }
     var rewardBool_Mochao = false;
     function findMochao_Occupy() {//auto occupy MoChao(Shentai)              
-        if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
-            var para_Shentai1 = findMochao(810, 850) || findMochao(910, 999);
-            net.MochaoModel.ins().send3(para_Shentai1, 0);
-            console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
-        }
+        // if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
+        //     var para_Shentai1 = findMochao(810, 850) || findMochao(910, 999);
+        //     net.MochaoModel.ins().send3(para_Shentai1, 0);
+        //     console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
+        // }
         if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:00:00')) {
             var para_mc = gd.mochao.getMyMoChaoData();
-            if (!para_mc || Object.keys(para_mc).length > 0) {
-                console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
-            }
-            if (!para_mc || Object.keys(para_mc).length === 0 || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)) {
+            // if (!para_mc || Object.keys(para_mc).length > 0) {
+            //     console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
+            // }
+            if (para_mc == null || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)) {
                 var para_Shentai = findMochao(810, 850) || findMochao(910, 999);//findMochao(704, 751) || findMochao(804, 999);
                 if (para_Shentai) {
                     net.MochaoModel.ins().send3(para_Shentai, 0);
@@ -910,9 +913,9 @@
             }
             if (!rewardBool_Mochao && new Date().getDay() == 0 && new Date().toLocaleTimeString() >= '22:25:00') {
                 rewardBool_Mochao = true;
-                for (i = 1; i < 12; i++) {                   
+                for (i = 1; i < 12; i++) {
                     //net.MochaoModel.ins().send11(i);  //reward 1-n
-                }                
+                }
             }
         }
     }
@@ -1170,8 +1173,8 @@
         // y = f_ConvertXY(x, y, canvas.width, canvas.height).y;
         // if (x == 1130) { x = 800; y = 300; } //1024*768  tencent001-windows 
         // if (x == 1206) { x = 845; y = 300; } //1024*768  tencent001-windows
-        // if (x == 1130) { x = 815; y = 305; } //1024*768  aliyun001-linux
-        // if (x == 1206) { x = 860; y = 305; } //1024*768  aliyun001-linux
+        if (x == 1130) { x = 815; y = 305; } //1024*768  aliyun001-linux
+        if (x == 1206) { x = 860; y = 305; } //1024*768  aliyun001-linux
         const clientX = rect.left + x;
         const clientY = rect.top + y;
         canvas.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX, clientY }));

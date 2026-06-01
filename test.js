@@ -288,6 +288,7 @@ function beginTimer_f_Ice3(mapid, deliverId) {
             }
         }
         if (nowDate > 1145) {
+            // if (nowDate > 1145 || gd.map.tombInfo.length == 7) {
             stopTimer_f_Ice3();
         }
     }, 2000);
@@ -337,18 +338,21 @@ function beginTimer_f_Hot(mapid, deliverId) {
                 await new Promise(resolve => setTimeout(resolve, 200));
                 net.PlayModel.ins().send3(5618);//5618 5618  
                 await new Promise(resolve => setTimeout(resolve, 400));
-                            
-                // if (1 == 2) {
-                //     uim.show(213);
-                //     foreach(gd.map.tombInfo, (item) => {
-                //         if (new Date(Number(item.reliveTime)) - new Date() < 30000) {
-                //             gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
-                //             break;
-                //         }
-                //     })
-                //     uim.hide(213);
-                // }                
+
                 gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
+
+                // var para_boss = [
+                //     { mid: 400001, x: 78, y: 23 },
+                //     { mid: 400002, x: 78, y: 87 },
+                //     { mid: 400003, x: 17, y: 88 },
+                //     { mid: 400004, x: 16, y: 25 }
+                // ];
+                // para_boss.forEach((item) => {
+                //     if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
+                //         gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
+                //         break;
+                //     }
+                // });
             }
             if (gd.arpgInst.autoFightType == 3) {
                 await new Promise(resolve => setTimeout(resolve, 100));
@@ -356,6 +360,7 @@ function beginTimer_f_Hot(mapid, deliverId) {
             }
         }
         if (nowDate > 1740) {
+            // if (nowDate > 1740 ||gd.map.tombInfo.length == 4) {
             stopTimer_f_Hot();
         }
     }, 6000);
