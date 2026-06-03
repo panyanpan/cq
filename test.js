@@ -1,3 +1,37 @@
+t.prototype.doRecycle = function () {
+    if (gd.bag.recycleLids) {
+        var e = [];
+        for (var t in gd.bag.recycleLids)
+            gd.bag.bagDic[t] && e.push(gd.bag.recycleLids[t]);
+        e.length > 0 && net.BagModel.ins().send7(e),
+            gd.bag.recycleLids = {}
+    }
+}
+
+if (!t.btn_auto.selected)
+    return void net.RoleModel.ins().send23(2006, !1, null, -1, -1);
+var a = "";
+for (var r in cm.monthCard)
+    if (cm.monthCard[r].ronglian && (a = a ? a : cm.monthCard[r].name,
+        gd.player.TQData[r]))
+        return void net.RoleModel.ins().send23(2006, !0, null, -1, -1);
+t.btn_auto.selected = !1,
+
+
+    // n.emptyItemGridCount <= 20 && n.autoRonglianBoo) {
+    var D = [];
+for (var S in cm.monthCard)
+    if (gd.player.TQData[S] && cm.monthCard[S].ronglian) {
+        for (var P in gd.bag.bagDic) {
+            var N = gd.bag.bagDic[P];
+            !!gd.bag.canReTrader[N.itemId] && !gd.bag.getStarArmId(N.extraType, N.extraValue) && !gd.bag.getMohunId(N.extraType, N.extraValue) && D.push(N.lid)
+        }
+        break
+    }
+if (D.length > 0)
+    return void net.BourseModel.ins().send21(D);
+D = null
+
 //this.tombDic[a.uid.toString()] = e.nextReliveTime   //gd.arpgInst
 //cm.deliver[e.posData.deliverId].toMapId     
 //gd.map.tombInfo // .nextReliveTime  //map boss time 
@@ -342,10 +376,10 @@ function beginTimer_f_Hot(mapid, deliverId) {
                 gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
 
                 // var para_boss = [
-                //     { mid: 400001, x: 78, y: 23 },
-                //     { mid: 400002, x: 78, y: 87 },
-                //     { mid: 400003, x: 17, y: 88 },
-                //     { mid: 400004, x: 16, y: 25 }
+                //     { mid: 9900101, x: 17, y: 87 },
+                //     { mid: 9900102, x: 17, y: 23 },
+                //     { mid: 9900103, x: 77, y: 23 },//xiao
+                //     { mid: 9900104, x: 77, y: 86 }
                 // ];
                 // para_boss.forEach((item) => {
                 //     if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
@@ -376,4 +410,46 @@ function stopTimer_f_Hot() {
         console.log('暂无运行中的定时器time-Hot:' + new Date().toLocaleString());
     }
     p_alert_success('已关闭');
+}
+
+
+uim.show(503, new UIData(null, 3));
+uim.showOrHide(820);
+// net.MochaoModel.ins().send1(0);  //7  8
+function findMochao(start, end) {//auto-MoChao(Shentai)
+    if (gd.mochao.moChaoInfo != null) {
+        for (let i = start; i <= end; i++) {
+            if (gd.mochao.moChaoInfo[i].status == 0) { return i; }
+        }
+    }
+    return null;
+}
+var rewardBool_Mochao = false;
+function findMochao_Occupy() {//auto occupy MoChao(Shentai)              
+    // if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
+    //     var para_Shentai1 = findMochao(810, 850) || findMochao(910, 999);
+    //     net.MochaoModel.ins().send3(para_Shentai1, 0);
+    //     console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
+    // }
+    if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:00:00')) {
+        var para_mc = gd.mochao.getMyMoChaoData();
+        // if (!para_mc || Object.keys(para_mc).length > 0) {
+        //     console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
+        // }
+        if (para_mc == null || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)) {
+            var para_Shentai = findMochao(711, 751) || findMochao(850, 999);//findMochao(704, 751) || findMochao(804, 999);
+            if (para_Shentai) {
+                net.MochaoModel.ins().send3(para_Shentai, 0);
+                console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
+            } else {
+                console.log("moChaoTimeOccupy--findMochao is null:" + new Date().toLocaleString());
+            }
+        }
+        if (!rewardBool_Mochao && new Date().getDay() == 0 && new Date().toLocaleTimeString() >= '22:25:00') {
+            rewardBool_Mochao = true;
+            for (i = 1; i < 12; i++) {
+                //net.MochaoModel.ins().send11(i);  //reward 1-n
+            }
+        }
+    }
 }
