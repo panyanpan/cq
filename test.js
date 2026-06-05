@@ -1,36 +1,36 @@
-t.prototype.doRecycle = function () {
-    if (gd.bag.recycleLids) {
-        var e = [];
-        for (var t in gd.bag.recycleLids)
-            gd.bag.bagDic[t] && e.push(gd.bag.recycleLids[t]);
-        e.length > 0 && net.BagModel.ins().send7(e),
-            gd.bag.recycleLids = {}
-    }
-}
+// t.prototype.doRecycle = function () {
+//     if (gd.bag.recycleLids) {
+//         var e = [];
+//         for (var t in gd.bag.recycleLids)
+//             gd.bag.bagDic[t] && e.push(gd.bag.recycleLids[t]);
+//         e.length > 0 && net.BagModel.ins().send7(e),
+//             gd.bag.recycleLids = {}
+//     }
+// }
 
-if (!t.btn_auto.selected)
-    return void net.RoleModel.ins().send23(2006, !1, null, -1, -1);
-var a = "";
-for (var r in cm.monthCard)
-    if (cm.monthCard[r].ronglian && (a = a ? a : cm.monthCard[r].name,
-        gd.player.TQData[r]))
-        return void net.RoleModel.ins().send23(2006, !0, null, -1, -1);
-t.btn_auto.selected = !1,
+// if (!t.btn_auto.selected)
+//     return void net.RoleModel.ins().send23(2006, !1, null, -1, -1);
+// var a = "";
+// for (var r in cm.monthCard)
+//     if (cm.monthCard[r].ronglian && (a = a ? a : cm.monthCard[r].name,
+//         gd.player.TQData[r]))
+//         return void net.RoleModel.ins().send23(2006, !0, null, -1, -1);
+// t.btn_auto.selected = !1,
 
 
-    // n.emptyItemGridCount <= 20 && n.autoRonglianBoo) {
-    var D = [];
-for (var S in cm.monthCard)
-    if (gd.player.TQData[S] && cm.monthCard[S].ronglian) {
-        for (var P in gd.bag.bagDic) {
-            var N = gd.bag.bagDic[P];
-            !!gd.bag.canReTrader[N.itemId] && !gd.bag.getStarArmId(N.extraType, N.extraValue) && !gd.bag.getMohunId(N.extraType, N.extraValue) && D.push(N.lid)
-        }
-        break
-    }
-if (D.length > 0)
-    return void net.BourseModel.ins().send21(D);
-D = null
+//     // n.emptyItemGridCount <= 20 && n.autoRonglianBoo) {
+//     var D = [];
+// for (var S in cm.monthCard)
+//     if (gd.player.TQData[S] && cm.monthCard[S].ronglian) {
+//         for (var P in gd.bag.bagDic) {
+//             var N = gd.bag.bagDic[P];
+//             !!gd.bag.canReTrader[N.itemId] && !gd.bag.getStarArmId(N.extraType, N.extraValue) && !gd.bag.getMohunId(N.extraType, N.extraValue) && D.push(N.lid)
+//         }
+//         break
+//     }
+// if (D.length > 0)
+//     return void net.BourseModel.ins().send21(D);
+// D = null
 
 //this.tombDic[a.uid.toString()] = e.nextReliveTime   //gd.arpgInst
 //cm.deliver[e.posData.deliverId].toMapId     
@@ -267,7 +267,8 @@ function beginTimer_f_Xian(mapid, deliverId) {
                 Logic.deliverToFindNpc(6102);
             }
         }
-        if (nowDate > 1715) {
+        if (nowDate > 1720 || (nowDate > 1705 && gd.map.curMapId == mapid && gd.map.tombInfo.length == 1)) {
+            // gd.map.tombInfo.some(p => p.mid === 111);
             stopTimer_f_Xian();
         }
     }, 2000);
@@ -286,7 +287,7 @@ function stopTimer_f_Xian() {
 }
 
 
-function beginTimer_f_Ice3(mapid, deliverId) {
+function beginTimer_f_Ice3() {
     console.log("benginTime-Ice3:" + new Date().toLocaleString());
     if (para_IntervalId_Ice3 != null) {
         console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Ice3");
@@ -309,8 +310,10 @@ function beginTimer_f_Ice3(mapid, deliverId) {
                 await new Promise(resolve => setTimeout(resolve, 4000));
                 net.CureModel.ins().send2(0);    //click cure
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                Logic.deliverToFindNpc(600089);      //bingong3  200052
-                console.log("gotoMapTime:" + new Date().toLocaleString());
+                if (emIns.firstPlayer.fighterObject.delayhp > emIns.firstPlayer.fighterObject.maxHp * 0.9) {
+                    Logic.deliverToFindNpc(600089);      //bingong3  200052
+                    console.log("gotoMapTime:" + new Date().toLocaleString());
+                }
             }
             if (gd.map.curMapId != 200052) {
                 await new Promise(resolve => setTimeout(resolve, 200));
@@ -341,7 +344,13 @@ function stopTimer_f_Ice3() {
 }
 
 
-function beginTimer_f_Hot(mapid, deliverId) {
+var para_boss_hot = [
+    { mid: 9900101, x: 17, y: 87 },
+    { mid: 9900102, x: 17, y: 23 },
+    { mid: 9900103, x: 77, y: 23 },
+    { mid: 9900104, x: 77, y: 86 }
+];
+function beginTimer_f_Hot() {
     console.log("benginTime-Hot:" + new Date().toLocaleString());
     if (para_IntervalId_Hot != null) {
         console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Hot");
@@ -372,28 +381,23 @@ function beginTimer_f_Hot(mapid, deliverId) {
                 await new Promise(resolve => setTimeout(resolve, 200));
                 net.PlayModel.ins().send3(5618);//5618 5618  
                 await new Promise(resolve => setTimeout(resolve, 400));
-
-                gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
-
-                // var para_boss = [
-                //     { mid: 9900101, x: 17, y: 87 },
-                //     { mid: 9900102, x: 17, y: 23 },
-                //     { mid: 9900103, x: 77, y: 23 },//xiao
-                //     { mid: 9900104, x: 77, y: 86 }
-                // ];
-                // para_boss.forEach((item) => {
-                //     if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
-                //         gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
-                //         break;
-                //     }
-                // });
+                // gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
+                para_boss_hot.forEach((item) => {
+                    if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
+                        var para_xy = gd.emIns.firstPlayer.fighterObject;
+                        if (Math.abs(item.x - para_xy.gridX) > 10 || Math.abs(item.y - para_xy.gridY) > 10) {
+                            gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
+                            break;
+                        }
+                    }
+                });
             }
             if (gd.arpgInst.autoFightType == 3) {
                 await new Promise(resolve => setTimeout(resolve, 100));
                 gd.arpgInst.setAutoFight(1);
             }
         }
-        if (nowDate > 1740) {
+        if (nowDate > 1740 || (nowDate > 1733 && d.map.curMapId == 5618 && gd.map.tombInfo.length == 4)) {
             // if (nowDate > 1740 ||gd.map.tombInfo.length == 4) {
             stopTimer_f_Hot();
         }
