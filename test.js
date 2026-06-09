@@ -1,3 +1,12 @@
+// debug
+//uim.show(503, new UIData(3));
+t.prototype.onRadioSelected = function (e) {
+    var t = this;
+    t.page && (t.group_page.addChild(t.page),
+        t.page.show(t.opd))
+}
+
+
 // gd.ronglian
 // t.prototype.updateInfo = function (e) {
 //     var t = this;
