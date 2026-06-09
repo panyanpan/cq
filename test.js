@@ -1,40 +1,9 @@
-// t.prototype.doRecycle = function () {
-//     if (gd.bag.recycleLids) {
-//         var e = [];
-//         for (var t in gd.bag.recycleLids)
-//             gd.bag.bagDic[t] && e.push(gd.bag.recycleLids[t]);
-//         e.length > 0 && net.BagModel.ins().send7(e),
-//             gd.bag.recycleLids = {}
-//     }
+// gd.ronglian
+// t.prototype.updateInfo = function (e) {
+//     var t = this;
+//     t.allRongLianObj[e.subType] = e,
+//         t.sendNotif(725)
 // }
-
-// if (!t.btn_auto.selected)
-//     return void net.RoleModel.ins().send23(2006, !1, null, -1, -1);
-// var a = "";
-// for (var r in cm.monthCard)
-//     if (cm.monthCard[r].ronglian && (a = a ? a : cm.monthCard[r].name,
-//         gd.player.TQData[r]))
-//         return void net.RoleModel.ins().send23(2006, !0, null, -1, -1);
-// t.btn_auto.selected = !1,
-
-
-//     // n.emptyItemGridCount <= 20 && n.autoRonglianBoo) {
-//     var D = [];
-// for (var S in cm.monthCard)
-//     if (gd.player.TQData[S] && cm.monthCard[S].ronglian) {
-//         for (var P in gd.bag.bagDic) {
-//             var N = gd.bag.bagDic[P];
-//             !!gd.bag.canReTrader[N.itemId] && !gd.bag.getStarArmId(N.extraType, N.extraValue) && !gd.bag.getMohunId(N.extraType, N.extraValue) && D.push(N.lid)
-//         }
-//         break
-//     }
-// if (D.length > 0)
-//     return void net.BourseModel.ins().send21(D);
-// D = null
-
-//this.tombDic[a.uid.toString()] = e.nextReliveTime   //gd.arpgInst
-//cm.deliver[e.posData.deliverId].toMapId     
-//gd.map.tombInfo // .nextReliveTime  //map boss time 
 
 //f_globalRelive(emIns.getEntity("1610424320_2128603008"));  //test???   fighterObject
 //gd.arpgInst = new ArpgInstanceData,
@@ -52,13 +21,6 @@
 //     e.position = 0,
 //     gd.map.readData(e)
 // }
-
-
-//mochao   MoChaoPanel  uim.show(503);
-// var r = cm.tulu[e.tid];
-//                 uim.show(503, new UIData(r,2))
-// uim.show(503,new UIData(null,3));
-//net.MochaoModel.ins().send11(t.info.id);  //reward 1-n
 
 
 //sifang----
@@ -455,5 +417,25 @@ function findMochao_Occupy() {//auto occupy MoChao(Shentai)
                 //net.MochaoModel.ins().send11(i);  //reward 1-n
             }
         }
+    }
+}
+
+var para_IntervalId_Ronglian = null;
+function beginTimer_f_Ronglian() {
+    console.log("beginTimer_f_Ronglian:" + new Date().toLocaleString());
+    if (para_IntervalId_Ronglian != null) {
+        clearInterval(para_IntervalId_Ronglian);
+        para_IntervalId_Ronglian = null;
+        p_alert_success('已关闭（Ronglian）');
+    }
+    else {
+        para_IntervalId_Ronglian = setInterval(async () => {
+            // uim.show(503, new UIData(null, 3));
+            // await new Promise(resolve => setTimeout(resolve, 2000));
+            clickCanvasAt(725, 517);
+            // await new Promise(resolve => setTimeout(resolve, 2000));
+            // uim.hide(503);
+        }, 600000);
+        p_alert_success('已开始（Ronglian）');
     }
 }
