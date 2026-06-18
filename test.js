@@ -1,18 +1,55 @@
-// debug
-//uim.show(503, new UIData(3));
-t.prototype.onRadioSelected = function (e) {
-    var t = this;
-    t.page && (t.group_page.addChild(t.page),
-        t.page.show(t.opd))
+var p_iCount = 0;
+setInterval(async () => {
+    p_iCount++;
+    if (p_iCount % 10 == 0) {
+        const x = 500;
+        const y = 200;
+        const centerX = Math.floor(window.screen.width / 2);
+        const centerY = Math.floor(window.screen.height / 2);
+        if (Math.abs(x - centerX) > 100 || Math.abs(y - centerY) > 100) {
+            console.log(`time-${p_iCount},x-${x},y-${y} `);
+        }
+    };
+}, 1000);
+
+function f_CheckPosition_Go(x, y) {
+    if (gd.map.curMapId == 53001) {
+        try {
+            const rewardNum = 0;
+            if (gd.honourbattle.nowqzjdkillnum > 9 && gd.honourbattle.nowqzjdkillnum % 2 != 0) {
+                rewardNum = gd.honourbattle.nowqzjdkillnum - 1;
+            } else {
+                rewardNum = gd.honourbattle.nowqzjdkillnum;
+            }
+            net.CanyonHegemonyModel.ins().send16(rewardNum);
+            console.log("time-Shenmo get reward:" + rewardNum + "----" + new Date().toLocaleString());
+        } catch (error) {
+            console.error('time-shenmo-error:', new Date().toLocaleString() + "--" + error.message);
+        }
+
+        const currentX = emIns.firstPlayer.fighterObject.gridX;
+        const currentY = emIns.firstPlayer.fighterObject.gridY;
+        if (Math.abs(currentX - x) > 10 || Math.abs(currentY - y) > 10) {
+            gd.map.gotoStagePoint(x, y, gd.map.curMapId, false);//center xy
+        }
+    }
 }
 
+// Math.floor(gd.cangbaotu.bookEndTime.toNumber() / 1e3) > 9 * 60
+t = cm.kuafuduodiankillrewards
+for (var a in t) {
+    if (t[a].needKill > gd.honourbattle.qzjdgetkillnum) {
+        i = t[a].id;
+        break
+    }
+    r = t[a].id
+}
+// var n = cm.kuafuduodiankillrewards[i]
+// n.needKill <= gd.honourbattle.nowqzjdkillnum
+// net.CanyonHegemonyModel.ins().send16(needKill);
 
-// gd.ronglian
-// t.prototype.updateInfo = function (e) {
-//     var t = this;
-//     t.allRongLianObj[e.subType] = e,
-//         t.sendNotif(725)
-// }
+
+
 
 //f_globalRelive(emIns.getEntity("1610424320_2128603008"));  //test???   fighterObject
 //gd.arpgInst = new ArpgInstanceData,
@@ -394,7 +431,7 @@ uim.showOrHide(820);
 function findMochao(start, end) {//auto-MoChao(Shentai)
     if (gd.mochao.moChaoInfo != null) {
         for (let i = start; i <= end; i++) {
-            if (gd.mochao.moChaoInfo[i].status == 0) { return i; }
+            if (gd.mochao.moChaoInfo[i]?.status == 0) { return i; }
         }
     }
     return null;
