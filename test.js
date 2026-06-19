@@ -1,16 +1,26 @@
-var p_iCount = 0;
-setInterval(async () => {
-    p_iCount++;
-    if (p_iCount % 10 == 0) {
-        const x = 500;
-        const y = 200;
-        const centerX = Math.floor(window.screen.width / 2);
-        const centerY = Math.floor(window.screen.height / 2);
-        if (Math.abs(x - centerX) > 100 || Math.abs(y - centerY) > 100) {
-            console.log(`time-${p_iCount},x-${x},y-${y} `);
-        }
-    };
-}, 1000);
+
+//net.DuplicateModel.ins().send2(32005);//jilin005
+// var PersonalFuBenPop = function(e) {//jilin
+// ShenJianTiaoZhanPop
+// t.prototype.onBtnClick = function(e) {
+//         var t = this;
+//         switch (e.currentTarget) {
+//         case t.btn_go:
+//             var i = t.bossInfo[t.selectBoss];
+//             if (!i || !i[0])
+//                 return;
+//             Logic.deliverToFindNpc(parseInt(i[0].deliver));
+//             break;
+//         case t.btn_desc:
+//             var r = void 0;
+//             switch (this.bossType1) {
+//             case 101:
+//                 r = 8700
+//             }
+//             uim.showOrHide(749, new UIData(r))
+//         }
+//     }
+
 
 function f_CheckPosition_Go(x, y) {
     if (gd.map.curMapId == 53001) {
@@ -420,6 +430,51 @@ function stopTimer_f_Hot() {
         console.log('定时器已关闭time-Hot:' + new Date().toLocaleString());
     } else {
         console.log('暂无运行中的定时器time-Hot:' + new Date().toLocaleString());
+    }
+    p_alert_success('已关闭');
+}
+
+var para_IntervalId_Jilin = null;
+function beginTimer_f_Jilin(id) {
+    console.log("benginTime-jilin:" + new Date().toLocaleString());
+    if (para_IntervalId_Jilin != null) {
+        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-jilin");
+        p_alert_success('运行中...');
+        return;
+    }
+    var expireDate = new Date(Date.now() + 20 * 60 * 1000); //20 miniute
+    para_IntervalId_Jilin = setInterval(async () => {
+        var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
+        if ((nowDate < 600 || nowDate < 2200)) {
+            return;
+        }
+        if (para_globalBool == true) {
+            para_globalBool = false;
+        }
+        if (emIns.firstPlayer.fighterObject.delayhp == 0) {
+            await new Promise(resolve => setTimeout(resolve, 400));
+            clickCanvasAt(1206, 400);
+        }
+        if (gd.map.curMapId != id) {
+            net.DuplicateModel.ins().send2(id);//32001;32002;32003;32004
+        }
+        if (gd.arpgInst.autoFightType == 3) {
+            gd.arpgInst.setAutoFight(1);
+        }
+        if (new Date() > expireDate || gd.boss.dupCountData[id] == 0) {
+            stopTimer_f_Jilin();
+        }
+    }, 10000);
+    p_alert_success('开始（jilin）');
+}
+function stopTimer_f_Jilin() {
+    para_globalBool = true;
+    if (para_IntervalId_Jilin != null) {
+        clearInterval(para_IntervalId_Jilin);
+        para_IntervalId_Jilin = null;
+        console.log('定时器已关闭time-Jilin:' + new Date().toLocaleString());
+    } else {
+        console.log('暂无运行中的定时器time-Jilin:' + new Date().toLocaleString());
     }
     p_alert_success('已关闭');
 }
