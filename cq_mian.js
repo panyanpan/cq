@@ -235,7 +235,80 @@ var __reflect = this && this.__reflect || function(e, t, i) {
     }
     return e
 }
-  , UIBase = function(e) {
+  , AI = function() {
+    function e() {
+        this.state = 0,
+        this.skillDelayTime = 1e3
+    }
+    return e.prototype.getSkill = function(e) {
+        return 10101
+    }
+    ,
+    e.prototype.moveComplete = function(e, t) {
+        if (1 == e.curFsm.getState()) {
+            var i = this.check(e);
+            if (1 == i)
+                return
+        }
+        e.waitForNextMove = t + 100
+    }
+    ,
+    e.prototype.checkBase = function(e) {
+        return 0 == this.state ? 0 : AIManager.instance.isAIIntervalLimit(e.uid) ? 0 : 3
+    }
+    ,
+    e.prototype.check = function(e) {
+        return this.checkBase(e)
+    }
+    ,
+    e.prototype.checkNormal = function(e) {
+        return 0
+    }
+    ,
+    e.prototype.start = function() {
+        this.state = 1
+    }
+    ,
+    e.prototype.stop = function() {
+        this.state = 0
+    }
+    ,
+    e.prototype.doSort = function(e, t) {
+        return e.frame > t.frame ? -1 : e.frame < t.frame ? 1 : e.dis > t.dis ? 1 : e.dis < t.dis ? -1 : 0
+    }
+    ,
+    e.prototype.tweenComplete = function(e) {
+        emIns.destoryEntity(e.uid)
+    }
+    ,
+    e.prototype.die = function(e) {
+        e instanceof AnimalEntity && e.die()
+    }
+    ,
+    e.prototype.relive = function(e) {
+        e.relive(),
+        e.changeFSMState(EntityFreeFsm.Instance)
+    }
+    ,
+    e.prototype.moveToServer = function(e, t, i) {}
+    ,
+    e.prototype.skillToServer = function(e, t, i) {}
+    ,
+    e.prototype.pickupServer = function(e, t, i) {}
+    ,
+    e
+}();
+__reflect(AI.prototype, "AI");
+var DisSort = function() {
+    function e(e, t, i) {
+        this.dis = e,
+        this.target = t,
+        this.frame = void 0 == i ? 0 : i
+    }
+    return e
+}();
+__reflect(DisSort.prototype, "DisSort");
+var UIBase = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
         return t._inited = !1,
@@ -596,80 +669,7 @@ var __reflect = this && this.__reflect || function(e, t, i) {
     ,
     t
 }(eui.Component);
-__reflect(UIBase.prototype, "UIBase", ["IUIBase", "IObserver", "IViewHint", "IGameEventHandler"]);
-var AI = function() {
-    function e() {
-        this.state = 0,
-        this.skillDelayTime = 1e3
-    }
-    return e.prototype.getSkill = function(e) {
-        return 10101
-    }
-    ,
-    e.prototype.moveComplete = function(e, t) {
-        if (1 == e.curFsm.getState()) {
-            var i = this.check(e);
-            if (1 == i)
-                return
-        }
-        e.waitForNextMove = t + 100
-    }
-    ,
-    e.prototype.checkBase = function(e) {
-        return 0 == this.state ? 0 : AIManager.instance.isAIIntervalLimit(e.uid) ? 0 : 3
-    }
-    ,
-    e.prototype.check = function(e) {
-        return this.checkBase(e)
-    }
-    ,
-    e.prototype.checkNormal = function(e) {
-        return 0
-    }
-    ,
-    e.prototype.start = function() {
-        this.state = 1
-    }
-    ,
-    e.prototype.stop = function() {
-        this.state = 0
-    }
-    ,
-    e.prototype.doSort = function(e, t) {
-        return e.frame > t.frame ? -1 : e.frame < t.frame ? 1 : e.dis > t.dis ? 1 : e.dis < t.dis ? -1 : 0
-    }
-    ,
-    e.prototype.tweenComplete = function(e) {
-        emIns.destoryEntity(e.uid)
-    }
-    ,
-    e.prototype.die = function(e) {
-        e instanceof AnimalEntity && e.die()
-    }
-    ,
-    e.prototype.relive = function(e) {
-        e.relive(),
-        e.changeFSMState(EntityFreeFsm.Instance)
-    }
-    ,
-    e.prototype.moveToServer = function(e, t, i) {}
-    ,
-    e.prototype.skillToServer = function(e, t, i) {}
-    ,
-    e.prototype.pickupServer = function(e, t, i) {}
-    ,
-    e
-}();
-__reflect(AI.prototype, "AI");
-var DisSort = function() {
-    function e(e, t, i) {
-        this.dis = e,
-        this.target = t,
-        this.frame = void 0 == i ? 0 : i
-    }
-    return e
-}();
-__reflect(DisSort.prototype, "DisSort"),
+__reflect(UIBase.prototype, "UIBase", ["IUIBase", "IObserver", "IViewHint", "IGameEventHandler"]),
 function() {
     RES.NOCache = "NC",
     RES.NCImg = "NCImg",
@@ -1584,6 +1584,8 @@ var ArpgAI = function(e) {
           , o = gd.arpgInst.cfgId && gd.map.curMapId == cm.duplicate[gd.arpgInst.cfgId].mapId && 33 == cm.duplicate[gd.arpgInst.cfgId].duplicateType
           , s = (gd.arpgInst.cfgId && gd.map.curMapId == cm.duplicate[gd.arpgInst.cfgId].mapId && 35 == cm.duplicate[gd.arpgInst.cfgId].duplicateType,
         gd.arpgInst.cfgId && gd.map.curMapId == cm.duplicate[gd.arpgInst.cfgId].mapId && 70 == cm.duplicate[gd.arpgInst.cfgId].duplicateType);
+        if (e.playerObject.invisible2)
+            return !0;
         if (r || gd.map.kuafuluandou)
             return gd.arpgInst.biqiMyGroup && e.playerObject.league == gd.arpgInst.biqiMyGroup ? !0 : e.fighterObject.isDead || 0 == e.fighterObject.truehp ? !0 : !1;
         if (a) {
@@ -1904,6 +1906,44 @@ var ArpgAI = function(e) {
         } else
             h && gd.arpgInst.sendNotif(611);
         return !1
+    }
+    ,
+    t.prototype.checkFishPanel = function() {
+        var e = emIns.firstPlayer;
+        if (!e)
+            return !1;
+        var t = 98 == gd.map.config.cls;
+        if (js_gameVars.testFish && (t = !0),
+        !t)
+            return !1;
+        for (var i = e.gameObject.gridX, r = e.gameObject.gridY, a = !1, n = parseInt(cm.global[39006].value), o = i - n; i + n >= o; o++) {
+            for (var s = r - n; r + n >= s; s++)
+                if (!gd.map.checkCanStand(o, s)) {
+                    a = !0;
+                    break
+                }
+            if (a)
+                break
+        }
+        var l = !1
+          , c = uim.getMain();
+        return c && c.fishPro && (l = !0,
+        !a) ? (gd.arpgInst.sendNotif(1026),
+        !1) : (a && !l && gd.arpgInst.sendNotif(1025, e.realUid),
+        !1)
+    }
+    ,
+    t.prototype.checkYinNi = function() {
+        var e = emIns.firstPlayer;
+        if (e) {
+            var t = emIns.getAllPlayer();
+            for (var i in t) {
+                var r = t[i];
+                if (r.uid != emIns.firstPlayer.uid && r.playerObject.invisible2)
+                    return void emIns.firstPlayer.setYinNiIcon("com_task")
+            }
+            emIns.firstPlayer.setYinNiIcon(null)
+        }
     }
     ,
     t.prototype.checkPanel = function() {
@@ -2585,192 +2625,1189 @@ var radioBottom = function(e) {
     t
 }(eui.ItemRenderer);
 __reflect(radioBottom.prototype, "radioBottom");
-var Pool = function() {
-    function e(e, t) {
-        void 0 === t && (t = 10),
-        this.max = 0;
-        var i = this;
-        i.pool = [],
-        i.creater = e;
-        for (var r = 0; t > r; r++)
-            i.pool.push(new i.creater)
+var BagEquipRender = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
     }
-    return e.prototype.pop = function() {
-        var e = this
-          , t = e.pool.length > 0 ? e.pool.pop() : new e.creater;
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.touchEnabled = !1,
+        t.touchChildren = !0,
+        t.effGroup = new eui.Group,
+        t.effGroup.touchEnabled = !1,
+        t.effGroup.touchChildren = !1,
+        t.mainGroup = new eui.Group,
+        t.mainGroup.touchEnabled = !1,
+        t.mainGroup.touchChildren = !1,
+        t.addChild(t.mainGroup),
+        t.bgImg = new eui.Image,
+        t.bgImg.horizontalCenter = "0",
+        t.bgImg.verticalCenter = "0",
+        t.mainGroup.addChild(t.bgImg),
+        t.bgImg0 = new eui.Image,
+        t.bgImg0.horizontalCenter = "0",
+        t.bgImg0.verticalCenter = "0",
+        t.mainGroup.addChild(t.bgImg0),
+        t.img_soullv = new eui.Image,
+        t.img_soullv.horizontalCenter = 0,
+        t.img_soullv.verticalCenter = 0,
+        t.mainGroup.addChild(t.img_soullv),
+        t.icon = new eui.Image,
+        t.icon.horizontalCenter = "0",
+        t.icon.verticalCenter = "0",
+        t.mainGroup.addChild(t.icon),
+        t.icon.y = t.icon.x = 8,
+        t.icon.anchorOffsetX = t.icon.anchorOffsetY = 24,
+        t.icon.x = t.icon.y = 30,
+        t.select = new eui.Image,
+        t.select.width = t.select.height = 62,
+        t.select.x = -1,
+        t.select.y = -1,
+        t.select.source = "com_selectImg3",
+        t.img_type = new eui.Image,
+        t.img_type.y = 39,
+        t.img_type.x = 40,
+        t.img_type.visible = !1,
+        t.mainGroup.addChild(t.img_type),
+        t.img_xy = new eui.Image,
+        t.img_xy.x = -1,
+        t.img_xy.y = -1,
+        t.img_xy1 = new eui.Image,
+        t.img_xy1.y = 0,
+        t.count = new eui.Label,
+        t.count.width = 56,
+        t.count.height = 13,
+        t.count.style = "193",
+        t.count.size = 13,
+        t.count.x = 0,
+        t.count.y = 43,
+        t.count.textAlign = egret.HorizontalAlign.RIGHT,
+        t.count.stroke = 1,
+        t.addChild(t.count),
+        t.mainGroup.addChild(t.effGroup),
+        t.effGroup.horizontalCenter = 0,
+        t.effGroup.verticalCenter = 0,
+        t.grp_equipRank = new eui.Group,
+        t.grp_equipRank.width = 19,
+        t.grp_equipRank.height = 31,
+        t.grp_equipRank.y = 2,
+        t.grp_equipRank.right = 1,
+        t.addChild(t.grp_equipRank),
+        t.powerChange = new eui.Image,
+        t.mainGroup.addChild(t.powerChange),
+        t.powerChange.y = 35,
+        t.powerChange.x = 41,
+        t.img_insure = new eui.Image,
+        t.img_insure.x = 46,
+        t.img_insure.y = -3,
+        t.img_insure.visible = !1,
+        t.img_insure.source = "grid_ic_tb",
+        t.mainGroup.addChild(t.img_insure),
+        t.rect = new eui.Rect(60,60,0),
+        t.rect.fillAlpha = .7,
+        t.xieicon = new eui.Image,
+        t.xieicon.horizontalCenter = "13",
+        t.xieicon.verticalCenter = "-13",
+        t.mainGroup.addChild(t.xieicon),
+        t.hint = new eui.Image,
+        t.hint.x = 47,
+        t.hint.y = 0,
+        t.hint.source = "bagHint",
+        t.hint.visible = !1,
+        t.addChild(t.hint),
+        t.touchGroup = new eui.Group,
+        t.addChild(t.touchGroup),
+        t.touchGroup.touchChildren = !0,
+        t.img_sex = new eui.Image,
+        t.img_sex.x = 2,
+        t.img_sex.y = 43,
+        t.touchGroup.addChild(t.img_sex),
+        Capability.mobileUI ? t.touchGroup.on(TP, t.doMobileTouch, t) : (mouse.setButtonMode(t, !0),
+        t.touchGroup.on(mouse.MouseEvent.ROLL_OVER, t.overs, t),
+        t.touchGroup.on(mouse.MouseEvent.ROLL_OUT, t.outs, t)),
+        t.touchGroup.on(egret.TouchEvent.TOUCH_BEGIN, t.touchDown, t),
+        t.touchGroup.on(egret.TouchEvent.TOUCH_END, t.touchEnd, t),
+        t.touchGroup.on(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, t.touchOutside, t),
+        t.mainGroup.width = t.mainGroup.height = 60,
+        t.effGroup.width = t.effGroup.height = 60,
+        t.touchGroup.width = t.touchGroup.height = 60
+    }
+    ,
+    t.prototype.addBitRank = function() {
+        var e = this;
+        e.img_jie = new eui.Image,
+        e.img_jie.source = "grid_jie",
+        e.img_jie.x = 3,
+        e.img_jie.y = 16,
+        e.grp_equipRank.addChild(e.img_jie),
+        e.bit_rank = new eui.BitmapLabel,
+        e.bit_rank.font = "equipRankFont_fnt",
+        e.bit_rank.width = 22,
+        e.bit_rank.textAlign = "center",
+        e.bit_rank.x = -2,
+        e.bit_rank.y = 0,
+        e.bit_rank.letterSpacing = -1,
+        e.grp_equipRank.addChild(e.bit_rank)
+    }
+    ,
+    t.prototype.touchDown = function(e) {
+        var t = this;
+        t.data && t.data.from && (t.icon.scaleX = t.icon.scaleY = .95)
+    }
+    ,
+    t.prototype.touchEnd = function(e) {
+        var t = this;
+        t.icon.scaleX = t.icon.scaleY = 1
+    }
+    ,
+    t.prototype.touchOutside = function(e) {
+        var t = this;
+        t.icon.scaleX = t.icon.scaleY = 1
+    }
+    ,
+    t.prototype.clearAllEff = function() {
+        var e = this;
+        e.clearEff(),
+        e.clearEff2(),
+        e.removelhEff(),
+        e.hint.visible && egret.Tween.removeTweens(e.hint)
+    }
+    ,
+    t.prototype.dispose = function() {
+        var e = this;
+        e.filters = null,
+        e.clearAllEff(),
+        Logic.removeNew([e.hint, e.bgImg, e.bgImg0, e.img_insure, e.icon, e.img_type, e.count, e.select, e.img_xy, e.mainGroup, e.effGroup, e.touchGroup, e.rect, e.powerChange, e.img_xy1, e.txt_qStar, e.img_qStar1, e.img_qStar2, e.txt_mvlv, e.txt_handleItem, e.bit_rank, e.grp_equipRank, e.img_jie, e.img_sex, e.txt_tl]),
+        Capability.mobileUI ? e.touchGroup.off(TP, e.doMobileTouch, e) : (e.touchGroup.off(mouse.MouseEvent.ROLL_OVER, e.overs, e),
+        e.touchGroup.off(mouse.MouseEvent.ROLL_OUT, e.outs, e),
+        e.checkYULANItem() && e.touchGroup.off(TP, e.doMobileTouch, e)),
+        e.sceneEffect && (e.sceneEffect.dispose(),
+        e.sceneEffect = null),
+        e.touchGroup.off(egret.TouchEvent.TOUCH_BEGIN, e.touchDown, e),
+        e.touchGroup.off(egret.TouchEvent.TOUCH_END, e.touchEnd, e),
+        e.touchGroup.off(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, e.touchOutside, e)
+    }
+    ,
+    t.prototype.doMobileTouch = function(e) {
+        var t = this;
+        if (t.data && !t.data.isNull) {
+            var i = t.data.from;
+            if (i && (1 == i || 3 == i || 2 == i || 8 === i || 41 === i || 42 === i || 35 === i || 38 === i || 17 === i || 18 === i || 31 === i || 23 === i || 9 === i || 25 === i || 26 === i || 27 === i || 28 === i || 28 === i || 37 === i || 48 === i || 49 === i || 55 === i || 54 === i || 56 === i || 51 === i || 57 === i || 45 === i))
+                return;
+            if (i && 30 == i)
+                return;
+            t.overs(e)
+        }
+    }
+    ,
+    t.prototype.overs = function(e) {
+        var t = this;
+        t.data && !t.data.isNull && (TipsManager.Instance.closeTip(),
+        38 == t.data.from ? (t.data.xx = t.stage.stageWidth / 4,
+        t.data.yy = 300) : (t.data.xx = e.stageX,
+        t.data.yy = e.stageY),
+        t.data.touchEnble = !1,
+        t.showTips(),
+        (Capability.mobileUI || t.checkYULANItem()) && e.stopImmediatePropagation())
+    }
+    ,
+    t.prototype.outs = function(e) {
+        var t = this;
+        t.checkYULANTips() || TipsManager.Instance.closeTip()
+    }
+    ,
+    t.prototype.checkYULANItem = function() {
+        var e = this;
+        return e.data && !Capability.mobileUI && e.data.from && 59 == e.data.from ? !0 : !1
+    }
+    ,
+    t.prototype.checkYULANTips = function() {
+        var e = this;
+        return e.data && !Capability.mobileUI && e.data.config && 7 == e.data.config[21] ? !0 : !1
+    }
+    ,
+    t.prototype.showTips = function() {
+        var e = this;
+        if (e.data.config) {
+            var t = e.data
+              , i = Logic.getEquipCopy(t);
+            if (!Capability.mobileUI && e.checkYULANTips() && (i.touchEnble = !0),
+            12 == t.config[1])
+                TipsManager.Instance.showTips(0, i, 4);
+            else if (2 == t.config[1]) {
+                var r = 4
+                  , a = t.lid;
+                if (a) {
+                    var n = t.config[23]
+                      , o = gd.player.equipInfo[n];
+                    o && a.toString() == o.lid.toString() ? r = 2 : (2 == n && (o = gd.player.equipInfo[9]),
+                    3 == n && (o = gd.player.equipInfo[10]),
+                    o && a.toString() == o.lid.toString() && (r = 2))
+                }
+                1 == t.from && (r = 1),
+                32 == t.from && (r = 21),
+                Capability.mobileUI || !e.checkYULANTips() && !e.checkYULANItem() || (r = 32),
+                TipsManager.Instance.showTips(0, i, r)
+            } else {
+                var r = 4;
+                Capability.mobileUI || !e.checkYULANTips() && !e.checkYULANItem() || (r = 32),
+                TipsManager.Instance.showTips(1, i, r)
+            }
+        }
+    }
+    ,
+    t.prototype.playerOnceEff = function(e) {
+        var t = this
+          , i = OnceEffFactory.create();
+        t.mainGroup.addChild(i),
+        i.anchorOffsetX = 250,
+        i.anchorOffsetY = 250,
+        i.x = 45,
+        i.y = 45,
+        NameMovieClipResManager.Instance.getMcByRes(e, i),
+        i.once(egret.Event.COMPLETE, function(e) {
+            t.removeChild(i),
+            i.data = null,
+            OnceEffFactory.Instance.distroy(i)
+        }, t),
+        i.gotoAndPlay(0, 1)
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        if (e.clearAllEff(),
+        e.img_insure.visible = e.hint.visible = e.rect.visible = !1,
+        e.select.visible = !1,
+        e.powerChange.source = "",
+        e.touchEnabled = !1,
+        e.bgImg.visible = !0,
+        e.bgImg.source = e.bgImg0.source = e.icon.source = e.xieicon.source = "",
+        e.grp_equipRank.visible = !1,
+        e.count.text = "",
+        e.img_sex.visible = !1,
+        e.img_type.visible = !1,
+        e.sceneEffect && (e.sceneEffect.dispose(),
+        e.sceneEffect = null),
+        e.txt_qStar && (e.txt_qStar.visible = !1),
+        e.img_qStar1 && (e.img_qStar1.visible = !1),
+        e.img_qStar2 && (e.img_qStar2.visible = !1),
+        e.txt_mvlv && (e.txt_mvlv.visible = !1),
+        e.txt_tl && (e.txt_tl.visible = !1),
+        e.txt_handleItem && (e.txt_handleItem.visible = !1),
+        e.data) {
+            !Capability.mobileUI && e.checkYULANItem() && (e.touchGroup.on(TP, e.doMobileTouch, e),
+            e.touchGroup.off(mouse.MouseEvent.ROLL_OVER, e.overs, e),
+            e.touchGroup.off(mouse.MouseEvent.ROLL_OUT, e.outs, e)),
+            e.data.hidebg && (e.bgImg.visible = !1),
+            e.select.visible = !!e.data.selected;
+            var t = 0
+              , i = e.data
+              , r = i.config;
+            if (r) {
+                if (e.img_insure.visible = !1,
+                i.lid && gd.insure.isInsureEquip(i.lid) && (e.img_insure.visible = !0),
+                228 == r[21] && (e.txt_mvlv || (e.txt_mvlv = new eui.Label,
+                e.txt_mvlv.style = "46",
+                e.txt_mvlv.width = 18,
+                e.txt_mvlv.y = 5,
+                e.txt_mvlv.x = 5,
+                e.txt_mvlv.textAlign = "center",
+                e.mainGroup.addChild(e.txt_mvlv)),
+                e.txt_mvlv.text = Logic.getNumberToRomon(cm.mingwen[r[0]].level),
+                e.txt_mvlv.visible = !0),
+                40 == r[21]) {
+                    var a = cm.tulu[parseInt(r[22])];
+                    if (a) {
+                        var n = gd.tuluData.tuluData[a.id];
+                        n && (e.txt_tl || (e.txt_tl = new eui.Label,
+                        e.txt_tl.style = "17",
+                        e.txt_tl.verticalCenter = 0,
+                        e.txt_tl.horizontalCenter = 0,
+                        e.mainGroup.addChild(e.txt_tl)),
+                        e.txt_tl.text = "已激活",
+                        e.txt_tl.visible = !0)
+                    }
+                }
+                if (i.showRed && (Logic.check_item_can_be_use(r, i.lid) || 20445514 == r[0]) && (e.hint.visible = !0,
+                egret.Tween.get(e.hint, {
+                    loop: !0
+                }).to({
+                    alpha: .5
+                }, 500).to({
+                    alpha: 1
+                }, 500)),
+                e.data.count && e.data.count > 1) {
+                    var o = e.data.count;
+                    e.count.text = Html.numToWan3(o)
+                }
+                5 == r[23] && r[56] && (e.img_sex.source = 1 == r[56] ? "nan" : "nv",
+                e.img_sex.visible = !0),
+                t = r[9],
+                t = t ? t : 0,
+                r[61] && (Logic.isMiniGame() || js_gameVars.wxTest || Logic.isQuickGame()) && Logic.checkMiniGameHideItemEff(r) ? e.showIcon(i.starArm, r) : r[61] ? (e.sceneEffect || (e.sceneEffect = new UISceneEffectAnimation),
+                e.sceneEffect.init(e.effGroup, r[61]),
+                e.sceneEffect.x = 714,
+                e.sceneEffect.y = 703) : (e.showIcon(i.starArm, r),
+                13 == i.config[1] && (e.icon.source = ResUrl.url(i.config[19] + "", 77))),
+                e.data.refineSoulLevel ? e.img_soullv.source = "ngrid_" + [, 1, 3, 4, 5][e.data.refineSoulLevel] : e.img_soullv.source = "",
+                e.bgImg.source = "equip_grid",
+                e.img_type.x = 40,
+                e.img_type.source = "",
+                Logic.isZhuXian(r[23]) && 999 != r[8] || Logic.isAwakeEquip(r[23]) || Logic.isTSSDEquip(r[23]) || Logic.isPoMoEquip(r[23]) || Logic.isLingZhuangEquip(r[23]) ? (e.grp_equipRank.visible = !0,
+                e.bit_rank || e.addBitRank(),
+                e.bit_rank.text = r[4] + "") : e.grp_equipRank.visible = !1,
+                5 == r[8] && 58 != e.data.from ? (e.img_type.source = "grid_shen",
+                e.img_type.visible = !0) : 26 == r[8] ? (e.img_type.source = "grid_long",
+                e.img_type.visible = !0) : 27 == r[8] ? (e.img_type.source = "grid_sheng",
+                e.img_type.visible = !0) : 11 == r[8] ? (e.img_type.source = "grid_jie",
+                e.img_type.visible = !0) : 12 == r[8] ? (e.img_type.source = "grid_zhi",
+                e.img_type.visible = !0) : 15 == r[8] ? (e.img_type.source = "grid_shou",
+                e.img_type.visible = !0) : 14 == r[8] ? (e.img_type.source = "grid_zhuo",
+                e.img_type.visible = !0) : 16 == r[8] ? (e.img_type.source = "grid_wu",
+                e.img_type.visible = !0) : 110 == r[8] ? (e.img_type.source = "grid_wuhun",
+                e.img_type.visible = !0) : 111 == r[8] ? (e.img_type.source = "grid_lei",
+                e.img_type.visible = !0) : 10 == r[8] ? (e.img_type.source = "grid_suipian",
+                e.img_type.visible = !0,
+                e.img_type.x = 26) : e.img_type.visible = !1
+            } else
+                e.img_type.visible = !1;
+            if (i.isNull)
+                e.bgImg.source = "",
+                e.img_soullv.source = "",
+                e.bgImg0.source = "",
+                t = 0;
+            else if (i.storageSuo)
+                e.bgImg.source = "storageSuo",
+                t = 0;
+            else {
+                t = t ? t : 0;
+                var s = !1;
+                r && 3 == r[1] && r[8] && 999 == r[8] && (s = !0),
+                r && 3 == r[1] && t > 7 && (s = !0),
+                !e.data.hideGridEff && (i.showeff || s) && t > showEffQuality && e.addEff(t)
+            }
+            if (e.data instanceof ItemGridData && (e.data.noHave ? e.filters = [FilterUtil.FILTER_GRAY()] : e.filters = null),
+            e.data instanceof MailItemGridData && (e.data.showGray ? e.filters = [FilterUtil.FILTER_GRAY()] : e.filters = null),
+            e.img_xy.source = "",
+            i.jueban || i.gailv && (e.img_xy.source = "mc_icon0"),
+            e.img_xy.source && "" != e.img_xy.source && (e.img_xy.visible = !0,
+            !e.img_xy.parent && e.mainGroup.addChild(e.img_xy)),
+            i.times || i.probability || (e.img_xy1.source = ""),
+            e.img_xy1.source && "" != e.img_xy1.source && (e.img_xy1.visible = !0,
+            !e.img_xy1.parent && e.mainGroup.addChild(e.img_xy1),
+            e.img_xy1.x = e.mainGroup.width,
+            e.img_xy1.rotation = 90),
+            e.data.showRect && (e.addChild(e.rect),
+            e.rect.visible = !0),
+            e.data.xieIcon) {
+                var l = e.data.xieIcon.split("&");
+                l.length > 1 && (e.xieicon.horizontalCenter = "-13",
+                e.xieicon.verticalCenter = "-13"),
+                e.xieicon.source = l[0]
+            }
+            if (e.data.isNull && e.data.showgird && (e.bgImg.source = "equip_grid1",
+            e.bgImg.width = 62,
+            e.bgImg.height = 62),
+            e.data.itemStarBean && e.data.itemStarBean.level > 0) {
+                var c = e.data.itemStarBean.level
+                  , d = 0
+                  , p = 0;
+                c > 0 && (d = Math.floor((c - 1) / 10),
+                p = c % 10 == 0 ? 10 : c % 10),
+                e.img_qStar1 || (e.img_qStar1 = new eui.Image("icon_star_0" + d + "_1"),
+                e.mainGroup.addChild(e.img_qStar1)),
+                e.img_qStar1.source = "icon_star_0" + d + "_1",
+                e.img_qStar2 || (e.img_qStar2 = new eui.Image("icon_star_0" + d),
+                e.img_qStar2.y = 18,
+                e.mainGroup.addChild(e.img_qStar2)),
+                e.img_qStar2.source = "icon_star_0" + d,
+                e.txt_qStar || (e.txt_qStar = new eui.Label,
+                e.txt_qStar.style = "46",
+                e.txt_qStar.width = 18,
+                e.txt_qStar.y = 2,
+                e.txt_qStar.x = 0,
+                e.txt_qStar.textAlign = "center",
+                e.mainGroup.addChild(e.txt_qStar)),
+                e.img_qStar1.visible = e.img_qStar2.visible = e.txt_qStar.visible = !0,
+                e.txt_qStar.textFlow = Html.toEle(Html.str(p + "", Logic.getQStarLevelColor(d)))
+            }
+            e.mainGroup.addChild(e.select),
+            !e.data.hideGridEff && i.niepanLv && i.niepanLv > 2 && e.addEff2(i.niepanLv),
+            i.scSpecialEff && e.addEff2(6),
+            e.data.iconBg && (e.bgImg.source = e.data.iconBg)
+        } else
+            e.txt_qStar && (e.txt_qStar.visible = !1),
+            e.img_qStar1 && (e.img_qStar1.visible = !1),
+            e.img_qStar2 && (e.img_qStar2.visible = !1),
+            e.txt_mvlv && (e.txt_mvlv.visible = !1),
+            e.txt_tl && (e.txt_tl.visible = !1),
+            e.img_soullv.source = ""
+    }
+    ,
+    t.prototype.showIcon = function(e, t) {
+        var i = this;
+        e > 0 && cm.star[e].icon ? i.icon.source = ResUrl.url(cm.star[e].icon + "", 8) : i.icon.source = ResUrl.url(t[19] + "", 8)
+    }
+    ,
+    t.prototype.getLongHuangEffType = function(e) {
+        for (var t = 0, i = cm.global[22701].value, r = i.split("&"), a = 0, n = r.length; n > a; a++) {
+            var o = r[a].split("#")
+              , s = Number(o[0])
+              , l = Number(o[1]);
+            e >= s && (t = l)
+        }
         return t
     }
     ,
-    e.prototype.push = function(e) {
-        this.pool.push(e)
-    }
-    ,
-    e.prototype.has = function(e) {
-        for (var t = 0, i = this.pool; t < i.length; t++) {
-            var r = i[t];
-            if (r == e)
-                return !0
-        }
-        return !1
-    }
-    ,
-    e.prototype.clear = function() {
-        var e = this;
-        if (e.pool)
-            for (; e.pool.length; ) {
-                var t = e.pool.shift();
-                t instanceof eui.Image && (t.removeSelf(),
-                egret.Tween.removeTweens(t),
-                t.dispose(),
-                t = null)
-            }
-        e.pool = []
-    }
-    ,
-    e
-}();
-__reflect(Pool.prototype, "Pool");
-var NormalEffect = function() {
-    function e() {
-        this.enabled = !1,
-        this._inView = !1
-    }
-    return e.prototype.init = function(e, t, i, r, a, n, o, s, l, c, d) {
-        void 0 === i && (i = -1),
-        void 0 === r && (r = 0);
-        var p = this;
-        p.eid = e,
-        p.config = cm.effect[e],
-        p._container = t,
-        p._loop = i,
-        0 == s ? p._scale = null : p._scale = s,
-        p.offsetX = null == l ? 0 : l,
-        p.offsetY = null == c ? 0 : c,
-        p.startTime = r,
-        p._dir = a,
-        p.soundid = n,
-        p.attention = d
-    }
-    ,
-    e.prototype.setTarget = function(e) {
-        this._targetEntity = e
-    }
-    ,
-    Object.defineProperty(e.prototype, "rotation", {
-        set: function(e) {
-            this._rotation = e,
-            this.animation && (this.animation.rotation = e)
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    e.prototype.addToView = function() {
-        null == this.animation && this.initDisplay(),
-        this.animation.addToParent(this._container)
-    }
-    ,
-    e.prototype.initDisplay = function() {
-        var e = this;
-        e.animation = SingleAnimationPlayer.create(),
-        e.animation.playMaxCount = e._loop,
-        e.animation.setPrority(e.attention ? 1 : 0),
-        e.animation.x = e._x,
-        e.animation.y = e._y,
-        e.animation.addType(7, e.config.model, null),
-        e.animation.endHandler = new CallBack0(e.die,e),
-        Vars.modelScale && e.config.model < 19e3 ? null != e._scale ? e.animation.scale = GameDefine.SCALE_EFFECT * e._scale * .01 : e.animation.scale = GameDefine.SCALE_EFFECT : null != e._scale && (e.animation.scale = e._scale / 100),
-        e.enabled && e.start(),
-        null !== e._rotation && (e.animation.rotation = e._rotation),
-        e.soundid && e.soundid in ActionSound.SkillSounds && e.animation.addActionSound(e.config.action, ActionSound.SkillSounds[e.soundid]),
-        e.config.blendmode === egret.BlendMode.ADD && (e.animation.blendMode = e.config.blendmode)
-    }
-    ,
-    e.prototype.die = function() {
-        this.enabled = !1,
-        SceneEffectManager.Instance.readyToDie(this)
-    }
-    ,
-    e.prototype.start = function() {
-        var e = this;
-        e.enabled || (e.enabled = !0,
-        e.startTime = GameTime.Instance.totalGameTime),
-        e.animation && (void 0 == e._dir || null == e._dir ? e.animation.setAction(e.config.action, e.config.dir, !0) : 1 == e.config.totaldir ? e.animation.setAction(e.config.action, e.config.dir, !0) : e.animation.setAction(e.config.action, e._dir, !0)),
-        e._targetEntity && e._targetEntity.enabled && (e.x = e._targetEntity.x + e.offsetX,
-        e.y = e._targetEntity.y + e.offsetY)
-    }
-    ,
-    Object.defineProperty(e.prototype, "inView", {
-        get: function() {
-            return this._inView
-        },
-        set: function(e) {
-            this._inView = e,
-            this.animation && (this.animation.inView = e)
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(e.prototype, "x", {
-        get: function() {
-            return this._x
-        },
-        set: function(e) {
-            this._x = e,
-            this.animation && (this.animation.x = e)
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(e.prototype, "y", {
-        get: function() {
-            return this._y
-        },
-        set: function(e) {
-            this._y = e,
-            this.animation && (this.animation.y = e)
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    e.prototype.update = function(e) {
+    t.prototype.addLHEff = function(e) {
         var t = this;
-        t.enabled ? t.animation && t.animation.enabled && t.animation.inView ? (t.animation.render(e),
-        t._targetEntity && t._targetEntity.enabled && (t.x = t._targetEntity.x + t.offsetX,
-        t.y = t._targetEntity.y + t.offsetY)) : t._loop > -1 && t.startTime + GameDefine.Effect_Wait_Time < e.totalGameTime && t.die() : t.startTime > 0 && e.totalGameTime > t.startTime && t.start()
+        t._eff_lh || (t._eff_lh = new NameMovieClip,
+        t.addChild(t._eff_lh),
+        t._eff_lh.blendMode = egret.BlendMode.ADD),
+        NameMovieClipResManager.Instance.getMcByRes("grid_eff/lh_quality" + e, t._eff_lh),
+        t._eff_lh.play(-1),
+        t._eff_lh.setFrame(7)
     }
     ,
-    e.prototype.updateRect = function(e) {
-        var t = this
-          , i = e.contains(t.x, t.y);
-        !i && t._inView ? t.animation && (t.animation.removeFromParent(),
-        t.animation.dispose(),
-        t.animation = void 0) : i && !t._inView && t.addToView(),
-        t.inView = i
+    t.prototype.addEff = function(e) {
+        if (29 != e) {
+            var t = this;
+            t._eff_quality || (t._eff_quality = new NameMovieClip,
+            t._eff_quality.anchorOffsetX = 31,
+            t._eff_quality.anchorOffsetY = 31,
+            t.mainGroup.addChild(t._eff_quality),
+            t._eff_quality.blendMode = egret.BlendMode.ADD,
+            t._eff_quality.touchEnabled = !1),
+            e > 29 ? (t._eff_quality.x = 20,
+            t._eff_quality.y = 20) : (t._eff_quality.x = e > 24 ? -11 : 23 == e ? 25 : 26,
+            t._eff_quality.y = e > 24 ? -14 : 25),
+            e > 46 && (t._eff_quality.x = 0,
+            t._eff_quality.y = 1,
+            t._eff_quality.scaleX = .9,
+            t._eff_quality.scaleY = .9),
+            45 == e && (t._eff_quality.x = 28,
+            t._eff_quality.y = 27),
+            46 == e && (t._eff_quality.x = 0,
+            t._eff_quality.y = 0,
+            t._eff_quality.scaleX = .93,
+            t._eff_quality.scaleY = .93),
+            NameMovieClipResManager.Instance.getMcByRes("grid_eff/qualitys" + e, t._eff_quality),
+            t._eff_quality.play(-1),
+            (51 == e || 52 == e) && t._eff_quality.setFrame(8)
+        }
     }
     ,
-    e.prototype.dispose = function() {
+    t.prototype.addEff2 = function(e) {
+        var t = this;
+        if (!t._eff_niepan) {
+            t._eff_niepan = new UISceneEffectAnimation;
+            var i = cm.niepan[t.data.index][e];
+            t._eff_niepan.init(t, i.effect),
+            t._eff_niepan.x = 698,
+            t._eff_niepan.y = 666
+        }
+    }
+    ,
+    t.prototype.clearEff2 = function() {
         var e = this;
-        void 0 != e.id && (e.id = void 0,
-        e.enabled = !1,
-        e._container = void 0,
-        e.config = void 0,
-        e.animation && (e.animation.removeFromParent(),
-        e.animation.dispose(),
-        e.animation = void 0),
-        e._x = void 0,
-        e._y = void 0,
-        e._inView = !1,
-        e.eid = void 0,
-        e._loop = void 0,
-        e._rotation = null,
-        e._targetEntity = null,
-        e.soundid = void 0,
-        SceneEffectManager.Instance.returnEffect(this))
+        e._eff_niepan && (e._eff_niepan.die(),
+        e._eff_niepan = null)
     }
     ,
-    e
-}();
-__reflect(NormalEffect.prototype, "NormalEffect", ["IUpdateable"]);
+    t.prototype.clearEff = function() {
+        var e = this;
+        e._eff_quality && (e._eff_quality.stop(),
+        e._eff_quality.removeSelf(),
+        e._eff_quality.data = null,
+        e._eff_quality = null)
+    }
+    ,
+    t.prototype.removelhEff = function() {
+        var e = this;
+        e._eff_lh && (e.removeChild(this._eff_lh),
+        e._eff_lh.data = null,
+        e._eff_lh = null)
+    }
+    ,
+    t.prototype.playEff = function() {
+        var e = this.localToGlobal(0, 0);
+        ItemEffects.Instance.add({
+            icon: this.data.config[19],
+            x: e.x,
+            y: e.y
+        })
+    }
+    ,
+    t
+}(eui.ItemRenderer);
+__reflect(BagEquipRender.prototype, "BagEquipRender");
+var showEffQuality = 21
+  , BagEquipRender48 = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.mainGroup.scaleX = .75,
+        t.mainGroup.scaleY = .75,
+        t.touchGroup.scaleX = t.touchGroup.scaleY = .75,
+        t.effGroup.scaleX = t.effGroup.scaleY = .75,
+        t.count.x = 0,
+        t.count.width = 46,
+        t.count.y = 33
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRender48.prototype, "BagEquipRender48");
+var BagEquipRender50 = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.width = t.height = 50,
+        t.mainGroup.scaleX = .833,
+        t.mainGroup.scaleY = .833,
+        t.touchGroup.scaleX = t.touchGroup.scaleY = .833,
+        t.effGroup.scaleX = t.effGroup.scaleY = .833,
+        t.count.width = 50,
+        t.count.x = 8,
+        t.count.y = 39,
+        t.count.scaleX = t.count.scaleY = .8
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRender50.prototype, "BagEquipRender50");
+var BagEquipRender40 = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.width = t.height = 40,
+        t.mainGroup.scaleX = .665,
+        t.mainGroup.scaleY = .665,
+        t.touchGroup.scaleX = t.touchGroup.scaleY = .665,
+        t.effGroup.scaleX = t.effGroup.scaleY = .665,
+        t.count.width = 56,
+        t.count.x = -4,
+        t.count.y = 31,
+        t.count.scaleX = t.count.scaleY = .8
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRender40.prototype, "BagEquipRender40");
+var BagEquipRender40bg1 = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.width = t.height = 40
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.bgImg.source = "equip_grid1"
+    }
+    ,
+    t
+}(BagEquipRender40);
+__reflect(BagEquipRender40bg1.prototype, "BagEquipRender40bg1");
+var BagEquipRender48bg1 = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.mainGroup.scaleX = .75,
+        t.mainGroup.scaleY = .75,
+        t.touchGroup.scaleX = .75,
+        t.touchGroup.scaleY = .75,
+        t.effGroup.scaleX = t.effGroup.scaleY = .75,
+        t.count.x = 0,
+        t.count.width = 46,
+        t.count.y = 33
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.bgImg.source = "equip_grid1"
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRender48bg1.prototype, "BagEquipRender48bg1");
+var BagEquipRender30 = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.mainGroup.scaleX = .5,
+        t.mainGroup.scaleY = .5,
+        t.touchGroup.scaleX = t.touchGroup.scaleY = .5,
+        t.effGroup.scaleX = t.effGroup.scaleY = .5,
+        t.count.x = 0,
+        t.count.width = 29,
+        t.count.size = 8,
+        t.count.y = 20,
+        t.height = t.width = 30
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.bgImg.source = "equip_grid1"
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRender30.prototype, "BagEquipRender30");
+var BagEquipRender30_Eff = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.mainGroup.scaleX = .5,
+        t.mainGroup.scaleY = .5,
+        t.touchGroup.scaleX = t.touchGroup.scaleY = .5,
+        t.count.x = 0,
+        t.count.width = 29,
+        t.count.size = 8,
+        t.count.y = 20,
+        t.height = t.width = 30
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.bgImg.source = "equip_grid1"
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRender30_Eff.prototype, "BagEquipRender30_Eff");
+var BagEquipRender30_Alter = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.mainGroup.scaleX = .5,
+        t.mainGroup.scaleY = .5,
+        t.touchGroup.scaleX = t.touchGroup.scaleY = .5,
+        t.effGroup.scaleX = t.effGroup.scaleY = .5,
+        t.count.x = 0,
+        t.count.width = 29,
+        t.count.size = 8,
+        t.count.y = 20,
+        t.height = t.width = 30
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRender30_Alter.prototype, "BagEquipRender30_Alter");
+var BagEquipRenderBgGrid1 = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this),
+        this.width = 67,
+        this.height = 68
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.bgImg.source = "equip_grid1"
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRenderBgGrid1.prototype, "BagEquipRenderBgGrid1");
+var BagEquipRenderJingHe = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this),
+        this.width = 60,
+        this.height = 60
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.bgImg.source = "equip_grid1"
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRenderJingHe.prototype, "BagEquipRenderJingHe");
+var BagFirstCharDialog = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this),
+        this.width = 67,
+        this.height = 68
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.bgImg.source = "bg_zhigou_04"
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagFirstCharDialog.prototype, "BagFirstCharDialog");
+var BagEquipRenderWarrior = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this),
+        this.width = 67,
+        this.height = 68
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.bgImg.source = "equip_grid1",
+        t.bgImg.visible = !0
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRenderWarrior.prototype, "BagEquipRenderWarrior");
+var TouziitemRender = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.additemeff()
+    }
+    ,
+    t.prototype.additemeff = function() {
+        var e = this;
+        e.removeitemEff(),
+        e.itemEff || (e.itemEff = new NameMovieClip,
+        e.addChild(e.itemEff),
+        e.itemEff.x = -11,
+        e.itemEff.y = -26,
+        e.itemEff.scaleX = .52,
+        e.itemEff.scaleY = 1.23,
+        e.itemEff.touchEnabled = !1),
+        NameMovieClipResManager.Instance.getMcByRes("qiandaoSelEff1", e.itemEff),
+        e.itemEff.play(-1),
+        e.itemEff.setFrame(6)
+    }
+    ,
+    t.prototype.removeitemEff = function() {
+        var e = this;
+        e.itemEff && (e.itemEff.stop(),
+        e.removeChild(e.itemEff),
+        e.itemEff.data = null,
+        e.itemEff = null)
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.removeitemEff()
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(TouziitemRender.prototype, "TouziitemRender");
+var BagEquipRenderExchange = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.count.x = 0,
+        t.count.width = t.width,
+        t.count.textAlign = egret.HorizontalAlign.CENTER
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t, i = this;
+        i.data.isReward || (t = i.data.inBagNum && i.data.inBagNum >= i.data.count ? Logic.getCol(50) : Logic.getCol(49),
+        i.count.textFlow = Html.toEle(Html.str(Html.numToWan3(i.data.count), t)))
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRenderExchange.prototype, "BagEquipRenderExchange");
+var BagEquipRenderYLQ = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.img_wear = new eui.Image("com_txt_ylq2"),
+        t.img_wear.y = 18,
+        t.img_wear.scaleX = t.img_wear.scaleY = .7,
+        t.img_wear.horizontalCenter = 0,
+        this.mainGroup.addChild(t.img_wear)
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this),
+        this.img_wear.source = null,
+        this.img_wear.removeSelf(),
+        this.img_wear = null
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this),
+        this.img_wear.visible = this.data.ylq
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(BagEquipRenderYLQ.prototype, "BagEquipRenderYLQ");
+var ChatBagEquipRender = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.img_wear = new eui.Image("y_com_txt_cdz"),
+        t.img_wear.y = 4,
+        t.img_wear.horizontalCenter = 0
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this.img_wear
+          , i = this.data instanceof EquipGridData || this.data.hxWear;
+        i ? t.parent || this.mainGroup.addChild(t) : t.removeSelf()
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        Logic.removeNew([t.img_wear])
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(ChatBagEquipRender.prototype, "ChatBagEquipRender");
+var HexinEquipRender = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.txt_lv = new eui.Label,
+        t.txt_lv.width = 56,
+        t.txt_lv.height = 13,
+        t.txt_lv.style = "193",
+        t.txt_lv.size = 13,
+        t.txt_lv.x = 2,
+        t.txt_lv.y = 45,
+        t.txt_lv.textAlign = egret.HorizontalAlign.CENTER,
+        t.addChild(t.txt_lv)
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        if (t.txt_lv.visible = !1,
+        t.data) {
+            var i = cm.item[t.data.itemId]
+              , r = t.data.lv;
+            i && 12 == i[1] && (t.txt_lv.visible = !0,
+            t.txt_lv.text = "Lv." + r,
+            t.txt_lv.textColor = Html.New161)
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        Logic.removeNew([t.txt_lv])
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(HexinEquipRender.prototype, "HexinEquipRender");
+var GiftBoxBagEquipRender = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.img_yyy = new eui.Image,
+        t.img_yyy.right = 0,
+        t.img_yyy.top = 0,
+        t.img_yyy.source = "discount_yyy",
+        t.mainGroup.addChild(t.img_yyy)
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        if (t.img_yyy.visible = !1,
+        t.data) {
+            var i = cm.item[t.data.itemId];
+            if (4 == i[21]) {
+                var r = i[22].split("#")
+                  , a = cm.title[r[0]]
+                  , n = gd.fame.titleDic[a.id];
+                n && n.timeout <= 0 && (t.img_yyy.visible = !0)
+            }
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        Logic.removeNew([t.img_yyy])
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(GiftBoxBagEquipRender.prototype, "GiftBoxBagEquipRender");
+var ChouKaCostItemRender = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.height = t.width = 20,
+        t.mainGroup.scaleX = .33,
+        t.mainGroup.scaleY = .33,
+        t.touchGroup.scaleX = t.touchGroup.scaleY = .6,
+        t.effGroup.scaleX = t.effGroup.scaleY = .6
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(ChouKaCostItemRender.prototype, "ChouKaCostItemRender");
+var PopCommon = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.isPopCommon = !0,
+        t.currSelectRadioIndex = 0,
+        t.radioRender = !1,
+        t.radioImage = [],
+        t.radioName = [],
+        t.radioBtnName = [],
+        t.radioDire = 0,
+        t.showXingzuoEff = !0,
+        t.showDown = !0,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("PopCommonSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var t = this;
+        if (e.prototype.myCreated.call(this),
+        t.btn_close.on(TP, t.closeUI, t),
+        t.dropimg = t.topBg,
+        mum.popMouseStart(),
+        Capability.mobileUI && !Logic.specialUI(t.uiType)) {
+            var i = GameSceneManager.Instance.root;
+            i.on(TP, t.closeUI, t)
+        }
+    }
+    ,
+    t.prototype.refr = function() {
+        e.prototype.refr.call(this);
+        for (var t = this, i = 0, r = 0, a = t.radioName.length; a > r; r++)
+            if (t.radioName[r] && Logic.checkOpenLevel(t.uiType, r)) {
+                i = r;
+                break
+            }
+        t.currSelectRadioIndex = t.opd && t.opd.args && t.opd.args[0] ? t.opd.args[0] : i,
+        t.onRadioSelected(t.currSelectRadioIndex)
+    }
+    ,
+    t.prototype.onRadioSelected = function(e) {
+        var t = this;
+        t.page && (t.group_page.addChild(t.page),
+        t.page.show(t.opd))
+    }
+    ,
+    t.prototype.onResize = function(e, t) {
+        var i = this
+          , r = js_gameVars.isAdroid ? i.width * Capability.androidScale : i.width
+          , a = js_gameVars.isAdroid ? i.height * Capability.androidScale : i.height;
+        if (js_gameVars.adaptationBang) {
+            var n = parseInt(js_gameVars.adaptationBang);
+            i.x = (e - n - r >> 1) + n
+        } else
+            i.x = Math.floor(e - r >> 1);
+        i.y = Math.floor(t - a >> 1),
+        js_gameVars.isTT && js_gameVars.menuBtnBottom && (i.y = js_gameVars.menuBtnBottom + 10),
+        js_gameVars.add_mg_root_btn && (i.y += 10)
+    }
+    ,
+    t.prototype.setLabelTitle = function(e) {
+        var t = this;
+        t.txt_title && (t.txt_title.text = e)
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        if (t.isInit()) {
+            if (mum.popMounseStop(),
+            Capability.mobileUI && !Logic.specialUI(t.uiType)) {
+                var i = GameSceneManager.Instance.root;
+                i.off(TP, t.closeUI, t)
+            }
+            t.btn_close.off(TP, t.closeUI, t),
+            t.radioImage = null,
+            t.radioName = null,
+            t.radioList && (t.radioList.off(eui.UIEvent.RENDER, t.onRadioRender, t),
+            t.radioList.removeSelf(),
+            t.radioList = null),
+            t.occupation && (t.occupation.off(eui.UIEvent.CHANGE, t.radioChangeHandler, t),
+            t.occupation = null),
+            t.page && (t.page.parent && t.page.removeSelf(),
+            t.page.hide(),
+            t.page.preDis(),
+            t.page = null)
+        }
+    }
+    ,
+    t.prototype.showRadio = function() {
+        var e = this;
+        e.radioList && (e.radioList.off(eui.UIEvent.RENDER, e.onRadioRender, e),
+        e.radioList.removeSelf(),
+        e.radioList = null),
+        e.occupation && (e.occupation.off(eui.UIEvent.CHANGE, e.radioChangeHandler, e),
+        e.occupation = null);
+        var t = new eui.ArrayCollection;
+        e.occupation = new eui.RadioButtonGroup;
+        var i = e.radioName
+          , r = e.opd && e.opd.args ? e.opd.args[0] : 0;
+        e.currSelectRadioIndex && (r = e.currSelectRadioIndex);
+        for (var a = 0, n = new eui.ArrayCollection, o = new eui.ArrayCollection, s = 0, l = i.length; l > s; s++)
+            i[s] && Logic.checkShowPageBtn(e.uiType, s) && (t.addItem({
+                index: a,
+                group: e.occupation,
+                value: s,
+                isSelect: r == s,
+                image: "",
+                showDesc: i[s] && Logic.checkShowPageBtn(e.uiType, s) ? i[s] : "",
+                name: e.radioName[s],
+                open: Logic.checkOpenLevel(e.uiType, s)
+            }),
+            ++a);
+        for (var c in t.source)
+            t.source[c].open ? n.addItem(t.source[c]) : o.addItem(t.source[c]);
+        for (var d in o.source)
+            n.addItem(o.source[d]);
+        t = n,
+        e.occupation.on(eui.UIEvent.CHANGE, e.radioChangeHandler, e),
+        e.radioList = e.createRadio(t, e.radioDire),
+        e.radioList.on(eui.UIEvent.RENDER, e.onRadioRender, e)
+    }
+    ,
+    t.prototype.radioChangeHandler = function(e) {
+        var t = this
+          , i = e.target;
+        if (Logic.checkOpenLevel(t.uiType, i.selectedValue, 0, !0))
+            i.selection.selected = !0,
+            t.currSelectRadioIndex = i.selectedValue,
+            t.realIndex = i.selection.index,
+            t.onRadioSelected(t.currSelectRadioIndex);
+        else {
+            var r = cm.open_level[t.uiType]
+              , a = r[i.selectedValue];
+            PlatformManager.Instance.isCurPlatform(a.platform) && ncm.err("敬请期待"),
+            i.selection.selected = !1;
+            var n = t.occupation.getRadioButtonAt(t.currSelectRadioIndex);
+            n || (n = t.occupation.getRadioButtonAt(t.realIndex)),
+            n && (n.selected = !0)
+        }
+    }
+    ,
+    t.prototype.onRadioRender = function(e) {
+        var t = this;
+        if (t.radioList) {
+            if (t.radioList.off(eui.UIEvent.RENDER, t.onRadioRender, t),
+            t.radioRender = !0,
+            t.occupation.selectedValue = t.currSelectRadioIndex,
+            t.page_list && t.occupation.selection)
+                for (var i = 0; i < t.occupation.numRadioButtons; i++)
+                    if (t.occupation.getRadioButtonAt(i).value == t.occupation.selectedValue) {
+                        t.page_list.setChildIndex(t.page_list.getChildAt(i), t.occupation.numRadioButtons),
+                        t.page_list.selectedIndex = i;
+                        break
+                    }
+            t.updaRedHint()
+        }
+    }
+    ,
+    t.prototype.updaRedHint = function() {}
+    ,
+    t.prototype.updateHint = function(t, i, r, a) {
+        void 0 === r && (r = 15),
+        void 0 === a && (a = 1),
+        e.prototype.updateHint.call(this, t, i, r, a)
+    }
+    ,
+    t
+}(PopUpBase);
+__reflect(PopCommon.prototype, "PopCommon");
 var AnimalEntity = function(e) {
     function t(t, i) {
         var r = e.call(this, t, i) || this;
@@ -2957,6 +3994,10 @@ var AnimalEntity = function(e) {
         null != this._entityInfo && this._entityInfo.setHuiJi(t.fashionHuiJiId, !0)
     }
     ,
+    t.prototype.setYinNiIcon = function(e) {
+        null != this._entityInfo && this._entityInfo.setYinNiIcon(e)
+    }
+    ,
     t.prototype.updateTitle = function(e, t, i, r) {
         void 0 === e && (e = -1),
         void 0 === t && (t = -1),
@@ -2974,25 +4015,29 @@ var AnimalEntity = function(e) {
         }
     }
     ,
-    t.prototype.bianshen = function(e) {
-        var t = this;
-        if (t.gameObject && t.animal)
-            if (t.gameObject.bianshenModel = e,
+    t.prototype.bianshen = function(e, t, i, r) {
+        void 0 === i && (i = 1),
+        void 0 === r && (r = !0);
+        var a = this;
+        if (a.gameObject && a.animal)
+            if (a.gameObject.bianshenModel = e,
             e)
-                t.dingshen = !0,
-                t.changeSkins(e, null),
-                t.updateWing(null),
-                t.setAction(1, t.dir, !0);
-            else if (t.dingshen = !1,
-            t.animal) {
-                var i = t.gameObject.clothModel
-                  , r = t.gameObject.weaponModel
-                  , a = t.gameObject.wingModel
-                  , n = !1;
-                null != a && a > 0 && (n = t.updateWing(a));
-                var o = CommonUtils.getHatModel(t.fighterObject.career, t.fighterObject.sex);
-                n = t.changeSkins(i, r, o) || n,
-                n && t.setAction(t.action, t.dir, !0)
+                r && (a.dingshen = !0),
+                a.changeSkins(e, t ? t : null),
+                a.updateWing(null),
+                a.setAction(i, a.dir, !0);
+            else if (r && (a.dingshen = !1),
+            a.animal) {
+                var n = a.gameObject.clothModel
+                  , o = a.gameObject.weaponModel
+                  , s = a.gameObject.wingModel
+                  , l = !1;
+                null != s && s > 0 && (l = a.updateWing(s));
+                var c = CommonUtils.getHatModel(a.fighterObject.career, a.fighterObject.sex)
+                  , d = a.fighterObject.fashionClothId;
+                d && cm.title[d] && 2 == cm.title[d].roles && (c = 0),
+                l = a.changeSkins(n, o, c) || l,
+                l && a.setAction(a.action, a.dir, !0)
             }
     }
     ,
@@ -3583,7 +4628,9 @@ var ArpgFirstPlayerAI = function(e) {
         t.closeNPCDialog(!1),
         t._lasttime = i),
         i - t._lasttime > 500 && (t.checkPanel2(),
-        t.checkCaiJiPanel()),
+        t.checkCaiJiPanel(),
+        t.checkFishPanel(),
+        t.checkYinNi()),
         0
     }
     ,
@@ -4179,178 +5226,88 @@ var ArpgFirstPlayerAI = function(e) {
     t
 }(ArpgAI);
 __reflect(ArpgFirstPlayerAI.prototype, "ArpgFirstPlayerAI");
-var PopCommon = function(e) {
+var FighterObject = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
-        return t.isPopCommon = !0,
-        t.currSelectRadioIndex = 0,
-        t.radioRender = !1,
-        t.radioImage = [],
-        t.radioName = [],
-        t.radioBtnName = [],
-        t.radioDire = 0,
-        t.showXingzuoEff = !0,
-        t.showDown = !0,
+        return t.truehp = 0,
+        t.truemp = 0,
+        t.maxMp = 0,
+        t.dir = 0,
+        t.delayhp = 0,
+        t.maxHp = 0,
+        t.trueInner = 0,
+        t.delayInner = 0,
+        t.maxInner = 0,
+        t.trueHushen = 0,
+        t.isDead = !1,
+        t.league = 0,
+        t.assistState = 0,
+        t.punishmentNum = 0,
         t
     }
     return __extends(t, e),
-    t.prototype.createChildren = function() {
-        this.uiSkin("PopCommonSkin")
-    }
-    ,
-    t.prototype.myCreated = function() {
-        var t = this;
-        if (e.prototype.myCreated.call(this),
-        t.btn_close.on(TP, t.closeUI, t),
-        t.dropimg = t.topBg,
-        mum.popMouseStart(),
-        Capability.mobileUI && !Logic.specialUI(t.uiType)) {
-            var i = GameSceneManager.Instance.root;
-            i.on(TP, t.closeUI, t)
-        }
-    }
-    ,
-    t.prototype.refr = function() {
-        e.prototype.refr.call(this);
-        for (var t = this, i = 0, r = 0, a = t.radioName.length; a > r; r++)
-            if (t.radioName[r] && Logic.checkOpenLevel(t.uiType, r)) {
-                i = r;
-                break
-            }
-        t.currSelectRadioIndex = t.opd && t.opd.args && t.opd.args[0] ? t.opd.args[0] : i,
-        t.onRadioSelected(t.currSelectRadioIndex)
-    }
-    ,
-    t.prototype.onRadioSelected = function(e) {
-        var t = this;
-        t.page && (t.group_page.addChild(t.page),
-        t.page.show(t.opd))
-    }
-    ,
-    t.prototype.onResize = function(e, t) {
-        var i = this
-          , r = js_gameVars.isAdroid ? i.width * Capability.androidScale : i.width
-          , a = js_gameVars.isAdroid ? i.height * Capability.androidScale : i.height;
-        if (js_gameVars.adaptationBang) {
-            var n = parseInt(js_gameVars.adaptationBang);
-            i.x = (e - n - r >> 1) + n
-        } else
-            i.x = Math.floor(e - r >> 1);
-        i.y = Math.floor(t - a >> 1),
-        js_gameVars.isTT && js_gameVars.menuBtnBottom && (i.y = js_gameVars.menuBtnBottom + 10),
-        js_gameVars.add_mg_root_btn && (i.y += 10)
-    }
-    ,
-    t.prototype.setLabelTitle = function(e) {
-        var t = this;
-        t.txt_title && (t.txt_title.text = e)
-    }
-    ,
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        var t = this;
-        if (t.isInit()) {
-            if (mum.popMounseStop(),
-            Capability.mobileUI && !Logic.specialUI(t.uiType)) {
-                var i = GameSceneManager.Instance.root;
-                i.off(TP, t.closeUI, t)
-            }
-            t.btn_close.off(TP, t.closeUI, t),
-            t.radioImage = null,
-            t.radioName = null,
-            t.radioList && (t.radioList.off(eui.UIEvent.RENDER, t.onRadioRender, t),
-            t.radioList.removeSelf(),
-            t.radioList = null),
-            t.occupation && (t.occupation.off(eui.UIEvent.CHANGE, t.radioChangeHandler, t),
-            t.occupation = null),
-            t.page && (t.page.parent && t.page.removeSelf(),
-            t.page.hide(),
-            t.page.preDis(),
-            t.page = null)
-        }
-    }
-    ,
-    t.prototype.showRadio = function() {
+    t.prototype.clear = function() {
         var e = this;
-        e.radioList && (e.radioList.off(eui.UIEvent.RENDER, e.onRadioRender, e),
-        e.radioList.removeSelf(),
-        e.radioList = null),
-        e.occupation && (e.occupation.off(eui.UIEvent.CHANGE, e.radioChangeHandler, e),
-        e.occupation = null);
-        var t = new eui.ArrayCollection;
-        e.occupation = new eui.RadioButtonGroup;
-        var i = e.radioName
-          , r = e.opd && e.opd.args ? e.opd.args[0] : 0;
-        e.currSelectRadioIndex && (r = e.currSelectRadioIndex);
-        for (var a = 0, n = new eui.ArrayCollection, o = new eui.ArrayCollection, s = 0, l = i.length; l > s; s++)
-            i[s] && Logic.checkShowPageBtn(e.uiType, s) && (t.addItem({
-                index: a,
-                group: e.occupation,
-                value: s,
-                isSelect: r == s,
-                image: "",
-                showDesc: i[s] && Logic.checkShowPageBtn(e.uiType, s) ? i[s] : "",
-                name: e.radioName[s],
-                open: Logic.checkOpenLevel(e.uiType, s)
-            }),
-            ++a);
-        for (var c in t.source)
-            t.source[c].open ? n.addItem(t.source[c]) : o.addItem(t.source[c]);
-        for (var d in o.source)
-            n.addItem(o.source[d]);
-        t = n,
-        e.occupation.on(eui.UIEvent.CHANGE, e.radioChangeHandler, e),
-        e.radioList = e.createRadio(t, e.radioDire),
-        e.radioList.on(eui.UIEvent.RENDER, e.onRadioRender, e)
-    }
-    ,
-    t.prototype.radioChangeHandler = function(e) {
-        var t = this
-          , i = e.target;
-        if (Logic.checkOpenLevel(t.uiType, i.selectedValue, 0, !0))
-            i.selection.selected = !0,
-            t.currSelectRadioIndex = i.selectedValue,
-            t.realIndex = i.selection.index,
-            t.onRadioSelected(t.currSelectRadioIndex);
-        else {
-            var r = cm.open_level[t.uiType]
-              , a = r[i.selectedValue];
-            PlatformManager.Instance.isCurPlatform(a.platform) && ncm.err("敬请期待"),
-            i.selection.selected = !1;
-            var n = t.occupation.getRadioButtonAt(t.currSelectRadioIndex);
-            n || (n = t.occupation.getRadioButtonAt(t.realIndex)),
-            n && (n.selected = !0)
-        }
-    }
-    ,
-    t.prototype.onRadioRender = function(e) {
-        var t = this;
-        if (t.radioList) {
-            if (t.radioList.off(eui.UIEvent.RENDER, t.onRadioRender, t),
-            t.radioRender = !0,
-            t.occupation.selectedValue = t.currSelectRadioIndex,
-            t.page_list && t.occupation.selection)
-                for (var i = 0; i < t.occupation.numRadioButtons; i++)
-                    if (t.occupation.getRadioButtonAt(i).value == t.occupation.selectedValue) {
-                        t.page_list.setChildIndex(t.page_list.getChildAt(i), t.occupation.numRadioButtons),
-                        t.page_list.selectedIndex = i;
-                        break
-                    }
-            t.updaRedHint()
-        }
-    }
-    ,
-    t.prototype.updaRedHint = function() {}
-    ,
-    t.prototype.updateHint = function(t, i, r, a) {
-        void 0 === r && (r = 15),
-        void 0 === a && (a = 1),
-        e.prototype.updateHint.call(this, t, i, r, a)
+        e.x = null,
+        e.y = null,
+        e.hatItemid = null,
+        e.hatModel = null,
+        e.gridX = null,
+        e.gridY = null,
+        e.name = null,
+        e.id = null,
+        e.uid = null,
+        e.type = null,
+        e.group = null,
+        e.truehp = 0,
+        e.delayhp = 0,
+        e.maxHp = 0,
+        e.delayInner = 0,
+        e.trueInner = 0,
+        e.maxInner = 0,
+        e.trueHushen = 0,
+        e.league = 0,
+        e.weaponModel = null,
+        e.weaponEffectModel = null,
+        e.clothModel = null,
+        e.weaponItemId = null,
+        e.clothItemId = null,
+        e.fashionWeaponId = null,
+        e.fashionClothId = null,
+        e.fashionWingId = null,
+        e.fashionFootId = null,
+        e.fashionHuiJiId = null,
+        e.fashionZuoqiId = null,
+        e.wingCfgId = null,
+        e.sex = null,
+        e.career = null,
+        e.isDead = !1,
+        e.wingModel = null,
+        e.titleId = null,
+        e.titleId1 = null,
+        e.titleId2 = null,
+        e.titleId3 = null,
+        e.arpgBuffList = null,
+        e.killer = null,
+        e.bornX = null,
+        e.bornY = null,
+        e.unionName = null,
+        e.unionId = null,
+        e.asuramId = null,
+        e.junXName = null,
+        e.junXColor = null,
+        e.initShowBlood = null,
+        e.bianshenModel = null,
+        e.nameColor = null,
+        e.legendClothId = null,
+        e.zqClothId = null,
+        e.legendWeaponId = null,
+        e.canSearchCorpse = !1
     }
     ,
     t
-}(PopUpBase);
-__reflect(PopCommon.prototype, "PopCommon");
+}(GameObject);
+__reflect(FighterObject.prototype, "FighterObject");
 var UseConsumption = function(e) {
     function t() {
         var t = e.call(this) || this
@@ -4383,6 +5340,15 @@ var UseConsumption = function(e) {
                 t.costStr = " ")
             }
         }
+    }
+    ,
+    t.prototype.reSetX = function() {
+        var e = this;
+        if ((!e.data || !e.data.row) && e.grp.numChildren > 0)
+            for (var t = 0, i = void 0, r = 0; r < e.grp.numChildren; r++)
+                i = e.grp.getChildAt(r),
+                i && (i.x = t,
+                t += i.width)
     }
     ,
     t.prototype.removeAllRender = function() {
@@ -4702,88 +5668,51 @@ var NpcDialogBase = function(e) {
     t
 }(eui.Component);
 __reflect(NpcDialogBase.prototype, "NpcDialogBase", ["IObserver", "IGameEventHandler"]);
-var FighterObject = function(e) {
-    function t() {
-        var t = null !== e && e.apply(this, arguments) || this;
-        return t.truehp = 0,
-        t.truemp = 0,
-        t.maxMp = 0,
-        t.dir = 0,
-        t.delayhp = 0,
-        t.maxHp = 0,
-        t.trueInner = 0,
-        t.delayInner = 0,
-        t.maxInner = 0,
-        t.trueHushen = 0,
-        t.isDead = !1,
-        t.league = 0,
-        t.assistState = 0,
-        t.punishmentNum = 0,
-        t
+var Pool = function() {
+    function e(e, t) {
+        void 0 === t && (t = 10),
+        this.max = 0;
+        var i = this;
+        i.pool = [],
+        i.creater = e;
+        for (var r = 0; t > r; r++)
+            i.pool.push(new i.creater)
     }
-    return __extends(t, e),
-    t.prototype.clear = function() {
-        var e = this;
-        e.x = null,
-        e.y = null,
-        e.hatItemid = null,
-        e.hatModel = null,
-        e.gridX = null,
-        e.gridY = null,
-        e.name = null,
-        e.id = null,
-        e.uid = null,
-        e.type = null,
-        e.group = null,
-        e.truehp = 0,
-        e.delayhp = 0,
-        e.maxHp = 0,
-        e.delayInner = 0,
-        e.trueInner = 0,
-        e.maxInner = 0,
-        e.trueHushen = 0,
-        e.league = 0,
-        e.weaponModel = null,
-        e.weaponEffectModel = null,
-        e.clothModel = null,
-        e.weaponItemId = null,
-        e.clothItemId = null,
-        e.fashionWeaponId = null,
-        e.fashionClothId = null,
-        e.fashionWingId = null,
-        e.fashionFootId = null,
-        e.fashionHuiJiId = null,
-        e.fashionZuoqiId = null,
-        e.wingCfgId = null,
-        e.sex = null,
-        e.career = null,
-        e.isDead = !1,
-        e.wingModel = null,
-        e.titleId = null,
-        e.titleId1 = null,
-        e.titleId2 = null,
-        e.titleId3 = null,
-        e.arpgBuffList = null,
-        e.killer = null,
-        e.bornX = null,
-        e.bornY = null,
-        e.unionName = null,
-        e.unionId = null,
-        e.asuramId = null,
-        e.junXName = null,
-        e.junXColor = null,
-        e.initShowBlood = null,
-        e.bianshenModel = null,
-        e.nameColor = null,
-        e.legendClothId = null,
-        e.zqClothId = null,
-        e.legendWeaponId = null,
-        e.canSearchCorpse = !1
+    return e.prototype.pop = function() {
+        var e = this
+          , t = e.pool.length > 0 ? e.pool.pop() : new e.creater;
+        return t
     }
     ,
-    t
-}(GameObject);
-__reflect(FighterObject.prototype, "FighterObject");
+    e.prototype.push = function(e) {
+        this.pool.push(e)
+    }
+    ,
+    e.prototype.has = function(e) {
+        for (var t = 0, i = this.pool; t < i.length; t++) {
+            var r = i[t];
+            if (r == e)
+                return !0
+        }
+        return !1
+    }
+    ,
+    e.prototype.clear = function() {
+        var e = this;
+        if (e.pool)
+            for (; e.pool.length; ) {
+                var t = e.pool.shift();
+                t instanceof eui.Image && (t.removeSelf(),
+                egret.Tween.removeTweens(t),
+                t.dispose(),
+                t = null)
+            }
+        e.pool = []
+    }
+    ,
+    e
+}();
+__reflect(Pool.prototype, "Pool");
 var constants;
 !function(e) {
     function t(e) {
@@ -6306,7 +7235,473 @@ var DragonBallXunBaoSubType;
     e[e.DragonXBLog = 1] = "DragonXBLog",
     e[e.XBWarehouse = 2] = "XBWarehouse"
 }(DragonBallXunBaoSubType || (DragonBallXunBaoSubType = {}));
-var BagEquipRender = function(e) {
+var NormalEffect = function() {
+    function e() {
+        this.enabled = !1,
+        this._inView = !1
+    }
+    return e.prototype.init = function(e, t, i, r, a, n, o, s, l, c, d) {
+        void 0 === i && (i = -1),
+        void 0 === r && (r = 0);
+        var p = this;
+        p.eid = e,
+        p.config = cm.effect[e],
+        p._container = t,
+        p._loop = i,
+        0 == s ? p._scale = null : p._scale = s,
+        p.offsetX = null == l ? 0 : l,
+        p.offsetY = null == c ? 0 : c,
+        p.startTime = r,
+        p._dir = a,
+        p.soundid = n,
+        p.attention = d
+    }
+    ,
+    e.prototype.setTarget = function(e) {
+        this._targetEntity = e
+    }
+    ,
+    Object.defineProperty(e.prototype, "rotation", {
+        set: function(e) {
+            this._rotation = e,
+            this.animation && (this.animation.rotation = e)
+        },
+        enumerable: !0,
+        configurable: !0
+    }),
+    e.prototype.addToView = function() {
+        null == this.animation && this.initDisplay(),
+        this.animation.addToParent(this._container)
+    }
+    ,
+    e.prototype.initDisplay = function() {
+        var e = this;
+        e.animation = SingleAnimationPlayer.create(),
+        e.animation.playMaxCount = e._loop,
+        e.animation.setPrority(e.attention ? 1 : 0),
+        e.animation.x = e._x,
+        e.animation.y = e._y,
+        e.animation.addType(7, e.config.model, null),
+        e.animation.endHandler = new CallBack0(e.die,e),
+        Vars.modelScale && e.config.model < 19e3 ? null != e._scale ? e.animation.scale = GameDefine.SCALE_EFFECT * e._scale * .01 : e.animation.scale = GameDefine.SCALE_EFFECT : null != e._scale && (e.animation.scale = e._scale / 100),
+        e.enabled && e.start(),
+        null !== e._rotation && (e.animation.rotation = e._rotation),
+        e.soundid && e.soundid in ActionSound.SkillSounds && e.animation.addActionSound(e.config.action, ActionSound.SkillSounds[e.soundid]),
+        e.config.blendmode === egret.BlendMode.ADD && (e.animation.blendMode = e.config.blendmode)
+    }
+    ,
+    e.prototype.die = function() {
+        this.enabled = !1,
+        SceneEffectManager.Instance.readyToDie(this)
+    }
+    ,
+    e.prototype.start = function() {
+        var e = this;
+        e.enabled || (e.enabled = !0,
+        e.startTime = GameTime.Instance.totalGameTime),
+        e.animation && (void 0 == e._dir || null == e._dir ? e.animation.setAction(e.config.action, e.config.dir, !0) : 1 == e.config.totaldir ? e.animation.setAction(e.config.action, e.config.dir, !0) : e.animation.setAction(e.config.action, e._dir, !0)),
+        e._targetEntity && e._targetEntity.enabled && (e.x = e._targetEntity.x + e.offsetX,
+        e.y = e._targetEntity.y + e.offsetY)
+    }
+    ,
+    Object.defineProperty(e.prototype, "inView", {
+        get: function() {
+            return this._inView
+        },
+        set: function(e) {
+            this._inView = e,
+            this.animation && (this.animation.inView = e)
+        },
+        enumerable: !0,
+        configurable: !0
+    }),
+    Object.defineProperty(e.prototype, "x", {
+        get: function() {
+            return this._x
+        },
+        set: function(e) {
+            this._x = e,
+            this.animation && (this.animation.x = e)
+        },
+        enumerable: !0,
+        configurable: !0
+    }),
+    Object.defineProperty(e.prototype, "y", {
+        get: function() {
+            return this._y
+        },
+        set: function(e) {
+            this._y = e,
+            this.animation && (this.animation.y = e)
+        },
+        enumerable: !0,
+        configurable: !0
+    }),
+    e.prototype.update = function(e) {
+        var t = this;
+        t.enabled ? t.animation && t.animation.enabled && t.animation.inView ? (t.animation.render(e),
+        t._targetEntity && t._targetEntity.enabled && (t.x = t._targetEntity.x + t.offsetX,
+        t.y = t._targetEntity.y + t.offsetY)) : t._loop > -1 && t.startTime + GameDefine.Effect_Wait_Time < e.totalGameTime && t.die() : t.startTime > 0 && e.totalGameTime > t.startTime && t.start()
+    }
+    ,
+    e.prototype.updateRect = function(e) {
+        var t = this
+          , i = e.contains(t.x, t.y);
+        !i && t._inView ? t.animation && (t.animation.removeFromParent(),
+        t.animation.dispose(),
+        t.animation = void 0) : i && !t._inView && t.addToView(),
+        t.inView = i
+    }
+    ,
+    e.prototype.dispose = function() {
+        var e = this;
+        void 0 != e.id && (e.id = void 0,
+        e.enabled = !1,
+        e._container = void 0,
+        e.config = void 0,
+        e.animation && (e.animation.removeFromParent(),
+        e.animation.dispose(),
+        e.animation = void 0),
+        e._x = void 0,
+        e._y = void 0,
+        e._inView = !1,
+        e.eid = void 0,
+        e._loop = void 0,
+        e._rotation = null,
+        e._targetEntity = null,
+        e.soundid = void 0,
+        SceneEffectManager.Instance.returnEffect(this))
+    }
+    ,
+    e
+}();
+__reflect(NormalEffect.prototype, "NormalEffect", ["IUpdateable"]);
+var CloudTraderPanel = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.lids = {},
+        t.curlids = {},
+        t.effs = [],
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("CloudTraderPanelSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.item_list = new eui.ArrayCollection,
+        e.list_item.itemRenderer = SmeltBagEquipRender,
+        e.list_item.dataProvider = e.item_list,
+        e.show_list = new eui.ArrayCollection,
+        e.list_show.itemRenderer = BagEquipRender,
+        e.list_show.dataProvider = e.show_list,
+        e.show_list12 = new eui.ArrayCollection,
+        e.list_show12.itemRenderer = BagEquipRender42,
+        e.list_show12.dataProvider = e.show_list12,
+        e.set_list = new eui.ArrayCollection,
+        e.list_sel.itemRenderer = CloudTraderSetRenger,
+        e.list_sel.dataProvider = e.set_list,
+        e.addAutoEventListener(e.onClick, e.btn_go, e.btn_set, e.btn_desc, e.btn_close, e.btn_sure, e.btn_auto),
+        e.list_item.on(eui.ItemTapEvent.ITEM_TAP, e.onChangeHandler, e),
+        ScrollerManager.ins.init2(e.s2, 68)
+    }
+    ,
+    t.prototype.onChangeHandler = function(e) {
+        var t = this
+          , i = e.currentTarget.selectedItem
+          , r = t.list_item.getElementAt(t.list_item.selectedIndex);
+        r && i.lid && (r.select.visible ? t.lids[i.lid.toString()] && delete t.lids[i.lid.toString()] : t.lids[i.lid.toString()] = i.lid,
+        r.select.visible = !r.select.visible,
+        r.data.selected = r.select.visible),
+        t.showCost()
+    }
+    ,
+    t.prototype.refr = function() {
+        var t = this;
+        e.prototype.refr.call(this),
+        t.bindSubject(gd.bag, gd.player),
+        t.btn_auto.selected = gd.bag.autoRonglianBoo,
+        t.showAutoBtn(),
+        t.updateBagInfo(),
+        t.showReward(),
+        t.showSetGro(),
+        t.add_checkIn_eff()
+    }
+    ,
+    t.prototype.showAutoBtn = function() {
+        for (var e = this, t = cm.global[39301].value.split("|"), i = t[0], r = t[1].split("&"), a = 0; a < r.length; a++) {
+            var n = r[a].splitNum("#");
+            if (Vars.platform == n[0])
+                return void (e.btn_auto.visible = Logic.checkCondition(n[1]))
+        }
+        e.btn_auto.visible = Logic.checkCondition(i)
+    }
+    ,
+    t.prototype.showCost = function() {
+        var e = this;
+        if (Object.keys(e.lids).length > 0) {
+            e.costGro.visible = !0;
+            var t = 0
+              , i = 0;
+            for (var r in e.lids) {
+                var a = gd.bag.bagDic[r];
+                if (a) {
+                    var n = cm.item[a.itemId]
+                      , o = n ? n[58] : null;
+                    o && (i = o.splitNum("#")[0],
+                    t += o.splitNum("#")[1])
+                }
+            }
+            e.txt_cost.text = t + "",
+            e.txt_cost.textColor = gd.bag.getCount(i, !0) >= t ? Logic.getCol(50) : Logic.getCol(49)
+        } else
+            e.costGro.visible = !1
+    }
+    ,
+    t.prototype.onClick = function(e) {
+        var t = this;
+        switch (e.currentTarget) {
+        case t.btn_go:
+            var i = [];
+            for (var r in t.lids)
+                i.push(t.lids[r]);
+            i.length > 0 && net.BourseModel.ins().send21(i);
+            break;
+        case t.btn_set:
+            t.setGro.visible = !t.setGro.visible;
+            break;
+        case t.btn_desc:
+            uim.showOrHide(749, new UIData(1296));
+            break;
+        case t.btn_close:
+        case t.btn_sure:
+            t.setGro.visible = !1;
+            break;
+        case t.btn_auto:
+            if (!t.btn_auto.selected)
+                return void net.RoleModel.ins().send23(2006, !1, null, -1, -1);
+            var a = "";
+            for (var r in cm.monthCard)
+                if (cm.monthCard[r].ronglian && (a = a ? a : cm.monthCard[r].name,
+                gd.player.TQData[r]))
+                    return void net.RoleModel.ins().send23(2006, !0, null, -1, -1);
+            t.btn_auto.selected = !1,
+            ncm.err("需要：" + a)
+        }
+    }
+    ,
+    t.prototype.updateBagInfo = function() {
+        var e = this;
+        e.item_list.removeAll(),
+        e.curlids = {};
+        for (var t in gd.bag.bagDic) {
+            var i = gd.bag.bagDic[t]
+              , r = cm.item[i.itemId]
+              , a = i.count;
+            if (r && a > 0) {
+                var n = GridFactory.createEquipGridVoBag(i.itemId, i.lid, a, 0, i.time, i.bind, i.fromBean, null, i.jiPinBean, !1, i.extraType, i.extraValue, i.business);
+                n.touchEnble = !1,
+                e.lids[i.lid.toString()] ? (n.selected = !0,
+                e.curlids[i.lid.toString()] = i.lid) : !!gd.bag.canReTrader[i.itemId] && (n.selected = !0) && (e.curlids[i.lid.toString()] = i.lid),
+                !e.ifCanRecycle(i.itemId) || gd.bag.getStarArmId(i.extraType, i.extraValue) || gd.bag.getMohunId(i.extraType, i.extraValue) || (n.iconBg = "equip_grid1",
+                n.from = 8,
+                e.item_list.addItem(n))
+            }
+        }
+        e.lids = e.curlids;
+        for (var o = 48, t = e.item_list.source.length; o > t; t++)
+            e.item_list.addItem({
+                iconBg: "equip_grid1"
+            });
+        e.showCost()
+    }
+    ,
+    t.prototype.ifCanRecycle = function(e) {
+        var t = cm.item[e];
+        if (!t)
+            return !1;
+        var i = !1;
+        for (var r in cm.huishou)
+            if (2 == cm.huishou[r].type && gd.bag.reTraderCfg[r][e] && Logic.checkCondition(cm.huishou[r].condition)) {
+                i = !0;
+                break
+            }
+        return i
+    }
+    ,
+    t.prototype.showReward = function() {
+        var e = this;
+        e.show_list.removeAll(),
+        e.show_list12.removeAll();
+        for (var t = parseInt(cm.global[33702].value), i = cm.global[33701].value.split("&"), r = [], a = 0; a < i.length; a++)
+            for (var n = i[a].splitNum("#"), o = 0; o < n.length; o++) {
+                var s = GridFactory.createItemGridVo(n[o], Long.create(0, 0), 1);
+                0 != a ? (r[a - 1] || (r[a - 1] = []),
+                r[a - 1].push(s),
+                1 == a && e.show_list.addItem(s)) : e.show_list12.addItem(s)
+            }
+        var l = 0;
+        e.tt && egret.clearInterval(e.tt),
+        e.tt = egret.setInterval(function() {
+            l++,
+            l = l >= r.length ? 0 : l,
+            e.show_list.removeAll();
+            for (var t in r[l])
+                e.show_list.addItem(r[l][t]);
+            egret.Tween.get(e.effGro).to({
+                scaleX: -1
+            }, 300).to({
+                scaleX: 1
+            }, 300)
+        }, e, 1e3 * t)
+    }
+    ,
+    t.prototype.showSetGro = function() {
+        var e = this;
+        e.set_list.removeAll();
+        for (var t = e.sortTable(), i = 0; i < t.length; i++)
+            2 == t[i].type && Logic.checkCondition(t[i].condition) && e.set_list.addItem(t[i].id)
+    }
+    ,
+    t.prototype.sortTable = function() {
+        var e = [];
+        for (var t in cm.huishou) {
+            var i = cm.huishou[t];
+            !i || 2 != i.type || i.condition && !Logic.checkCondition(i.condition) || e.push(i)
+        }
+        return e.sort(function(e, t) {
+            return e.index && t.index ? e.index - t.index : e.id - t.id
+        }),
+        e
+    }
+    ,
+    t.prototype.add_checkIn_eff = function() {
+        for (var e = this, t = 0; 3 > t; t++) {
+            var i = new NameMovieClip;
+            e.effGro.addChild(i),
+            i.x = 16,
+            i.y = 1 + 108 * t,
+            i.touchEnabled = !1,
+            NameMovieClipResManager.Instance.getMcByRes("grid_red_eff", i),
+            i.play(-1),
+            e.effs.push(i)
+        }
+    }
+    ,
+    t.prototype.remove_checkIn_eff = function() {
+        var e = this;
+        for (var t in e.effs)
+            e.effs[t] && (e.effs[t].stop(),
+            e.effs[t].removeSelf(),
+            e.effs[t].data = null,
+            e.effs[t] = null)
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 621:
+            i.showSetGro(),
+            i.updateBagInfo();
+            break;
+        case 3:
+            t && i.updateBagInfo();
+            break;
+        case 223:
+            if (!t || 2006 != t)
+                return;
+            i.btn_auto.selected = gd.bag.autoRonglianBoo
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        ScrollerManager.ins.dispose2(68),
+        t.list_item.off(eui.ItemTapEvent.ITEM_TAP, t.onChangeHandler, t),
+        t.item_list.removeAll(),
+        t.item_list = null,
+        t.show_list.removeAll(),
+        t.show_list = null,
+        t.show_list12.removeAll(),
+        t.show_list12 = null,
+        t.set_list.removeAll(),
+        t.set_list = null,
+        t.effs = null,
+        t.curlids = null,
+        t.lids = null,
+        t.tt && egret.clearInterval(t.tt),
+        egret.Tween.removeTweens(t.effGro),
+        t.remove_checkIn_eff()
+    }
+    ,
+    t
+}(UIBase);
+__reflect(CloudTraderPanel.prototype, "CloudTraderPanel");
+var CloudTraderSetRenger = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        Logic.removeNew([t.check, t.mainGroup]),
+        t.off(TP, t.onClickHander, t),
+        t.check = null,
+        t.mainGroup = null
+    }
+    ,
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this);
+        var t = this;
+        t.mainGroup = new eui.Group,
+        t.mainGroup.width = 120,
+        t.mainGroup.height = 10,
+        t.mainGroup.touchEnabled = !0,
+        t.addChild(t.mainGroup),
+        t.check = new eui.CheckBox,
+        t.check.skinName = "CheckBox8Skin",
+        t.check.y = 10,
+        t.check.touchEnabled = !1,
+        t.mainGroup.addChild(t.check),
+        t.on(TP, t.onClickHander, t),
+        t.width = 120,
+        t.height = 10
+    }
+    ,
+    t.prototype.onClickHander = function() {
+        var e = this;
+        e.data && net.BagModel.ins().send36(e.data, 0, !gd.bag.recycleLog[e.data])
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.check.selected = !1,
+        t.data && (t.check.selected = !!gd.bag.recycleLog[t.data],
+        t.check.label = "  " + cm.huishou[t.data].name)
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(CloudTraderSetRenger.prototype, "CloudTraderSetRenger");
+var SmeltBagEquipRender = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this),
+        this.select.source = "y_select1"
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(SmeltBagEquipRender.prototype, "SmeltBagEquipRender");
+var BagEquipRender42 = function(e) {
     function t() {
         return null !== e && e.apply(this, arguments) || this
     }
@@ -6314,989 +7709,167 @@ var BagEquipRender = function(e) {
     t.prototype.createChildren = function() {
         e.prototype.createChildren.call(this);
         var t = this;
-        t.touchEnabled = !1,
-        t.touchChildren = !0,
-        t.effGroup = new eui.Group,
-        t.effGroup.touchEnabled = !1,
-        t.effGroup.touchChildren = !1,
-        t.mainGroup = new eui.Group,
-        t.mainGroup.touchEnabled = !1,
-        t.mainGroup.touchChildren = !1,
-        t.addChild(t.mainGroup),
-        t.bgImg = new eui.Image,
-        t.bgImg.horizontalCenter = "0",
-        t.bgImg.verticalCenter = "0",
-        t.mainGroup.addChild(t.bgImg),
-        t.bgImg0 = new eui.Image,
-        t.bgImg0.horizontalCenter = "0",
-        t.bgImg0.verticalCenter = "0",
-        t.mainGroup.addChild(t.bgImg0),
-        t.img_soullv = new eui.Image,
-        t.img_soullv.horizontalCenter = 0,
-        t.img_soullv.verticalCenter = 0,
-        t.mainGroup.addChild(t.img_soullv),
-        t.icon = new eui.Image,
-        t.icon.horizontalCenter = "0",
-        t.icon.verticalCenter = "0",
-        t.mainGroup.addChild(t.icon),
-        t.icon.y = t.icon.x = 8,
-        t.icon.anchorOffsetX = t.icon.anchorOffsetY = 24,
-        t.icon.x = t.icon.y = 30,
-        t.select = new eui.Image,
-        t.select.width = t.select.height = 62,
-        t.select.x = -1,
-        t.select.y = -1,
-        t.select.source = "com_selectImg3",
-        t.img_type = new eui.Image,
-        t.img_type.y = 39,
-        t.img_type.x = 40,
-        t.img_type.visible = !1,
-        t.mainGroup.addChild(t.img_type),
-        t.img_xy = new eui.Image,
-        t.img_xy.x = -1,
-        t.img_xy.y = -1,
-        t.img_xy1 = new eui.Image,
-        t.img_xy1.y = 0,
-        t.count = new eui.Label,
-        t.count.width = 56,
-        t.count.height = 13,
-        t.count.style = "193",
-        t.count.size = 13,
-        t.count.x = 0,
-        t.count.y = 43,
-        t.count.textAlign = egret.HorizontalAlign.RIGHT,
-        t.count.stroke = 1,
-        t.addChild(t.count),
-        t.mainGroup.addChild(t.effGroup),
-        t.effGroup.horizontalCenter = 0,
-        t.effGroup.verticalCenter = 0,
-        t.grp_equipRank = new eui.Group,
-        t.grp_equipRank.width = 19,
-        t.grp_equipRank.height = 31,
-        t.grp_equipRank.y = 2,
-        t.grp_equipRank.right = 1,
-        t.addChild(t.grp_equipRank),
-        t.powerChange = new eui.Image,
-        t.mainGroup.addChild(t.powerChange),
-        t.powerChange.y = 35,
-        t.powerChange.x = 41,
-        t.img_insure = new eui.Image,
-        t.img_insure.x = 46,
-        t.img_insure.y = -3,
-        t.img_insure.visible = !1,
-        t.img_insure.source = "grid_ic_tb",
-        t.mainGroup.addChild(t.img_insure),
-        t.rect = new eui.Rect(60,60,0),
-        t.rect.fillAlpha = .7,
-        t.xieicon = new eui.Image,
-        t.xieicon.horizontalCenter = "13",
-        t.xieicon.verticalCenter = "-13",
-        t.mainGroup.addChild(t.xieicon),
-        t.hint = new eui.Image,
-        t.hint.x = 47,
-        t.hint.y = 0,
-        t.hint.source = "bagHint",
-        t.hint.visible = !1,
-        t.addChild(t.hint),
-        t.touchGroup = new eui.Group,
-        t.addChild(t.touchGroup),
-        t.touchGroup.touchChildren = !0,
-        t.img_sex = new eui.Image,
-        t.img_sex.x = 2,
-        t.img_sex.y = 43,
-        t.touchGroup.addChild(t.img_sex),
-        Capability.mobileUI ? t.touchGroup.on(TP, t.doMobileTouch, t) : (mouse.setButtonMode(t, !0),
-        t.touchGroup.on(mouse.MouseEvent.ROLL_OVER, t.overs, t),
-        t.touchGroup.on(mouse.MouseEvent.ROLL_OUT, t.outs, t)),
-        t.touchGroup.on(egret.TouchEvent.TOUCH_BEGIN, t.touchDown, t),
-        t.touchGroup.on(egret.TouchEvent.TOUCH_END, t.touchEnd, t),
-        t.touchGroup.on(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, t.touchOutside, t),
-        t.mainGroup.width = t.mainGroup.height = 60,
-        t.effGroup.width = t.effGroup.height = 60,
-        t.touchGroup.width = t.touchGroup.height = 60
-    }
-    ,
-    t.prototype.addBitRank = function() {
-        var e = this;
-        e.img_jie = new eui.Image,
-        e.img_jie.source = "grid_jie",
-        e.img_jie.x = 3,
-        e.img_jie.y = 16,
-        e.grp_equipRank.addChild(e.img_jie),
-        e.bit_rank = new eui.BitmapLabel,
-        e.bit_rank.font = "equipRankFont_fnt",
-        e.bit_rank.width = 22,
-        e.bit_rank.textAlign = "center",
-        e.bit_rank.x = -2,
-        e.bit_rank.y = 0,
-        e.bit_rank.letterSpacing = -1,
-        e.grp_equipRank.addChild(e.bit_rank)
-    }
-    ,
-    t.prototype.touchDown = function(e) {
-        var t = this;
-        t.data && t.data.from && (t.icon.scaleX = t.icon.scaleY = .95)
-    }
-    ,
-    t.prototype.touchEnd = function(e) {
-        var t = this;
-        t.icon.scaleX = t.icon.scaleY = 1
-    }
-    ,
-    t.prototype.touchOutside = function(e) {
-        var t = this;
-        t.icon.scaleX = t.icon.scaleY = 1
-    }
-    ,
-    t.prototype.clearAllEff = function() {
-        var e = this;
-        e.clearEff(),
-        e.clearEff2(),
-        e.removelhEff(),
-        e.hint.visible && egret.Tween.removeTweens(e.hint)
-    }
-    ,
-    t.prototype.dispose = function() {
-        var e = this;
-        e.filters = null,
-        e.clearAllEff(),
-        Logic.removeNew([e.hint, e.bgImg, e.bgImg0, e.img_insure, e.icon, e.img_type, e.count, e.select, e.img_xy, e.mainGroup, e.effGroup, e.touchGroup, e.rect, e.powerChange, e.img_xy1, e.txt_qStar, e.img_qStar1, e.img_qStar2, e.txt_mvlv, e.txt_handleItem, e.bit_rank, e.grp_equipRank, e.img_jie, e.img_sex, e.txt_tl]),
-        Capability.mobileUI ? e.touchGroup.off(TP, e.doMobileTouch, e) : (e.touchGroup.off(mouse.MouseEvent.ROLL_OVER, e.overs, e),
-        e.touchGroup.off(mouse.MouseEvent.ROLL_OUT, e.outs, e)),
-        e.sceneEffect && (e.sceneEffect.dispose(),
-        e.sceneEffect = null),
-        e.touchGroup.off(egret.TouchEvent.TOUCH_BEGIN, e.touchDown, e),
-        e.touchGroup.off(egret.TouchEvent.TOUCH_END, e.touchEnd, e),
-        e.touchGroup.off(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, e.touchOutside, e)
-    }
-    ,
-    t.prototype.doMobileTouch = function(e) {
-        var t = this;
-        if (t.data && !t.data.isNull) {
-            var i = t.data.from;
-            if (i && (1 == i || 3 == i || 2 == i || 8 === i || 41 === i || 42 === i || 35 === i || 38 === i || 17 === i || 18 === i || 31 === i || 23 === i || 9 === i || 25 === i || 26 === i || 27 === i || 28 === i || 28 === i || 37 === i || 48 === i || 49 === i || 55 === i || 54 === i || 56 === i || 51 === i || 57 === i || 45 === i))
-                return;
-            if (i && 30 == i)
-                return;
-            t.overs(e)
-        }
-    }
-    ,
-    t.prototype.overs = function(e) {
-        var t = this;
-        t.data && !t.data.isNull && (TipsManager.Instance.closeTip(),
-        38 == t.data.from ? (t.data.xx = t.stage.stageWidth / 4,
-        t.data.yy = 300) : (t.data.xx = e.stageX,
-        t.data.yy = e.stageY),
-        t.data.touchEnble = !1,
-        t.showTips(),
-        Capability.mobileUI && e.stopImmediatePropagation())
-    }
-    ,
-    t.prototype.outs = function(e) {
-        TipsManager.Instance.closeTip()
-    }
-    ,
-    t.prototype.showTips = function() {
-        var e = this;
-        if (e.data.config) {
-            var t = e.data
-              , i = Logic.getEquipCopy(t);
-            if (12 == t.config[1])
-                TipsManager.Instance.showTips(0, i, 4);
-            else if (2 == t.config[1]) {
-                var r = 4
-                  , a = t.lid;
-                if (a) {
-                    var n = t.config[23]
-                      , o = gd.player.equipInfo[n];
-                    o && a.toString() == o.lid.toString() ? r = 2 : (2 == n && (o = gd.player.equipInfo[9]),
-                    3 == n && (o = gd.player.equipInfo[10]),
-                    o && a.toString() == o.lid.toString() && (r = 2))
-                }
-                1 == t.from && (r = 1),
-                32 == t.from && (r = 21),
-                TipsManager.Instance.showTips(0, i, r)
-            } else
-                TipsManager.Instance.showTips(1, i, 4)
-        }
-    }
-    ,
-    t.prototype.playerOnceEff = function(e) {
-        var t = this
-          , i = OnceEffFactory.create();
-        t.mainGroup.addChild(i),
-        i.anchorOffsetX = 250,
-        i.anchorOffsetY = 250,
-        i.x = 45,
-        i.y = 45,
-        NameMovieClipResManager.Instance.getMcByRes(e, i),
-        i.once(egret.Event.COMPLETE, function(e) {
-            t.removeChild(i),
-            i.data = null,
-            OnceEffFactory.Instance.distroy(i)
-        }, t),
-        i.gotoAndPlay(0, 1)
+        t.mainGroup.scaleX = t.mainGroup.scaleY = t.touchGroup.scaleX = t.touchGroup.scaleY = .7,
+        t.count.visible = !1
     }
     ,
     t.prototype.dataChanged = function() {
-        var e = this;
-        if (e.clearAllEff(),
-        e.img_insure.visible = e.hint.visible = e.rect.visible = !1,
-        e.select.visible = !1,
-        e.powerChange.source = "",
-        e.touchEnabled = !1,
-        e.bgImg.visible = !0,
-        e.bgImg.source = e.bgImg0.source = e.icon.source = e.xieicon.source = "",
-        e.grp_equipRank.visible = !1,
-        e.count.text = "",
-        e.img_sex.visible = !1,
-        e.img_type.visible = !1,
-        e.sceneEffect && (e.sceneEffect.dispose(),
-        e.sceneEffect = null),
-        e.txt_qStar && (e.txt_qStar.visible = !1),
-        e.img_qStar1 && (e.img_qStar1.visible = !1),
-        e.img_qStar2 && (e.img_qStar2.visible = !1),
-        e.txt_mvlv && (e.txt_mvlv.visible = !1),
-        e.txt_tl && (e.txt_tl.visible = !1),
-        e.txt_handleItem && (e.txt_handleItem.visible = !1),
-        e.data) {
-            e.data.hidebg && (e.bgImg.visible = !1),
-            e.select.visible = !!e.data.selected;
-            var t = 0
-              , i = e.data
-              , r = i.config;
-            if (r) {
-                if (e.img_insure.visible = !1,
-                i.lid && gd.insure.isInsureEquip(i.lid) && (e.img_insure.visible = !0),
-                228 == r[21] && (e.txt_mvlv || (e.txt_mvlv = new eui.Label,
-                e.txt_mvlv.style = "46",
-                e.txt_mvlv.width = 18,
-                e.txt_mvlv.y = 5,
-                e.txt_mvlv.x = 5,
-                e.txt_mvlv.textAlign = "center",
-                e.mainGroup.addChild(e.txt_mvlv)),
-                e.txt_mvlv.text = Logic.getNumberToRomon(cm.mingwen[r[0]].level),
-                e.txt_mvlv.visible = !0),
-                40 == r[21]) {
-                    var a = cm.tulu[parseInt(r[22])];
-                    if (a) {
-                        var n = gd.tuluData.tuluData[a.id];
-                        n && (e.txt_tl || (e.txt_tl = new eui.Label,
-                        e.txt_tl.style = "17",
-                        e.txt_tl.verticalCenter = 0,
-                        e.txt_tl.horizontalCenter = 0,
-                        e.mainGroup.addChild(e.txt_tl)),
-                        e.txt_tl.text = "已激活",
-                        e.txt_tl.visible = !0)
-                    }
-                }
-                if (i.showRed && (Logic.check_item_can_be_use(r, i.lid) || 20445514 == r[0]) && (e.hint.visible = !0,
-                egret.Tween.get(e.hint, {
-                    loop: !0
-                }).to({
-                    alpha: .5
-                }, 500).to({
-                    alpha: 1
-                }, 500)),
-                e.data.count && e.data.count > 1) {
-                    var o = e.data.count;
-                    e.count.text = Html.numToWan3(o)
-                }
-                5 == r[23] && r[56] && (e.img_sex.source = 1 == r[56] ? "nan" : "nv",
-                e.img_sex.visible = !0),
-                t = r[9],
-                t = t ? t : 0,
-                r[61] && (Logic.isMiniGame() || js_gameVars.wxTest || Logic.isQuickGame()) && Logic.checkMiniGameHideItemEff(r) ? e.showIcon(i.starArm, r) : r[61] ? (e.sceneEffect || (e.sceneEffect = new UISceneEffectAnimation),
-                e.sceneEffect.init(e.effGroup, r[61]),
-                e.sceneEffect.x = 714,
-                e.sceneEffect.y = 703) : (e.showIcon(i.starArm, r),
-                13 == i.config[1] && (e.icon.source = ResUrl.url(i.config[19] + "", 77))),
-                e.data.refineSoulLevel ? e.img_soullv.source = "ngrid_" + [, 1, 3, 4, 5][e.data.refineSoulLevel] : e.img_soullv.source = "",
-                e.bgImg.source = "equip_grid",
-                e.img_type.x = 40,
-                e.img_type.source = "",
-                Logic.isZhuXian(r[23]) && 999 != r[8] || Logic.isAwakeEquip(r[23]) || Logic.isTSSDEquip(r[23]) || Logic.isPoMoEquip(r[23]) || Logic.isLingZhuangEquip(r[23]) ? (e.grp_equipRank.visible = !0,
-                e.bit_rank || e.addBitRank(),
-                e.bit_rank.text = r[4] + "") : e.grp_equipRank.visible = !1,
-                5 == r[8] ? (e.img_type.source = "grid_shen",
-                e.img_type.visible = !0) : 26 == r[8] ? (e.img_type.source = "grid_long",
-                e.img_type.visible = !0) : 27 == r[8] ? (e.img_type.source = "grid_sheng",
-                e.img_type.visible = !0) : 11 == r[8] ? (e.img_type.source = "grid_jie",
-                e.img_type.visible = !0) : 12 == r[8] ? (e.img_type.source = "grid_zhi",
-                e.img_type.visible = !0) : 15 == r[8] ? (e.img_type.source = "grid_shou",
-                e.img_type.visible = !0) : 14 == r[8] ? (e.img_type.source = "grid_zhuo",
-                e.img_type.visible = !0) : 16 == r[8] ? (e.img_type.source = "grid_wu",
-                e.img_type.visible = !0) : 110 == r[8] ? (e.img_type.source = "grid_wuhun",
-                e.img_type.visible = !0) : 111 == r[8] ? (e.img_type.source = "grid_lei",
-                e.img_type.visible = !0) : 10 == r[8] ? (e.img_type.source = "grid_suipian",
-                e.img_type.visible = !0,
-                e.img_type.x = 26) : e.img_type.visible = !1
-            } else
-                e.img_type.visible = !1;
-            if (i.isNull)
-                e.bgImg.source = "",
-                e.img_soullv.source = "",
-                e.bgImg0.source = "",
-                t = 0;
-            else if (i.storageSuo)
-                e.bgImg.source = "storageSuo",
-                t = 0;
-            else {
-                t = t ? t : 0;
-                var s = !1;
-                r && 3 == r[1] && r[8] && 999 == r[8] && (s = !0),
-                r && 3 == r[1] && t > 7 && (s = !0),
-                !e.data.hideGridEff && (i.showeff || s) && t > showEffQuality && e.addEff(t)
-            }
-            if (e.data instanceof ItemGridData && (e.data.noHave ? e.filters = [FilterUtil.FILTER_GRAY()] : e.filters = null),
-            e.data instanceof MailItemGridData && (e.data.showGray ? e.filters = [FilterUtil.FILTER_GRAY()] : e.filters = null),
-            e.img_xy.source = "",
-            i.jueban || i.gailv && (e.img_xy.source = "mc_icon0"),
-            e.img_xy.source && "" != e.img_xy.source && (e.img_xy.visible = !0,
-            !e.img_xy.parent && e.mainGroup.addChild(e.img_xy)),
-            i.times || i.probability || (e.img_xy1.source = ""),
-            e.img_xy1.source && "" != e.img_xy1.source && (e.img_xy1.visible = !0,
-            !e.img_xy1.parent && e.mainGroup.addChild(e.img_xy1),
-            e.img_xy1.x = e.mainGroup.width,
-            e.img_xy1.rotation = 90),
-            e.data.showRect && (e.addChild(e.rect),
-            e.rect.visible = !0),
-            e.data.xieIcon) {
-                var l = e.data.xieIcon.split("&");
-                l.length > 1 && (e.xieicon.horizontalCenter = "-13",
-                e.xieicon.verticalCenter = "-13"),
-                e.xieicon.source = l[0]
-            }
-            if (e.data.isNull && e.data.showgird && (e.bgImg.source = "equip_grid1",
-            e.bgImg.width = 62,
-            e.bgImg.height = 62),
-            e.data.itemStarBean && e.data.itemStarBean.level > 0) {
-                var c = e.data.itemStarBean.level
-                  , d = 0
-                  , p = 0;
-                c > 0 && (d = Math.floor((c - 1) / 10),
-                p = c % 10 == 0 ? 10 : c % 10),
-                e.img_qStar1 || (e.img_qStar1 = new eui.Image("icon_star_0" + d + "_1"),
-                e.mainGroup.addChild(e.img_qStar1)),
-                e.img_qStar1.source = "icon_star_0" + d + "_1",
-                e.img_qStar2 || (e.img_qStar2 = new eui.Image("icon_star_0" + d),
-                e.img_qStar2.y = 18,
-                e.mainGroup.addChild(e.img_qStar2)),
-                e.img_qStar2.source = "icon_star_0" + d,
-                e.txt_qStar || (e.txt_qStar = new eui.Label,
-                e.txt_qStar.style = "46",
-                e.txt_qStar.width = 18,
-                e.txt_qStar.y = 2,
-                e.txt_qStar.x = 0,
-                e.txt_qStar.textAlign = "center",
-                e.mainGroup.addChild(e.txt_qStar)),
-                e.img_qStar1.visible = e.img_qStar2.visible = e.txt_qStar.visible = !0,
-                e.txt_qStar.textFlow = Html.toEle(Html.str(p + "", Logic.getQStarLevelColor(d)))
-            }
-            e.mainGroup.addChild(e.select),
-            !e.data.hideGridEff && i.niepanLv && i.niepanLv > 2 && e.addEff2(i.niepanLv),
-            i.scSpecialEff && e.addEff2(6),
-            e.data.iconBg && (e.bgImg.source = e.data.iconBg)
-        } else
-            e.txt_qStar && (e.txt_qStar.visible = !1),
-            e.img_qStar1 && (e.img_qStar1.visible = !1),
-            e.img_qStar2 && (e.img_qStar2.visible = !1),
-            e.txt_mvlv && (e.txt_mvlv.visible = !1),
-            e.txt_tl && (e.txt_tl.visible = !1),
-            e.img_soullv.source = ""
-    }
-    ,
-    t.prototype.showIcon = function(e, t) {
-        var i = this;
-        e > 0 && cm.star[e].icon ? i.icon.source = ResUrl.url(cm.star[e].icon + "", 8) : i.icon.source = ResUrl.url(t[19] + "", 8)
-    }
-    ,
-    t.prototype.getLongHuangEffType = function(e) {
-        for (var t = 0, i = cm.global[22701].value, r = i.split("&"), a = 0, n = r.length; n > a; a++) {
-            var o = r[a].split("#")
-              , s = Number(o[0])
-              , l = Number(o[1]);
-            e >= s && (t = l)
-        }
-        return t
-    }
-    ,
-    t.prototype.addLHEff = function(e) {
+        e.prototype.dataChanged.call(this);
         var t = this;
-        t._eff_lh || (t._eff_lh = new NameMovieClip,
-        t.addChild(t._eff_lh),
-        t._eff_lh.blendMode = egret.BlendMode.ADD),
-        NameMovieClipResManager.Instance.getMcByRes("grid_eff/lh_quality" + e, t._eff_lh),
-        t._eff_lh.play(-1),
-        t._eff_lh.setFrame(7)
-    }
-    ,
-    t.prototype.addEff = function(e) {
-        if (29 != e) {
-            var t = this;
-            t._eff_quality || (t._eff_quality = new NameMovieClip,
-            t._eff_quality.anchorOffsetX = 31,
-            t._eff_quality.anchorOffsetY = 31,
-            t.mainGroup.addChild(t._eff_quality),
-            t._eff_quality.blendMode = egret.BlendMode.ADD,
-            t._eff_quality.touchEnabled = !1),
-            e > 29 ? (t._eff_quality.x = 20,
-            t._eff_quality.y = 20) : (t._eff_quality.x = e > 24 ? -11 : 23 == e ? 25 : 26,
-            t._eff_quality.y = e > 24 ? -14 : 25),
-            e > 46 && (t._eff_quality.x = 0,
-            t._eff_quality.y = 1,
-            t._eff_quality.scaleX = .9,
-            t._eff_quality.scaleY = .9),
-            45 == e && (t._eff_quality.x = 28,
-            t._eff_quality.y = 27),
-            46 == e && (t._eff_quality.x = 0,
-            t._eff_quality.y = 0,
-            t._eff_quality.scaleX = .93,
-            t._eff_quality.scaleY = .93),
-            NameMovieClipResManager.Instance.getMcByRes("grid_eff/qualitys" + e, t._eff_quality),
-            t._eff_quality.play(-1),
-            (51 == e || 52 == e) && t._eff_quality.setFrame(8)
+        switch (t.itemIndex) {
+        case 0:
+            t.mainGroup.x = t.touchGroup.x = 34,
+            t.mainGroup.y = t.touchGroup.y = 8;
+            break;
+        case 1:
+            t.mainGroup.x = t.touchGroup.x = -22,
+            t.mainGroup.y = t.touchGroup.y = 68;
+            break;
+        case 2:
+            t.mainGroup.x = t.touchGroup.x = 21,
+            t.mainGroup.y = t.touchGroup.y = 68;
+            break;
+        case 3:
+            t.mainGroup.x = t.touchGroup.x = -27,
+            t.mainGroup.y = t.touchGroup.y = 8;
+            break;
+        case 5:
+            t.mainGroup.x = t.touchGroup.x = -32,
+            t.mainGroup.y = t.touchGroup.y = 42;
+            break;
+        case 6:
+            t.mainGroup.x = t.touchGroup.x = 31,
+            t.mainGroup.y = t.touchGroup.y = 42;
+            break;
+        case 8:
+            t.mainGroup.x = t.touchGroup.x = 8,
+            t.mainGroup.y = t.touchGroup.y = 2;
+            break;
+        case 9:
+            t.mainGroup.x = t.touchGroup.x = -24,
+            t.mainGroup.y = t.touchGroup.y = 12;
+            break;
+        case 10:
+            t.mainGroup.x = t.touchGroup.x = 24,
+            t.mainGroup.y = t.touchGroup.y = 12;
+            break;
+        case 11:
+            t.mainGroup.x = t.touchGroup.x = -7,
+            t.mainGroup.y = t.touchGroup.y = 2
         }
     }
     ,
-    t.prototype.addEff2 = function(e) {
-        var t = this;
-        if (!t._eff_niepan) {
-            t._eff_niepan = new UISceneEffectAnimation;
-            var i = cm.niepan[t.data.index][e];
-            t._eff_niepan.init(t, i.effect),
-            t._eff_niepan.x = 698,
-            t._eff_niepan.y = 666
+    t
+}(BagEquipRender);
+__reflect(BagEquipRender42.prototype, "BagEquipRender42");
+var ItemRendererBase = function(e) {
+    function t() {
+        var t = e.call(this) || this;
+        return t._inited = !1,
+        t._hasDisposed = !1,
+        t.tweenType = 0,
+        t.initSkinName(),
+        t
+    }
+    return __extends(t, e),
+    t.prototype.initSkinName = function() {
+        this._inited = !1
+    }
+    ,
+    t.prototype.childrenCreated = function() {
+        e.prototype.childrenCreated.call(this),
+        this._inited = !0,
+        this.inited && this.data && this.toInitDataBase()
+    }
+    ,
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this),
+        this.toInitUIInfo(),
+        this.createAction()
+    }
+    ,
+    t.prototype.createAction = function() {
+        0 != this.tweenType && (this.alpha = .1,
+        1 == this.tweenType ? (this.scaleX = -1,
+        egret.Tween.get(this).to({
+            scaleX: 1,
+            alpha: 1
+        }, 500).call(this.toTweenComplete)) : 2 == this.tweenType && (this.scaleY = -1,
+        egret.Tween.get(this).to({
+            scaleY: 1,
+            alpha: 1
+        }, 500).call(this.toTweenComplete)))
+    }
+    ,
+    t.prototype.toTweenComplete = function() {
+        egret.Tween.removeTweens(this)
+    }
+    ,
+    Object.defineProperty(t.prototype, "inited", {
+        get: function() {
+            return this._inited
+        },
+        enumerable: !0,
+        configurable: !0
+    }),
+    t.prototype.toInitUIInfo = function() {}
+    ,
+    t.prototype.dataChanged = function() {
+        this.inited && this.data && this.toInitDataBase()
+    }
+    ,
+    t.prototype.toInitDataBase = function() {}
+    ,
+    t.prototype.setSelected = function(e) {}
+    ,
+    Object.defineProperty(t.prototype, "selected", {
+        get: function() {
+            return this._selected
+        },
+        set: function(e) {
+            this._selected != e && (this._selected = e,
+            this.invalidateState()),
+            this.setSelected(this.selected)
+        },
+        enumerable: !0,
+        configurable: !0
+    }),
+    t.prototype.updateHint = function(e, t, i, r) {
+        void 0 === i && (i = 27),
+        void 0 === r && (r = 0),
+        this.inited && !this._hasDisposed
+    }
+    ,
+    t.prototype.updateUIEff = function(e, t, i) {
+        void 0 === i && (i = egret.BlendMode.ADD),
+        this.inited
+    }
+    ,
+    t.prototype.dispose = function() {
+        this.inited && (egret.Tween.removeTweens(this),
+        this.disposeSkin(this),
+        this._hasDisposed = !0,
+        this.destroy())
+    }
+    ,
+    t.prototype.destroy = function() {}
+    ,
+    t.prototype.disposeSkin = function(e) {
+        var t, i;
+        for (i = e.numChildren,
+        t = 0; i > t; t++) {
+            var r = e.getChildAt(t);
+            r && (r instanceof eui.Image ? r.dispose() : r instanceof eui.List ? (r.$DataGroup[10] = !0,
+            r.removeAllRenderers(),
+            r.dataProvider = null,
+            r.itemRenderer = null) : r instanceof NameMovieClip ? (r.stop(),
+            r.data = null) : this.disposeSkin(r))
         }
-    }
-    ,
-    t.prototype.clearEff2 = function() {
-        var e = this;
-        e._eff_niepan && (e._eff_niepan.die(),
-        e._eff_niepan = null)
-    }
-    ,
-    t.prototype.clearEff = function() {
-        var e = this;
-        e._eff_quality && (e._eff_quality.stop(),
-        e._eff_quality.removeSelf(),
-        e._eff_quality.data = null,
-        e._eff_quality = null)
-    }
-    ,
-    t.prototype.removelhEff = function() {
-        var e = this;
-        e._eff_lh && (e.removeChild(this._eff_lh),
-        e._eff_lh.data = null,
-        e._eff_lh = null)
-    }
-    ,
-    t.prototype.playEff = function() {
-        var e = this.localToGlobal(0, 0);
-        ItemEffects.Instance.add({
-            icon: this.data.config[19],
-            x: e.x,
-            y: e.y
-        })
     }
     ,
     t
 }(eui.ItemRenderer);
-__reflect(BagEquipRender.prototype, "BagEquipRender");
-var showEffQuality = 21
-  , BagEquipRender48 = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.mainGroup.scaleX = .75,
-        t.mainGroup.scaleY = .75,
-        t.touchGroup.scaleX = t.touchGroup.scaleY = .75,
-        t.effGroup.scaleX = t.effGroup.scaleY = .75,
-        t.count.x = 0,
-        t.count.width = 46,
-        t.count.y = 33
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRender48.prototype, "BagEquipRender48");
-var BagEquipRender50 = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.width = t.height = 50,
-        t.mainGroup.scaleX = .833,
-        t.mainGroup.scaleY = .833,
-        t.touchGroup.scaleX = t.touchGroup.scaleY = .833,
-        t.effGroup.scaleX = t.effGroup.scaleY = .833,
-        t.count.width = 50,
-        t.count.x = 8,
-        t.count.y = 39,
-        t.count.scaleX = t.count.scaleY = .8
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRender50.prototype, "BagEquipRender50");
-var BagEquipRender40 = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.width = t.height = 40,
-        t.mainGroup.scaleX = .665,
-        t.mainGroup.scaleY = .665,
-        t.touchGroup.scaleX = t.touchGroup.scaleY = .665,
-        t.effGroup.scaleX = t.effGroup.scaleY = .665,
-        t.count.width = 56,
-        t.count.x = -4,
-        t.count.y = 31,
-        t.count.scaleX = t.count.scaleY = .8
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRender40.prototype, "BagEquipRender40");
-var BagEquipRender40bg1 = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.width = t.height = 40
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.bgImg.source = "equip_grid1"
-    }
-    ,
-    t
-}(BagEquipRender40);
-__reflect(BagEquipRender40bg1.prototype, "BagEquipRender40bg1");
-var BagEquipRender48bg1 = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.mainGroup.scaleX = .75,
-        t.mainGroup.scaleY = .75,
-        t.touchGroup.scaleX = .75,
-        t.touchGroup.scaleY = .75,
-        t.effGroup.scaleX = t.effGroup.scaleY = .75,
-        t.count.x = 0,
-        t.count.width = 46,
-        t.count.y = 33
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.bgImg.source = "equip_grid1"
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRender48bg1.prototype, "BagEquipRender48bg1");
-var BagEquipRender30 = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.mainGroup.scaleX = .5,
-        t.mainGroup.scaleY = .5,
-        t.touchGroup.scaleX = t.touchGroup.scaleY = .5,
-        t.effGroup.scaleX = t.effGroup.scaleY = .5,
-        t.count.x = 0,
-        t.count.width = 29,
-        t.count.size = 8,
-        t.count.y = 20,
-        t.height = t.width = 30
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.bgImg.source = "equip_grid1"
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRender30.prototype, "BagEquipRender30");
-var BagEquipRender30_Eff = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.mainGroup.scaleX = .5,
-        t.mainGroup.scaleY = .5,
-        t.touchGroup.scaleX = t.touchGroup.scaleY = .5,
-        t.count.x = 0,
-        t.count.width = 29,
-        t.count.size = 8,
-        t.count.y = 20,
-        t.height = t.width = 30
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.bgImg.source = "equip_grid1"
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRender30_Eff.prototype, "BagEquipRender30_Eff");
-var BagEquipRender30_Alter = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.mainGroup.scaleX = .5,
-        t.mainGroup.scaleY = .5,
-        t.touchGroup.scaleX = t.touchGroup.scaleY = .5,
-        t.effGroup.scaleX = t.effGroup.scaleY = .5,
-        t.count.x = 0,
-        t.count.width = 29,
-        t.count.size = 8,
-        t.count.y = 20,
-        t.height = t.width = 30
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRender30_Alter.prototype, "BagEquipRender30_Alter");
-var BagEquipRenderBgGrid1 = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this),
-        this.width = 67,
-        this.height = 68
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.bgImg.source = "equip_grid1"
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRenderBgGrid1.prototype, "BagEquipRenderBgGrid1");
-var BagEquipRenderJingHe = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this),
-        this.width = 60,
-        this.height = 60
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.bgImg.source = "equip_grid1"
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRenderJingHe.prototype, "BagEquipRenderJingHe");
-var BagFirstCharDialog = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this),
-        this.width = 67,
-        this.height = 68
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.bgImg.source = "bg_zhigou_04"
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagFirstCharDialog.prototype, "BagFirstCharDialog");
-var BagEquipRenderWarrior = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this),
-        this.width = 67,
-        this.height = 68
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.bgImg.source = "equip_grid1",
-        t.bgImg.visible = !0
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRenderWarrior.prototype, "BagEquipRenderWarrior");
-var TouziitemRender = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.additemeff()
-    }
-    ,
-    t.prototype.additemeff = function() {
-        var e = this;
-        e.removeitemEff(),
-        e.itemEff || (e.itemEff = new NameMovieClip,
-        e.addChild(e.itemEff),
-        e.itemEff.x = -11,
-        e.itemEff.y = -26,
-        e.itemEff.scaleX = .52,
-        e.itemEff.scaleY = 1.23,
-        e.itemEff.touchEnabled = !1),
-        NameMovieClipResManager.Instance.getMcByRes("qiandaoSelEff1", e.itemEff),
-        e.itemEff.play(-1),
-        e.itemEff.setFrame(6)
-    }
-    ,
-    t.prototype.removeitemEff = function() {
-        var e = this;
-        e.itemEff && (e.itemEff.stop(),
-        e.removeChild(e.itemEff),
-        e.itemEff.data = null,
-        e.itemEff = null)
-    }
-    ,
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        var t = this;
-        t.removeitemEff()
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(TouziitemRender.prototype, "TouziitemRender");
-var BagEquipRenderExchange = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.count.x = 0,
-        t.count.width = t.width,
-        t.count.textAlign = egret.HorizontalAlign.CENTER
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t, i = this;
-        i.data.isReward || (t = i.data.inBagNum && i.data.inBagNum >= i.data.count ? Logic.getCol(50) : Logic.getCol(49),
-        i.count.textFlow = Html.toEle(Html.str(Html.numToWan3(i.data.count), t)))
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRenderExchange.prototype, "BagEquipRenderExchange");
-var BagEquipRenderYLQ = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.img_wear = new eui.Image("com_txt_ylq2"),
-        t.img_wear.y = 18,
-        t.img_wear.scaleX = t.img_wear.scaleY = .7,
-        t.img_wear.horizontalCenter = 0,
-        this.mainGroup.addChild(t.img_wear)
-    }
-    ,
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this),
-        this.img_wear.source = null,
-        this.img_wear.removeSelf(),
-        this.img_wear = null
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this),
-        this.img_wear.visible = this.data.ylq
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRenderYLQ.prototype, "BagEquipRenderYLQ");
-var ChatBagEquipRender = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.img_wear = new eui.Image("y_com_txt_cdz"),
-        t.img_wear.y = 4,
-        t.img_wear.horizontalCenter = 0
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this.img_wear
-          , i = this.data instanceof EquipGridData || this.data.hxWear;
-        i ? t.parent || this.mainGroup.addChild(t) : t.removeSelf()
-    }
-    ,
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        var t = this;
-        Logic.removeNew([t.img_wear])
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(ChatBagEquipRender.prototype, "ChatBagEquipRender");
-var HexinEquipRender = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.txt_lv = new eui.Label,
-        t.txt_lv.width = 56,
-        t.txt_lv.height = 13,
-        t.txt_lv.style = "193",
-        t.txt_lv.size = 13,
-        t.txt_lv.x = 2,
-        t.txt_lv.y = 45,
-        t.txt_lv.textAlign = egret.HorizontalAlign.CENTER,
-        t.addChild(t.txt_lv)
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        if (t.txt_lv.visible = !1,
-        t.data) {
-            var i = cm.item[t.data.itemId]
-              , r = t.data.lv;
-            i && 12 == i[1] && (t.txt_lv.visible = !0,
-            t.txt_lv.text = "Lv." + r,
-            t.txt_lv.textColor = Html.New161)
-        }
-    }
-    ,
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        var t = this;
-        Logic.removeNew([t.txt_lv])
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(HexinEquipRender.prototype, "HexinEquipRender");
-var GiftBoxBagEquipRender = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.img_yyy = new eui.Image,
-        t.img_yyy.right = 0,
-        t.img_yyy.top = 0,
-        t.img_yyy.source = "discount_yyy",
-        t.mainGroup.addChild(t.img_yyy)
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        if (t.img_yyy.visible = !1,
-        t.data) {
-            var i = cm.item[t.data.itemId];
-            if (4 == i[21]) {
-                var r = i[22].split("#")
-                  , a = cm.title[r[0]]
-                  , n = gd.fame.titleDic[a.id];
-                n && n.timeout <= 0 && (t.img_yyy.visible = !0)
-            }
-        }
-    }
-    ,
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        var t = this;
-        Logic.removeNew([t.img_yyy])
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(GiftBoxBagEquipRender.prototype, "GiftBoxBagEquipRender");
-var ChouKaCostItemRender = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.height = t.width = 20,
-        t.mainGroup.scaleX = .33,
-        t.mainGroup.scaleY = .33,
-        t.touchGroup.scaleX = t.touchGroup.scaleY = .6,
-        t.effGroup.scaleX = t.effGroup.scaleY = .6
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(ChouKaCostItemRender.prototype, "ChouKaCostItemRender");
+__reflect(ItemRendererBase.prototype, "ItemRendererBase");
 var LimitedPool = function() {
     function e(e, t) {
         this.max = 0,
@@ -7326,594 +7899,6 @@ var LimitedPool = function() {
     e
 }();
 __reflect(LimitedPool.prototype, "LimitedPool");
-var SkillBase = function() {
-    function e() {
-        this.enabled = !1,
-        this.end = !1,
-        this.moving = !1,
-        this._showHurt = !1,
-        this._attantion = !1,
-        this.level = 1,
-        this.bindex = 0
-    }
-    return e.prototype.release = function(e, t, i, r, a, n, o, s, l, c, d) {
-        var p = this;
-        p.from = i,
-        this.level = t,
-        p.target = r,
-        p._attantion = !1,
-        p.target ? (p.targetX = r.x,
-        p.targetY = r.y,
-        r && r.fighterObject && 1 == r.fighterObject.group && (p._attantion = !0)) : (p.targetX = a * GameDefine.MAP_GRID_WIDTH + GameDefine.MAP_GRID_WIDTH / 2,
-        p.targetY = n * GameDefine.MAP_GRID_HEIGHT + GameDefine.MAP_GRID_HEIGHT / 2),
-        p.enabled = !0,
-        p._showHurt = l,
-        p.hurtList = c,
-        p.bufferList = d,
-        p.skillid = e,
-        p.config = cm.skill[e],
-        p.end = !1,
-        p.releaseTime = s,
-        i && (0 == p.config.action ? i.setAction(4, o, !0) : 1 == p.config.action && i.setAction(5, o, !0),
-        !p._attantion && i.fighterObject && 1 == i.fighterObject.group && (p._attantion = !0)),
-        gd.player.getSetState(1171) ? p.initEffects() : p.from && 1 == p.from.gameObject.group && p.initEffects(),
-        p.bufferList && p.addBufferList(p.bufferList)
-    }
-    ,
-    e.prototype.initEffects = function() {
-        if (1 != gd.player.getSetState(1155)) {
-            var e = this
-              , t = e.from;
-            t && 1 == t.gameObject.group ? e._needSound = !0 : e._needSound = !1;
-            var i, r, a = cm.skills_condition[e.skillid][e.level], n = cm.skillEffects[a.effLevelID];
-            if (null == n) {
-                cm.skillEffects[e.skillid]
-            }
-            if (t && void 0 == n && 4 == t.entityType) {
-                var o = t.monsterObject.config.model;
-                cm.monsterSkillEffects[o] && (n = cm.monsterSkillEffects[o])
-            }
-            if (n) {
-                for (var s = 0, l = n; s < l.length; s++) {
-                    var c = l[s];
-                    if (0 == c.type) {
-                        if (t) {
-                            var d = c.sound;
-                            t && t.fighterObject && 2 == t.fighterObject.sex && 6 == d && (d = 7),
-                            t instanceof Minion && gd.player.getSetState(2010) || SceneEffectManager.Instance.addEffect(c.effect, null, t.x, t.y, 1 == c.pos ? 7 : 5, 1, c.delaytime, t.dir, e._needSound ? d : null, null, c.scale, c.x, c.y, null, e._attantion)
-                        }
-                    } else
-                        1 == c.type ? (r || (r = []),
-                        r.push(c)) : 2 == c.type && (i = c)
-                }
-                if (e.targetEffect = r,
-                i && t) {
-                    e.moving = !0,
-                    e.bindex = Math.ceil(1e6 * Math.random());
-                    var p = SceneEffectManager.Instance.addSkillBullet(e.id, i.effect, t.x, t.y - GameDefine.SKILL_HitTestY, e.target, e.targetX, e.targetY, 1 == i.pos ? 7 : 5, -1, i.delaytime, void 0, e._needSound ? i.sound : null, null, i.scale, i.x, i.y);
-                    p.bindex = e.bindex,
-                    p || e.flyComplete()
-                } else
-                    e.moving = !1,
-                    e.playTargetEffects()
-            } else
-                e.targetEffect = void 0
-        }
-    }
-    ,
-    e.prototype.flyComplete = function(e) {
-        void 0 === e && (e = 0),
-        this.releaseTime = GameTime.Instance.totalGameTime,
-        this.moving = !1,
-        this.playTargetEffects(GameDefine.SKILL_HitTestY + e)
-    }
-    ,
-    e.prototype.playTargetEffects = function(e) {
-        void 0 === e && (e = 0);
-        var t = this;
-        if (t.targetEffect)
-            for (var i = 0, r = t.targetEffect; i < r.length; i++) {
-                var a = r[i];
-                1 == a.param || (t.target && 1 != t.config.notargeteff ? SceneEffectManager.Instance.addEffect(a.effect, t.target, t.targetX, t.targetY - e, 1 == a.pos ? 7 : 5, 1, a.delaytime, void 0, t._needSound ? a.sound : null, null, a.scale, a.x, a.y, a.rotation, t._attantion) : SceneEffectManager.Instance.addEffect(a.effect, null, t.targetX, t.targetY - e, 1 == a.pos ? 7 : 5, 1, a.delaytime, void 0, t._needSound ? a.sound : null, null, a.scale, a.x, a.y, a.rotation, t._attantion))
-            }
-    }
-    ,
-    e.prototype.update = function(e) {
-        var t = this;
-        t.end ? (SkillManager.Instance.readyToDie(this),
-        t.enabled = !1) : t.moving || e.totalGameTime > t.config.hurtDelay + t.releaseTime && (t.hurtList ? (t.playHurtList(t.hurtList, e),
-        t.end = !0) : e.totalGameTime > t.config.hurtDelay + t.releaseTime + 5e3 && (t.end = !0))
-    }
-    ,
-    e.prototype.delayHurts = function(e, t) {
-        var i = this;
-        i.hurtList = e,
-        i.addBufferList(t),
-        null == i.hurtList && (i.end = !0)
-    }
-    ,
-    e.prototype.addBufferList = function(e) {
-        if (null != e)
-            for (var t = emIns.getAllEntity(), i = 0, r = e; i < r.length; i++) {
-                var a = r[i]
-                  , n = t[a.targetId.toString()];
-                n && (ARpgBuffManager.Instance.addBuff(n, a),
-                void 0 != cm.buff[a.buffid].piaozi && cm.buff[a.buffid].piaozi > 0 && n.showBloodEffect(0, 0, cm.buff[a.buffid].piaozi))
-            }
-    }
-    ,
-    e.prototype.playHurtList = function(e, t) {
-        if (e) {
-            for (var i = this, r = emIns.getAllEntity(), a = 0, n = [], o = 0, s = e; o < s.length; o++) {
-                var l = s[o];
-                if (null != l.id) {
-                    a++;
-                    var c = r[l.id.toString()];
-                    if ((0 != l.plus || 0 != l.hurt || 0 != l.effectValue) && c && c.enabled) {
-                        if (i.targetEffect && i.targetEffect)
-                            for (var d = 0, p = i.targetEffect; d < p.length; d++) {
-                                var u = p[d];
-                                1 == u.param && SceneEffectManager.Instance.addEffect(u.effect, c, c.x, c.y, 1 == u.pos ? 7 : 5, 1, u.delaytime, void 0, i._needSound ? u.sound : null, null, u.scale, u.x, u.y, u.rotation, i._attantion)
-                            }
-                        var g = c.gameObject;
-                        if (g.delayhp = g.truehp,
-                        0 != l.hurt) {
-                            var f = i.from && i.from.fighterObject && 1 == i.from.fighterObject.group;
-                            c.setBlood(g.delayhp, c.gameObject.maxHp, f)
-                        }
-                        if (0 != l.inner && c.setInner(g.delayInner, g.maxInner, !0, g.trueHushen),
-                        c._entityAI.hpChanged(c),
-                        0 != g.delayhp || g.isDead || (n.push(c),
-                        g.isDead = !0),
-                        gd.player.getSetState(1171)) {
-                            if (i.from && i.from.gameObject && 1 == i.from.gameObject.group) {
-                                var h = cm.damage[l.plus];
-                                h && 1 == h.shock && GameSceneManager.Instance.curInstance.shake()
-                            }
-                        } else if (i.from && i.from.gameObject && 1 != i.from.gameObject.group && 1 != g.group)
-                            continue;
-                        if (i._showHurt && i.from && i.from.gameObject) {
-                            var m = 0;
-                            if (i.from && i.from.enabled && (i.from.x > c.x ? m = 1 : i.from.x < c.x && (m = 2)),
-                            (1 == c.gameObject.group || this.from && this.from.gameObject && 1 == this.from.gameObject.group || this.target && this.target.gameObject && 1 == this.target.gameObject.group) && c.showBloodEffect(l.effectValue, m, l.plus, a),
-                            this.from && this.from.gameObject && 1 == this.from.gameObject.group) {
-                                var v = l.plus;
-                                if (1 == c.gameObject.group) {
-                                    var h = cm.damage[v];
-                                    if (null == h)
-                                        return;
-                                    v = h.side
-                                }
-                                var y = cm.damage[v];
-                                y && y.effectid > 0 && SceneEffectManager.Instance.addEffect(y.effectid, c, c.x, c.y, 11, 1, 0, void 0, null, null)
-                            }
-                        }
-                    }
-                }
-            }
-            n.forEach(function(e) {
-                e.changeFSMState(EntityDeadFsm.Instance)
-            })
-        }
-    }
-    ,
-    e.prototype.doDelay = function(e) {
-        e && (e._entityAI ? e.changeFSMState(EntityDeadFsm.Instance) : emIns.destoryEntity(e.uid))
-    }
-    ,
-    e.prototype.dispose = function() {
-        var e = this;
-        if (e.enabled = !1,
-        e.targetEffect = void 0,
-        e.from = void 0,
-        e.target = void 0,
-        e.targetX = void 0,
-        e.targetY = void 0,
-        e.skillid = void 0,
-        e.hurtList) {
-            for (var t = 0, i = e.hurtList; t < i.length; t++) {
-                var r = i[t];
-                r.dispose()
-            }
-            e.hurtList = null
-        }
-        SkillManager.Instance.returnSkill(this)
-    }
-    ,
-    e
-}();
-__reflect(SkillBase.prototype, "SkillBase", ["IUpdateable"]);
-var ResUrl = function() {
-    function e() {}
-    return e.url = function(t, i, r, a) {
-        void 0 === i && (i = 0),
-        void 0 === r && (r = void 0),
-        void 0 === a && (a = e.PNGExt);
-        var n = ""
-          , o = !0
-          , s = ""
-          , l = t
-          , c = ""
-          , d = "";
-        if (js_gameVars.isAdroid && e.modelName)
-            switch (i) {
-            case 0:
-                var p = e.modelName.model;
-                p && p[r] && p[r][t] && (o = !1,
-                c = p[r][t]);
-                break;
-            case 3:
-                var u = e.modelName.map;
-                u && u[r] && u[r][t] && (o = !1,
-                c = u[r][t]);
-                break;
-            case 15:
-                var g = e.modelName.audio;
-                g && g[t + ".mp3"] && (o = !1,
-                c = g[t + ".mp3"]);
-                break;
-            case 54:
-            case 9:
-            case 21:
-            case 8:
-                var f = e.modelName.tool;
-                f && f[r] && f[r][t + ".png"] && (o = !1,
-                c = f[r][t + ".png"])
-            }
-        if (js_gameVars.isAdroid)
-            switch (i) {
-            case 58:
-                o = !1
-            }
-        switch (i) {
-        case 0:
-            n = e.Model + r,
-            d = "/" + t;
-            break;
-        case 3:
-            n = e.MapBackGround + r,
-            d = "/" + t;
-            break;
-        case 6:
-            n = e.MiniMapGround + t + e.JPGExt;
-            break;
-        case 8:
-            gd.player.platChangeAssets && constants.platChangeAssetsIcon[t] && (t = constants.platChangeAssetsIcon[t]),
-            n = e.ToolIcon + t + e.PNGExt;
-            break;
-        case 40:
-            n = e.JueXing + t + e.PNGExt;
-            break;
-        case 7:
-            n = l;
-            break;
-        case 13:
-            return l = e.Data + t + e.ConfigDataBinExt;
-        case 14:
-            return l = e.Data + t + e.ConfigZipExt + e.defaultVersion;
-        case 12:
-            return l = e.Data + t + e.ConfigDataExt;
-        case 10:
-            n = e.HeadIcon + t + e.PNGExt;
-            break;
-        case 15:
-            var h = !0;
-            150 == Vars.platform && (h = !1),
-            n = Capability.mobileUI || 1 == Vars.client || 3 == Vars.client || h ? e.AudioIcon + t + e.mp3Ext : e.AudioIcon + t + e.AudioExt;
-            break;
-        case 9:
-            n = e.SkillIcon + t + a;
-            break;
-        case 11:
-            n = e.ShowIcon + t + e.PNGExt;
-            break;
-        case 16:
-            n = e.UIModel + t + e.UIModelExt;
-            break;
-        case 17:
-            n = e.UIModel + t + e.JsonExt;
-            break;
-        case 18:
-            n = e.ActiveBtn + t + e.PNGExt;
-            break;
-        case 19:
-            n = e.MenuBtn + t + e.PNGExt;
-            break;
-        case 20:
-            n = e.Way + t + e.PNGExt;
-            break;
-        case 21:
-            n = e.Title + t + e.PNGExt;
-            break;
-        case 62:
-            n = e.Huiji + t + e.PNGExt;
-            break;
-        case 23:
-            n = e.NpcTitle + t + e.PNGExt;
-            break;
-        case 22:
-            n = e.Activity + t + a;
-            break;
-        case 24:
-            n = e.Exhibition + t + a;
-            break;
-        case 25:
-            n = e.TIANFU_CARD + t + a;
-            break;
-        case 26:
-            n = e.SHENQI + t + e.PNGExt;
-            break;
-        case 27:
-            n = e.JUNXIAN + t + e.PNGExt;
-            break;
-        case 28:
-            n = e.WODERFUL + t + e.PNGExt;
-            break;
-        case 29:
-            n = e.SHENLONG + t + e.PNGExt;
-            break;
-        case 30:
-            n = e.TUJIAN + t + e.PNGExt;
-            break;
-        case 31:
-            n = e.VIP + t + e.PNGExt;
-            break;
-        case 32:
-            n = e.DailyIcon + t + e.PNGExt;
-            break;
-        case 33:
-            n = e.DailyActivityIcon + t + e.PNGExt;
-            break;
-        case 34:
-            n = e.MapTitle + t + e.PNGExt;
-            break;
-        case 35:
-            n = e.Activitypic + t + a;
-            break;
-        case 36:
-            n = e.Activitypage + t + e.PNGExt;
-            break;
-        case 38:
-            n = e.FuliRetrieve + t + e.PNGExt;
-            break;
-        case 39:
-            n = e.Shenbing + t + e.PNGExt;
-            break;
-        case 5:
-            n = e.Coin + t + e.PNGExt;
-            break;
-        case 41:
-            n = e.AdvanceTitle + t + e.PNGExt;
-            break;
-        case 42:
-            n = e.huanshowName + t + e.PNGExt;
-            break;
-        case 43:
-            n = e.wingName + t + e.PNGExt;
-            break;
-        case 44:
-            n = e.bagua + t + e.PNGExt;
-            break;
-        case 45:
-            n = e.Talent + t + e.PNGExt;
-            break;
-        case 46:
-            n = e.QrCode + t + e.PNGExt;
-            break;
-        case 47:
-            n = e.SoulPet + t + e.PNGExt;
-            break;
-        case 48:
-            n = e.LongHuang + t + e.PNGExt;
-            break;
-        case 49:
-            n = e.MeiNv + t + e.JPGExt;
-            break;
-        case 60:
-            n = e.SuperVipEwm + t + e.JPGExt;
-            break;
-        case 50:
-            n = e.Wenchangge + t + e.PNGExt;
-            break;
-        case 51:
-            n = e.Wanfayugao + t + e.JPGExt;
-            break;
-        case 52:
-            n = e.Touzi + t + e.PNGExt;
-            break;
-        case 53:
-            n = e.Master + t + e.PNGExt;
-            break;
-        case 54:
-            gd.player.platChangeAssets && constants.platChangeAssetsFashion[t] && (t = constants.platChangeAssetsFashion[t]),
-            n = e.Fashion + t + e.PNGExt;
-            break;
-        case 55:
-            n = e.ZhuHun + t + e.PNGExt;
-            break;
-        case 56:
-            n = e.BIG_HEAD + t + e.JPGExt;
-            break;
-        case 37:
-            n = e.ActivityTitle + t + e.PNGExt;
-            break;
-        case 57:
-            n = e.Scene_Effect + t + e.JsonExt;
-            break;
-        case 58:
-            n = e.NTILE_DATA + t + e.ConfigDataBinExt;
-            break;
-        case 59:
-            n = e.NTILE_MAP + t;
-            break;
-        case 61:
-            n = e.ZhanHun + t + e.PNGExt;
-            break;
-        case 63:
-            n = e.WeiWang + t + e.PNGExt;
-            break;
-        case 64:
-            n = e.ZhenFaPifu + t + e.PNGExt;
-            break;
-        case 65:
-            n = e.ZhenFaPifuName + t + e.PNGExt;
-            break;
-        case 66:
-            n = e.QiShiErBian + t + e.PNGExt;
-            break;
-        case 67:
-            n = e.QiShiErBianName + t + e.PNGExt;
-            break;
-        case 68:
-            n = e.XINGPANNAME + t + e.PNGExt;
-            break;
-        case 69:
-            n = e.ASTROLABE + t + e.JPGExt;
-            break;
-        case 70:
-            n = e.JINGJIENAME + t + e.JPGExt;
-            break;
-        case 71:
-            n = e.GONGZHONGHAO + t + e.PNGExt;
-            break;
-        case 72:
-            n = e.RedEnvelope + t + e.PNGExt;
-            break;
-        case 73:
-            n = e.DouChaRw + t + e.PNGExt;
-            break;
-        case 74:
-            n = e.KAPIAN + t + e.PNGExt;
-            break;
-        case 75:
-            n = e.TIANF + t + e.PNGExt;
-            break;
-        case 76:
-            n = e.XIALV + t + e.PNGExt;
-            break;
-        case 77:
-            n = e.KitchenGod + t + e.PNGExt;
-            break;
-        case 78:
-            n = e.QIPAO + t + e.PNGExt
-        }
-        if (this.NoCache)
-            l = e.ImageServer + n + d + e.defaultVersion;
-        else if (o)
-            cm.version[n + d] ? (s = cm.version[n + d] + "/",
-            l = e.ImageServer + s + n + d + e.defaultVersion) : cm.version[n] ? (s = cm.version[n] + "/",
-            l = e.ImageServer + s + n + d + e.defaultVersion) : l = e.ImageServer + s + n + d + e.defaultVersion;
-        else if (js_gameVars.iosResource) {
-            var m = d.split(".");
-            l = js_gameVars.iosResource + "/" + js_gameVars.iosResource + c + "." + m[1]
-        } else
-            l = "severResource/" + n + d + e.defaultVersion;
-        return l
-    }
-    ,
-    e.getSourceID = function(e, t, i) {
-        return 1e3 * e + 10 * t + i
-    }
-    ,
-    e.MapBackGround = "map/",
-    e.MiniMapGround = "minimap/",
-    e.JueXing = "icon/juexing/",
-    e.Model = "model/",
-    e.ddsModel = "ddsmodel/",
-    e.PvrModel = "pvrmodel/",
-    e.PvrMap = "pvrmap/",
-    e.ToolIcon = "icon/tool/",
-    e.HeadIcon = "icon/head/",
-    e.AudioIcon = "audio/",
-    e.SkillIcon = "icon/skills/",
-    e.ShowIcon = "icon/show/",
-    e.UIModel = "uiModel/",
-    e.ActiveBtn = "icon/actbtn/",
-    e.MenuBtn = "icon/menubtn/",
-    e.Way = "icon/way/",
-    e.Title = "icon/title/",
-    e.Huiji = "icon/huiji/",
-    e.NpcTitle = "icon/npctitle/",
-    e.Exhibition = "icon/exhibition/",
-    e.MINIMAP_ATLAS = "minimap/minimaps",
-    e.TIANFU_CARD = "icon/tianfu/",
-    e.SHENQI = "icon/shenqi/",
-    e.JUNXIAN = "icon/junxian/",
-    e.WODERFUL = "icon/xianshijingcai/",
-    e.SHENLONG = "icon/shenlong_tower/",
-    e.TUJIAN = "icon/tujian/",
-    e.VIP = "icon/vip/",
-    e.DailyIcon = "icon/daily/",
-    e.DailyActivityIcon = "icon/dailyicon/",
-    e.MapTitle = "icon/maptitle/",
-    e.Activitypic = "icon/activity_pic/",
-    e.Activitypage = "icon/activity_page/",
-    e.FuliRetrieve = "icon/ziyuanzhaohui/",
-    e.Shenbing = "icon/shenbing/",
-    e.Coin = "icon/coin/",
-    e.AdvanceTitle = "icon/huodongyugao/",
-    e.huanshowName = "icon/huanshou/",
-    e.wingName = "icon/guangyi/",
-    e.bagua = "icon/bagua/",
-    e.Talent = "icon/talent/",
-    e.QrCode = "icon/erweima/",
-    e.SoulPet = "icon/lingchong/",
-    e.LongHuang = "icon/longhuang/",
-    e.MeiNv = "icon/meinv/",
-    e.Wenchangge = "icon/cangpin/",
-    e.Wanfayugao = "icon/wanfayugao/",
-    e.Touzi = "icon/touzi/",
-    e.Master = "icon/master/",
-    e.Fashion = "icon/fashion/",
-    e.ZhuHun = "icon/zhuhun/",
-    e.BIG_HEAD = "icon/head_big/",
-    e.ActivityTitle = "icon/activity_title/",
-    e.Scene_Effect = "scene_effect/",
-    e.NTILE_DATA = "tilemap/tiledata/",
-    e.NTILE_MAP = "tilemap/",
-    e.SuperVipEwm = "icon/chaojihuiyuan/",
-    e.ZhanHun = "icon/zhanhun/",
-    e.WeiWang = "icon/weiming/",
-    e.ZhenFaPifu = "icon/zhenfapifu/",
-    e.ZhenFaPifuName = "icon/zhenfapifuname/",
-    e.QiShiErBian = "icon/qishierbian/",
-    e.QiShiErBianName = "icon/qsebname/",
-    e.XINGPANNAME = "icon/xingpanname/",
-    e.ASTROLABE = "icon/astrolabe/",
-    e.JINGJIENAME = "icon/jingjie/",
-    e.GONGZHONGHAO = "icon/gongzhonghao/",
-    e.RedEnvelope = "icon/hongbao/",
-    e.DouChaRw = "icon/doucharenwu/",
-    e.KAPIAN = "icon/kapian/",
-    e.TIANF = "icon/tianf/",
-    e.XIALV = "icon/xialv/",
-    e.KitchenGod = "icon/chushen/",
-    e.QIPAO = "icon/qipao/",
-    e.Activity = "icon/activity/",
-    e.Data = "http://192.168.5.66:8082/",
-    e.ImageServer = "http://192.168.5.66:8081/",
-    e.ConfigDataExt = ".csv",
-    e.ConfigDataBinExt = ".bin",
-    e.ConfigZipExt = ".dat",
-    e.AudioExt = ".wav",
-    e.mp3Ext = ".mp3",
-    e.UIModelExt = ".png",
-    e.PNGExt = ".png",
-    e.JPGExt = ".jpg",
-    e.JsonExt = ".json",
-    e.defaultVersion = "",
-    e.NoCache = !1,
-    e.modelName = {},
-    e.resName = {
-        8: "tool",
-        9: "skills",
-        21: "title",
-        54: "fashion"
-    },
-    e.mgResName = {},
-    e
-}();
-__reflect(ResUrl.prototype, "ResUrl");
 var ArpgInstanceData = function(e) {
     function t() {
         var t = e.call(this) || this;
@@ -9402,7 +9387,11 @@ var ARPGInstanceBase = function(e) {
                 l = Logic.getEquipId(i.fighterObject.sex, l, 4),
                 o = Logic.showWeapon(d) ? Logic.getEquipEffectId(i.fighterObject.sex, r, i.fighterObject.legendWeaponId ? 0 : i.fighterObject.fashionWeaponId) : 0,
                 i.updateWing(s),
-                i.updateEquipments(r, a, n, l, o)
+                i.updateEquipments(r, a, n, l, o);
+                break;
+            case 12:
+                1 == e.objType && (i.playerObject.FishId = e.fashionId,
+                i.updateFish())
             }
         }
     }
@@ -9927,6 +9916,13 @@ var ARPGInstanceBase = function(e) {
     t.prototype.updatePlayerInvisibale = function(e) {
         var t = emIns.getEntity(e.rid.toString());
         t && (t.setInvisible(e.invisible),
+        gd.player.sendNotif(385))
+    }
+    ,
+    t.prototype.updatePlayerInvisibale2 = function(e) {
+        var t = emIns.getAllPlayer()[e.rid.toString()];
+        t && (t.setInvisible2 && t.setInvisible2(e.stealthToPlayer),
+        t.uid == emIns.firstPlayer._entityTargetId && e.stealthToPlayer && emIns.selectEntity(),
         gd.player.sendNotif(385))
     }
     ,
@@ -10707,114 +10703,195 @@ var ModelBase = function() {
     e
 }();
 __reflect(ModelBase.prototype, "ModelBase", ["ICMDHandler", "ISubject"]);
-var ActivityGuessNumFuli = function(e) {
+var ActivityHelpGift = function(e) {
     function t() {
-        return e.call(this) || this
+        var t = e.call(this) || this;
+        return t.timeid = 0,
+        t
     }
     return __extends(t, e),
     t.prototype.createChildren = function() {
-        this.uiSkin("ActivityGuessNumFuliSkin")
+        this.uiSkin("ActivityHelpGiftSkin")
     }
     ,
     t.prototype.myCreated = function() {
         var e = this;
-        e.showList = new eui.ArrayCollection,
-        e.list.itemRenderer = GuessNumFuliRender,
-        e.list.dataProvider = e.showList
-    }
-    ,
-    t.prototype.update = function(e, t) {
-        var i = this;
-        switch (e) {
-        case 172:
-            i.updateInfo()
-        }
+        e.listArr_hz = new eui.ArrayCollection,
+        e.items.itemRenderer = BagEquipRender,
+        e.items.dataProvider = e.listArr_hz,
+        e.addAutoEventListener(e.onClickHandler, e.btn_go)
     }
     ,
     t.prototype.refr = function() {
         e.prototype.refr.call(this);
         var t = this;
-        t.bindSubject(gd.activity),
         t.actMsg = t.opd.data,
-        t.txt_desc.textFlow = Html.toEle(ActivityTimeUtil.getActivtyDesc(t.actMsg)),
-        t.updateInfo()
+        t.bindSubject(gd.store, gd.bag),
+        gd.activity.isFirstOpenLim[t.actMsg.id] || (gd.activity.isFirstOpenLim[t.actMsg.id] = !0,
+        gd.angler.sendNotif(108)),
+        t.showDesc(),
+        t.updateInfo(),
+        t.showCost(),
+        t.updateBtnState(),
+        t.checkStoreCondition1()
+    }
+    ,
+    t.prototype.onClickHandler = function() {
+        var e = this;
+        450 == e.actMsg.activityType ? gd.store.commonBuy(e.storeCfg, 1) : e.storeCfg && uim.show(711, new UIData({
+            storeId: e.storeCfg.id,
+            initNum: 1
+        }))
+    }
+    ,
+    t.prototype.showDesc = function() {
+        var e = this;
+        if (e.actMsg) {
+            e.txt_desc.textFlow = Html.toEle(ActivityTimeUtil.getActivtyDesc(e.actMsg));
+            var t = ActivityTimeUtil.checkActivityLastTime(e.actMsg);
+            t && (450 == e.actMsg.activityType ? e.txt_time.visible = !1 : (e.txt_time.textFlow = Html.toEle(Html.str(t.timelimit, Logic.getCol(50))),
+            e.checkTime(t.timedis, t.endtime)))
+        }
+    }
+    ,
+    t.prototype.showCost = function() {
+        var e = this
+          , t = e.storeCfg;
+        if (e.img_red.visible = !0,
+        e.txt_price1.visible = e.img_price1.visible = !1,
+        e.img_price0.visible = !0,
+        t) {
+            var i = t.moneyType
+              , r = cm.item[i];
+            e.img_price0.source = e.img_price1.source = ResUrl.url(r[19], 8),
+            t.originalPrice ? (e.txt_price1.visible = e.img_price1.visible = !0,
+            e.txt_price0.text = t.originalPrice + "",
+            e.txt_price1.textFlow = Html.toEle(Html.str(t.price + "", Logic.getCol(50)))) : (e.img_red.visible = !1,
+            e.txt_price0.textFlow = Html.toEle(Html.str(t.price + "", Logic.getCol(50))))
+        }
+    }
+    ,
+    t.prototype.getStoreCfg = function(e) {
+        var t = null;
+        if (!e || 0 == e.length)
+            return t;
+        for (var i = 0, r = e.length; r > i; i++) {
+            var a = cm.store[e[i]];
+            if (a && Logic.checkCondition(a.showCondition)) {
+                t = a;
+                break
+            }
+        }
+        return t
     }
     ,
     t.prototype.updateInfo = function() {
         var e = this;
-        e.showList.removeAll();
-        var t = cm.activitygoals[e.actMsg.id];
-        t.sort(e.compare),
-        t.forEach(function(t) {
-            e.showList.addItem({
-                config: t,
-                msg: e.actMsg
-            })
+        if (e.actMsg) {
+            e.listArr_hz.removeAll();
+            var t = e.actMsg.param.splitNum("&");
+            if (e.storeCfg = e.getStoreCfg(t),
+            e.storeCfg) {
+                var i = e.storeCfg.itemId;
+                if (i) {
+                    var r = [];
+                    r = BoxUtil.getItemOrBox(i),
+                    e.listArr_hz.source = r
+                }
+            }
+        }
+    }
+    ,
+    t.prototype.updateBtnState = function() {
+        var e = this
+          , t = gd.store.getLimitCount(e.storeCfg)
+          , i = parseInt(e.storeCfg.price)
+          , r = gd.bag.getCount(e.storeCfg.moneyType, !0);
+        e.updateUIEff(e.btn_go, r >= i && t > 0 ? UIEffect.BUTTON_EFF_RED : null),
+        e.btn_go.filters = 0 >= t ? [FilterUtil.FILTER_GRAY()] : null,
+        e.btn_go.label = 0 >= t ? "已售罄" : "立即购买",
+        e.btn_go.touchEnabled = 0 >= t ? !1 : !0,
+        450 == e.actMsg.activityType && 0 >= t && gd.activity.sendNotif(170, {
+            acttype: e.actMsg.activityType
         })
     }
     ,
-    t.prototype.compare = function(e, t) {
-        var i = gd.activity.getActivityBean(e.id, e.goal, e.type)
-          , r = gd.activity.getActivityBean(t.id, t.goal, t.type)
-          , a = 2
-          , n = 2;
-        return i && (a = 2,
-        1 == i.rewardState ? a = 1 : 2 == i.rewardState && (a = 3)),
-        r && (n = 2,
-        1 == r.rewardState ? n = 1 : 2 == r.rewardState && (n = 3)),
-        a > n ? 1 : n > a ? -1 : e.type > t.type ? 1 : e.type < t.type ? -1 : e.goal > t.goal ? 1 : e.goal < t.goal ? -1 : 0
+    t.prototype.checkStoreCondition1 = function() {
+        var e = this;
+        e.txt_con.visible = !1;
+        var t = gd.store.getLimitCount(e.storeCfg);
+        e.storeCfg.showCondition1 && !Logic.checkCondition(e.storeCfg.showCondition1) && t > 0 && (e.txt_con.visible = !0,
+        e.txt_con.textFlow = Html.toEle(Logic.getConditionListShow(e.storeCfg.showCondition1)),
+        e.btn_go.enabled = !1,
+        e.btn_go.filters = [FilterUtil.FILTER_GRAY()],
+        e.updateUIEff(e.btn_go, null))
     }
+    ,
+    t.prototype.checkTime = function(e, t) {
+        var i = this;
+        void 0 === t && (t = 0);
+        var r = this;
+        e > 0 ? (t > 0 && (r.endTime = t,
+        0 == r.timeid && (r.timeid = egret.setInterval(function() {
+            var e = Math.ceil(i.endTime - (gd.serv.servertime + egret.getTimer()) / 1e3);
+            i.checkTime(e)
+        }, r, 1e3))),
+        e > 86400 && r.actMsg.showOverTime >= 999 ? (e %= 86400,
+        r.txt_time.textFlow = Html.toEle(Html.str("活动倒计时：", Logic.getCol(46)) + DateUtil.getLeftTimeStr2(e))) : r.txt_time.textFlow = Html.toEle(Html.str("活动倒计时：", Logic.getCol(46)) + DateUtil.getLeftTimeStr3(e))) : (r.clearTime(),
+        r.txt_time.textFlow = Html.toEle(Html.str("活动倒计时：", Logic.getCol(46)) + "活动已结束"))
+    }
+    ,
+    t.prototype.clearTime = function() {
+        var e = this;
+        e.timeid > 0 && (egret.clearInterval(e.timeid),
+        e.timeid = 0)
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 78:
+            i.setEff(),
+            i.showCost(),
+            i.updateBtnState(),
+            i.checkStoreCondition1();
+            break;
+        case 11:
+            i.showCost(),
+            i.updateBtnState(),
+            i.checkStoreCondition1()
+        }
+    }
+    ,
+    t.prototype.setEff = function() {
+        var e = this;
+        if (e.items && e.items.numChildren > 0)
+            for (var t = 0; t < e.items.numChildren; t++) {
+                var i = e.items.getChildAt(t);
+                if (i) {
+                    var r = i.localToGlobal(0, 0);
+                    ItemEffects.Instance.add({
+                        icon: i.data.config[19],
+                        x: r.x,
+                        y: r.y
+                    })
+                }
+            }
+    }
+    ,
+    t.prototype.closed = function() {}
     ,
     t.prototype.dispose = function() {
         e.prototype.dispose.call(this);
         var t = this;
-        t.isInit() && (t.btnList && t.btnList.removeAll(),
-        t.showList && t.showList.removeAll(),
-        t.showList = null)
+        t.clearTime(),
+        t.listArr_hz.removeAll(),
+        t.listArr_hz = null
     }
     ,
     t
 }(UIBase);
-__reflect(ActivityGuessNumFuli.prototype, "ActivityGuessNumFuli");
-var GuessNumFuliRender = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.onClickHandler = function(e) {
-        var t = this;
-        t._init && t.data && net.ActivityModel.ins().send1(t.data.msg.id, t.data.config.type, t.data.config.goal, 1)
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        var e = this;
-        if (e._init && e.data) {
-            e.img_bg.source = "guessnum_skuang";
-            var t = e.data.config
-              , i = cm.goals[t.goal];
-            e.status = 0,
-            e.showList.removeAll();
-            var r = BoxUtil.getItemOrBox(t.showReward);
-            for (var a in r)
-                e.showList.addItem(r[a]);
-            var n = gd.activity.getActivityBean(t.id, t.goal, t.type);
-            e.txt_limit.textFlow = Html.toEle(t.goalShow + Html.str("(" + n.now + "/" + i.count + ")", Logic.getCol(n.now >= i.count ? 50 : 49))),
-            e.btn_get.visible = !0,
-            e.btn_get.enabled = !0,
-            e.btn_get.filters = null,
-            e.txt_ylq.text = "",
-            n && (2 === n.rewardState ? (e.btn_get.visible = !1,
-            e.txt_ylq.textFlow = Html.getHTML("已领取", Logic.getCol(46))) : 1 == n.rewardState ? (e.btn_get.label = Lang.get("领取奖励"),
-            e.status = 1) : 0 == n.rewardState && (e.btn_get.label = Lang.get("不可领取"),
-            e.btn_get.enabled = !1,
-            e.btn_get.filters = [FilterUtil.FILTER_GRAY()])),
-            e._uiEff.setEff(e.btn_get, 1 == e.status ? UIEffect.BUTTON_EFF_RED : null)
-        }
-    }
-    ,
-    t
-}(LevelAlthleticsNewRender);
-__reflect(GuessNumFuliRender.prototype, "GuessNumFuliRender");
+__reflect(ActivityHelpGift.prototype, "ActivityHelpGift");
 var StoreFastBuyRender = function(e) {
     function t() {
         var t = e.call(this) || this
@@ -11314,7 +11391,10 @@ var PlayerObject = function(e) {
         e.yellowBean = null,
         e.lingbaoType = null,
         e.wanka = null,
-        e.invisible = !1
+        e.invisible = !1,
+        e.invisible2 = !1,
+        e.isCatchFish = !1,
+        e.FishId = null
     }
     ,
     t
@@ -11415,7 +11495,11 @@ var MainUICtrlBase = function(e) {
         e.caijiPro && (e.caijiPro.hide(),
         e.caijiPro.removeSelf(),
         e.caijiPro.preDis(),
-        e.caijiPro = null)
+        e.caijiPro = null),
+        e.fishPro && (e.fishPro.hide(),
+        e.fishPro.removeSelf(),
+        e.fishPro.preDis(),
+        e.fishPro = null)
     }
     ,
     t.prototype.update = function(e, t) {
@@ -11510,7 +11594,20 @@ var MainUICtrlBase = function(e) {
         case 809:
             i.autoEff && (i.autoEff.removeSelf(),
             mStage.addChild(i.autoEff)),
-            i.doGM3 = !0
+            i.doGM3 = !0;
+            break;
+        case 1028:
+            i.showFishPro(t);
+            break;
+        case 1029:
+        case 389:
+            i.showFishPro(t, !0);
+            break;
+        case 1025:
+            i.showOrHideFish(!0, t);
+            break;
+        case 1026:
+            i.showOrHideFish(!1, null)
         }
     }
     ,
@@ -11666,6 +11763,32 @@ var MainUICtrlBase = function(e) {
         var e = this
           , t = gd.player.main_show;
         e.activeButtons.changeShowOrHide(t)
+    }
+    ,
+    t.prototype.showOrHideFish = function(e, t) {
+        var i = this;
+        e ? i.fishPro || (i.fishPro = new FishProgressCtrl,
+        i.addChild(i.fishPro),
+        i.fishPro.show(new UIData(t))) : i.fishPro && (i.fishPro.removeSelf(),
+        i.fishPro.preDis(),
+        i.fishPro.closeUI(),
+        i.fishPro.dispose(),
+        i.fishPro = null)
+    }
+    ,
+    t.prototype.showFishPro = function(e, t) {
+        void 0 === t && (t = !1);
+        var i = this;
+        t ? i.fishPro && "捕鱼中" == i.fishPro.typeStr && (net.CatchfishModel.ins().send5(),
+        i.fishPro.resetState(!0)) : (i.fishPro || (i.fishPro = new FishProgressCtrl,
+        i.addChild(i.fishPro)),
+        i.fishPro.showProgress(e))
+    }
+    ,
+    t.prototype.checkShowFish = function() {
+        var e = this
+          , t = gd.map.config;
+        t && 98 != t.cls && e.fishPro && e.showOrHideFish(!1, null)
     }
     ,
     t.prototype.showLuoyanchanIcon = function(e) {
@@ -12455,7 +12578,8 @@ var HomeUIDownBase = function(e) {
         e.updateHint(e.btn_soulpet, i.soulPetHint),
         e.updateHint(e.btn_baoshi, i.baoshiHint || i.baoshiHintOnce || i.awakeHint || 1 == i.baoshiCompound || i.lingshiHint || i.lingshiHintOnce || 1 == i.lingshiCompound || i.csbyRedHint || i.cslsRedHint),
         e.updateHint(e.btn_doushen, i.checkOneLeishenHint(1) || i.checkOneLeishenHint(2) || i.checkOneLeishenHint(3) || i.checkOneLeishenHint(5) || i.checkOneLeishenHint(6)),
-        e.updateHint(e.btn_tianfu, i.tianfuHint || i.tianfujxHint)
+        e.updateHint(e.btn_tianfu, i.tianfuHint || i.tianfujxHint),
+        e.updateHint(e.btn_fishpond, i.treasureSSAnger || 1 == i.FishCKHint)
     }
     ,
     t.prototype.updateHint = function(t, i, r, a, n) {
@@ -16796,6 +16920,174 @@ var ActivityFanliRender = function(e) {
     t
 }(LevelAlthleticsRender);
 __reflect(ActivityFanliRender.prototype, "ActivityFanliRender");
+var ActivityFestivalLimited = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.actParams = [],
+        t.timeid = 0,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("ActivityFestivalLimitedSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.itemData = new eui.ArrayCollection,
+        e.list_item.dataProvider = e.itemData,
+        e.list_item.itemRenderer = LimitedItemRenderer,
+        e.addAutoEventListener(e.onClick, e.btn_get, e.img_desc, e.btn_tip)
+    }
+    ,
+    t.prototype.onClick = function(e) {
+        var t = this;
+        switch (e.stopPropagation(),
+        e.currentTarget) {
+        case t.btn_get:
+            var i = new CallBack3(t.callBack,t);
+            AlertDialog.showAlertById(227, i);
+            break;
+        case t.img_desc:
+            t.actMsg && uim.showOrHide(749, new UIData(1503));
+            break;
+        case t.btn_tip:
+            if (t.scfg) {
+                var r = t.scfg.itemId.splitNum("#")
+                  , a = GridFactory.createItemGridVo(r[0], null, r[1]);
+                TipsManager.Instance.showTips(1, a, 4)
+            }
+        }
+    }
+    ,
+    t.prototype.callBack = function(e) {
+        var t = this;
+        e == AlertDialog.AGREE && t.scfg && gd.store.commonBuy(t.scfg, 1)
+    }
+    ,
+    t.prototype.refr = function() {
+        e.prototype.refr.call(this);
+        var t = this;
+        if (t.bindSubject(gd.store, gd.bag),
+        t.actMsg = t.opd.data,
+        t.actMsg) {
+            t.actParams = t.actMsg.param.splitNum("#"),
+            gd.activity.isFirstOpenLim[t.actMsg.id] || (gd.activity.isFirstOpenLim[t.actMsg.id] = !0,
+            gd.angler.sendNotif(108));
+            var i = ActivityTimeUtil.checkActivityLastTime(t.actMsg);
+            i && (t.txt_time.textFlow = Html.toEle(Html.str(i.timelimit, Logic.getCol(50))),
+            t.checkTime(i.timedis, i.endtime)),
+            t.actMsg && t.actMsg.picture && (t.bg.source = ResUrl.url(t.actMsg.picture, 35, null, ResUrl.JPGExt)),
+            t.updateBtn(),
+            t.showEff(),
+            t.showItem()
+        }
+    }
+    ,
+    t.prototype.showItem = function() {
+        var e = this;
+        e.itemData.removeAll();
+        for (var t = 2; t < e.actParams.length; t++)
+            e.itemData.addItem({
+                item: e.actParams[t],
+                actGroup: e.actMsg.group
+            })
+    }
+    ,
+    t.prototype.updateBtn = function() {
+        var e = this;
+        e.scfg = cm.store[e.actParams[0]],
+        e.limitCount = gd.store.getLimitCount(e.scfg),
+        e.limitCount >= 1 || -1 == e.limitCount ? (e.btn_get.label = "立即购买",
+        e.btn_get.touchEnabled = !0,
+        e.btn_get.filters = null) : (e.btn_get.label = "已购买",
+        e.btn_get.touchEnabled = !1,
+        e.btn_get.filters = [FilterUtil.FILTER_GRAY()])
+    }
+    ,
+    t.prototype.showEff = function() {
+        var e = this;
+        e.effect || (e.effect = new UISceneEffectAnimation,
+        e.effect.init(e.grp_Eff, e.actParams[1]))
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 78:
+            i.updateBtn()
+        }
+    }
+    ,
+    t.prototype.checkTime = function(e, t) {
+        var i = this;
+        void 0 === t && (t = 0);
+        var r = this;
+        e > 0 ? (t > 0 && (r.endTime = t,
+        0 == r.timeid && (r.timeid = egret.setInterval(function() {
+            var e = Math.ceil(i.endTime - (gd.serv.servertime + egret.getTimer()) / 1e3);
+            i.checkTime(e)
+        }, r, 1e3))),
+        e > 86400 && r.actMsg.showOverTime >= 999 ? (e %= 86400,
+        r.txt_time.textFlow = Html.toEle("活动倒计时：" + DateUtil.getLeftTimeStr2(e))) : r.txt_time.textFlow = Html.toEle("活动倒计时：" + DateUtil.getLeftTimeStr3(e))) : (r.clearTime(),
+        r.txt_time.textFlow = Html.toEle("活动倒计时：活动已结束"))
+    }
+    ,
+    t.prototype.clearTime = function() {
+        var e = this;
+        e.timeid > 0 && (egret.clearInterval(e.timeid),
+        e.timeid = 0)
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.clearTime(),
+        t.effect && (t.effect.die(),
+        t.effect = null),
+        t.itemData && (t.itemData.removeAll(),
+        t.itemData = null)
+    }
+    ,
+    t
+}(UIBase);
+__reflect(ActivityFestivalLimited.prototype, "ActivityFestivalLimited");
+var LimitedItemRenderer = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.initSkinName = function() {
+        this.skinName = "LimitedItemRendererSkin"
+    }
+    ,
+    t.prototype.toInitUIInfo = function() {
+        var e = this;
+        e.btn.on(TP, e.onClick, e)
+    }
+    ,
+    t.prototype.onClick = function() {
+        var e = this;
+        uim.show(536, new UIData(null,e.actGroup))
+    }
+    ,
+    t.prototype.toInitDataBase = function() {
+        var e = this
+          , t = e.data;
+        e.actGroup = t.actGroup;
+        var i = GridFactory.createItemGridVo(t.item, null, 1);
+        e.item.data = i
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.btn.off(TP, t.onClick, t)
+    }
+    ,
+    t
+}(ItemRendererBase);
+__reflect(LimitedItemRenderer.prototype, "LimitedItemRenderer");
 var ActivityFreeGift = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
@@ -18413,6 +18705,114 @@ var GuessNumRankRender = function(e) {
     t
 }(eui.ItemRenderer);
 __reflect(GuessNumRankRender.prototype, "GuessNumRankRender");
+var ActivityGuessNumFuli = function(e) {
+    function t() {
+        return e.call(this) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("ActivityGuessNumFuliSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.showList = new eui.ArrayCollection,
+        e.list.itemRenderer = GuessNumFuliRender,
+        e.list.dataProvider = e.showList
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 172:
+            i.updateInfo()
+        }
+    }
+    ,
+    t.prototype.refr = function() {
+        e.prototype.refr.call(this);
+        var t = this;
+        t.bindSubject(gd.activity),
+        t.actMsg = t.opd.data,
+        t.txt_desc.textFlow = Html.toEle(ActivityTimeUtil.getActivtyDesc(t.actMsg)),
+        t.updateInfo()
+    }
+    ,
+    t.prototype.updateInfo = function() {
+        var e = this;
+        e.showList.removeAll();
+        var t = cm.activitygoals[e.actMsg.id];
+        t.sort(e.compare),
+        t.forEach(function(t) {
+            e.showList.addItem({
+                config: t,
+                msg: e.actMsg
+            })
+        })
+    }
+    ,
+    t.prototype.compare = function(e, t) {
+        var i = gd.activity.getActivityBean(e.id, e.goal, e.type)
+          , r = gd.activity.getActivityBean(t.id, t.goal, t.type)
+          , a = 2
+          , n = 2;
+        return i && (a = 2,
+        1 == i.rewardState ? a = 1 : 2 == i.rewardState && (a = 3)),
+        r && (n = 2,
+        1 == r.rewardState ? n = 1 : 2 == r.rewardState && (n = 3)),
+        a > n ? 1 : n > a ? -1 : e.type > t.type ? 1 : e.type < t.type ? -1 : e.goal > t.goal ? 1 : e.goal < t.goal ? -1 : 0
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.isInit() && (t.btnList && t.btnList.removeAll(),
+        t.showList && t.showList.removeAll(),
+        t.showList = null)
+    }
+    ,
+    t
+}(UIBase);
+__reflect(ActivityGuessNumFuli.prototype, "ActivityGuessNumFuli");
+var GuessNumFuliRender = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.onClickHandler = function(e) {
+        var t = this;
+        t._init && t.data && net.ActivityModel.ins().send1(t.data.msg.id, t.data.config.type, t.data.config.goal, 1)
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        if (e._init && e.data) {
+            e.img_bg.source = "guessnum_skuang";
+            var t = e.data.config
+              , i = cm.goals[t.goal];
+            e.status = 0,
+            e.showList.removeAll();
+            var r = BoxUtil.getItemOrBox(t.showReward);
+            for (var a in r)
+                e.showList.addItem(r[a]);
+            var n = gd.activity.getActivityBean(t.id, t.goal, t.type);
+            e.txt_limit.textFlow = Html.toEle(t.goalShow + Html.str("(" + n.now + "/" + i.count + ")", Logic.getCol(n.now >= i.count ? 50 : 49))),
+            e.btn_get.visible = !0,
+            e.btn_get.enabled = !0,
+            e.btn_get.filters = null,
+            e.txt_ylq.text = "",
+            n && (2 === n.rewardState ? (e.btn_get.visible = !1,
+            e.txt_ylq.textFlow = Html.getHTML("已领取", Logic.getCol(46))) : 1 == n.rewardState ? (e.btn_get.label = Lang.get("领取奖励"),
+            e.status = 1) : 0 == n.rewardState && (e.btn_get.label = Lang.get("不可领取"),
+            e.btn_get.enabled = !1,
+            e.btn_get.filters = [FilterUtil.FILTER_GRAY()])),
+            e._uiEff.setEff(e.btn_get, 1 == e.status ? UIEffect.BUTTON_EFF_RED : null)
+        }
+    }
+    ,
+    t
+}(LevelAlthleticsNewRender);
+__reflect(GuessNumFuliRender.prototype, "GuessNumFuliRender");
 var GuajiAINew = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
@@ -18714,195 +19114,6 @@ var GuajiAINew = function(e) {
     t
 }(ArpgFirstPlayerAI);
 __reflect(GuajiAINew.prototype, "GuajiAINew");
-var ActivityHelpGift = function(e) {
-    function t() {
-        var t = e.call(this) || this;
-        return t.timeid = 0,
-        t
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        this.uiSkin("ActivityHelpGiftSkin")
-    }
-    ,
-    t.prototype.myCreated = function() {
-        var e = this;
-        e.listArr_hz = new eui.ArrayCollection,
-        e.items.itemRenderer = BagEquipRender,
-        e.items.dataProvider = e.listArr_hz,
-        e.addAutoEventListener(e.onClickHandler, e.btn_go)
-    }
-    ,
-    t.prototype.refr = function() {
-        e.prototype.refr.call(this);
-        var t = this;
-        t.actMsg = t.opd.data,
-        t.bindSubject(gd.store, gd.bag),
-        gd.activity.isFirstOpenLim[t.actMsg.id] || (gd.activity.isFirstOpenLim[t.actMsg.id] = !0,
-        gd.angler.sendNotif(108)),
-        t.showDesc(),
-        t.updateInfo(),
-        t.showCost(),
-        t.updateBtnState(),
-        t.checkStoreCondition1()
-    }
-    ,
-    t.prototype.onClickHandler = function() {
-        var e = this;
-        450 == e.actMsg.activityType ? gd.store.commonBuy(e.storeCfg, 1) : e.storeCfg && uim.show(711, new UIData({
-            storeId: e.storeCfg.id,
-            initNum: 1
-        }))
-    }
-    ,
-    t.prototype.showDesc = function() {
-        var e = this;
-        if (e.actMsg) {
-            e.txt_desc.textFlow = Html.toEle(ActivityTimeUtil.getActivtyDesc(e.actMsg));
-            var t = ActivityTimeUtil.checkActivityLastTime(e.actMsg);
-            t && (450 == e.actMsg.activityType ? e.txt_time.visible = !1 : (e.txt_time.textFlow = Html.toEle(Html.str(t.timelimit, Logic.getCol(50))),
-            e.checkTime(t.timedis, t.endtime)))
-        }
-    }
-    ,
-    t.prototype.showCost = function() {
-        var e = this
-          , t = e.storeCfg;
-        if (e.img_red.visible = !0,
-        e.txt_price1.visible = e.img_price1.visible = !1,
-        e.img_price0.visible = !0,
-        t) {
-            var i = t.moneyType
-              , r = cm.item[i];
-            e.img_price0.source = e.img_price1.source = ResUrl.url(r[19], 8),
-            t.originalPrice ? (e.txt_price1.visible = e.img_price1.visible = !0,
-            e.txt_price0.text = t.originalPrice + "",
-            e.txt_price1.textFlow = Html.toEle(Html.str(t.price + "", Logic.getCol(50)))) : (e.img_red.visible = !1,
-            e.txt_price0.textFlow = Html.toEle(Html.str(t.price + "", Logic.getCol(50))))
-        }
-    }
-    ,
-    t.prototype.getStoreCfg = function(e) {
-        var t = null;
-        if (!e || 0 == e.length)
-            return t;
-        for (var i = 0, r = e.length; r > i; i++) {
-            var a = cm.store[e[i]];
-            if (a && Logic.checkCondition(a.showCondition)) {
-                t = a;
-                break
-            }
-        }
-        return t
-    }
-    ,
-    t.prototype.updateInfo = function() {
-        var e = this;
-        if (e.actMsg) {
-            e.listArr_hz.removeAll();
-            var t = e.actMsg.param.splitNum("&");
-            if (e.storeCfg = e.getStoreCfg(t),
-            e.storeCfg) {
-                var i = e.storeCfg.itemId;
-                if (i) {
-                    var r = [];
-                    r = BoxUtil.getItemOrBox(i),
-                    e.listArr_hz.source = r
-                }
-            }
-        }
-    }
-    ,
-    t.prototype.updateBtnState = function() {
-        var e = this
-          , t = gd.store.getLimitCount(e.storeCfg)
-          , i = parseInt(e.storeCfg.price)
-          , r = gd.bag.getCount(e.storeCfg.moneyType, !0);
-        e.updateUIEff(e.btn_go, r >= i && t > 0 ? UIEffect.BUTTON_EFF_RED : null),
-        e.btn_go.filters = 0 >= t ? [FilterUtil.FILTER_GRAY()] : null,
-        e.btn_go.label = 0 >= t ? "已售罄" : "立即购买",
-        e.btn_go.touchEnabled = 0 >= t ? !1 : !0,
-        450 == e.actMsg.activityType && 0 >= t && gd.activity.sendNotif(170, {
-            acttype: e.actMsg.activityType
-        })
-    }
-    ,
-    t.prototype.checkStoreCondition1 = function() {
-        var e = this;
-        e.txt_con.visible = !1;
-        var t = gd.store.getLimitCount(e.storeCfg);
-        e.storeCfg.showCondition1 && !Logic.checkCondition(e.storeCfg.showCondition1) && t > 0 && (e.txt_con.visible = !0,
-        e.txt_con.textFlow = Html.toEle(Logic.getConditionListShow(e.storeCfg.showCondition1)),
-        e.btn_go.enabled = !1,
-        e.btn_go.filters = [FilterUtil.FILTER_GRAY()],
-        e.updateUIEff(e.btn_go, null))
-    }
-    ,
-    t.prototype.checkTime = function(e, t) {
-        var i = this;
-        void 0 === t && (t = 0);
-        var r = this;
-        e > 0 ? (t > 0 && (r.endTime = t,
-        0 == r.timeid && (r.timeid = egret.setInterval(function() {
-            var e = Math.ceil(i.endTime - (gd.serv.servertime + egret.getTimer()) / 1e3);
-            i.checkTime(e)
-        }, r, 1e3))),
-        e > 86400 && r.actMsg.showOverTime >= 999 ? (e %= 86400,
-        r.txt_time.textFlow = Html.toEle(Html.str("活动倒计时：", Logic.getCol(46)) + DateUtil.getLeftTimeStr2(e))) : r.txt_time.textFlow = Html.toEle(Html.str("活动倒计时：", Logic.getCol(46)) + DateUtil.getLeftTimeStr3(e))) : (r.clearTime(),
-        r.txt_time.textFlow = Html.toEle(Html.str("活动倒计时：", Logic.getCol(46)) + "活动已结束"))
-    }
-    ,
-    t.prototype.clearTime = function() {
-        var e = this;
-        e.timeid > 0 && (egret.clearInterval(e.timeid),
-        e.timeid = 0)
-    }
-    ,
-    t.prototype.update = function(e, t) {
-        var i = this;
-        switch (e) {
-        case 78:
-            i.setEff(),
-            i.showCost(),
-            i.updateBtnState(),
-            i.checkStoreCondition1();
-            break;
-        case 11:
-            i.showCost(),
-            i.updateBtnState(),
-            i.checkStoreCondition1()
-        }
-    }
-    ,
-    t.prototype.setEff = function() {
-        var e = this;
-        if (e.items && e.items.numChildren > 0)
-            for (var t = 0; t < e.items.numChildren; t++) {
-                var i = e.items.getChildAt(t);
-                if (i) {
-                    var r = i.localToGlobal(0, 0);
-                    ItemEffects.Instance.add({
-                        icon: i.data.config[19],
-                        x: r.x,
-                        y: r.y
-                    })
-                }
-            }
-    }
-    ,
-    t.prototype.closed = function() {}
-    ,
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        var t = this;
-        t.clearTime(),
-        t.listArr_hz.removeAll(),
-        t.listArr_hz = null
-    }
-    ,
-    t
-}(UIBase);
-__reflect(ActivityHelpGift.prototype, "ActivityHelpGift");
 var ActivityHonorDial = function(e) {
     function t() {
         var t = e.call(this) || this;
@@ -23193,6 +23404,29 @@ var EntityInfo = function() {
         }
     }
     ,
+    e.prototype.setYinNiIcon = function(e) {
+        var t = this;
+        if (e)
+            if (t.yinniIcon)
+                t.yinniIcon.source = e;
+            else {
+                null == t.yinniIcon && (t.yinniIcon = new eui.Image),
+                t.yinniIcon.source = e;
+                var i = -85;
+                t.yinniIcon.x = -20,
+                t.yinniIcon.y = Math.ceil(i - 100 + 5),
+                t._txt.addChild(t.yinniIcon)
+            }
+        else
+            t.yinniIcon && (t.yinniIcon.source = "",
+            t.yinniIcon.parent && t.yinniIcon.parent.removeChild(t.yinniIcon),
+            t.yinniIcon = null)
+    }
+    ,
+    e.prototype.checkYinNi = function() {
+        return null == this.yinniIcon
+    }
+    ,
     e.prototype.setIcon = function(e) {
         var t = this;
         e ? (null == t._icon && (t._icon = BitmapPool.createBp()),
@@ -23690,6 +23924,8 @@ var EntityInfo = function() {
         t.nameRightIcon = null),
         t.mbtitle && (t.mbtitle.hide(),
         t.mbtitle = null),
+        t.yinniIcon && (t.yinniIcon.source = "",
+        t.yinniIcon = null),
         t._nonsense && (t._nonsense.clear(),
         t._nonsense = null),
         t._ae = null,
@@ -30580,13 +30816,25 @@ var Player = function(e) {
         }
         t.initLightRing(),
         t.setInvisible(r.invisible),
-        t.initZhenfa()
+        t.initZhenfa(),
+        t.updateFish()
     }
     ,
     t.prototype.setInvisible = function(e) {
         var t = this;
         t.playerObject.invisible = e,
         t.display && (t.display.alpha = e ? .7 : 1)
+    }
+    ,
+    t.prototype.setInvisible2 = function(e) {
+        var t = this;
+        t.tt && egret.clearTimeout(t.tt),
+        t.playerObject.invisible2 = e,
+        t != emIns.firstPlayer ? t.tt = egret.setTimeout(function() {
+            t.display && (t.display.alpha = e ? 0 : 1),
+            t.hideDisplay(e),
+            t.hideInfo(e)
+        }, t, 500) : t.display && (t.display.alpha = e ? .7 : 1)
     }
     ,
     t.prototype.onEnterMove = function() {
@@ -30818,6 +31066,14 @@ var Player = function(e) {
     ,
     t.prototype.updateLightRing = function() {
         this.initLightRing()
+    }
+    ,
+    t.prototype.updateFish = function() {
+        var e = this;
+        if (e._playerObject.isCatchFish || 98 == gd.map.config.cls) {
+            var t = cm.global[39007].value.splitNum("#");
+            e.bianshen(1 == e.playerObject.sex ? t[0] : t[1], e.playerObject.FishId ? e.playerObject.FishId : t[2], 1, !1)
+        }
     }
     ,
     t.prototype.clearLingbaoEffect = function() {
@@ -31848,7 +32104,7 @@ var ChatMsgBaseRender = function(e) {
             r.txt_rank.height = 20,
             r.txt_rank.scaleX = .7,
             r.txt_rank.scaleY = .7,
-            r.SHOW_CHANNELIMG ? r.txt_rank.x = 3 >= e ? r.iconx + 14 : 10 > e ? r.iconx + 13 : r.iconx + 10 + a : r.txt_rank.x = 3 >= e ? r.iconx + 14 : 10 > e ? r.iconx + 13 : r.iconx + 10 + a,
+            r.SHOW_CHANNELIMG ? r.txt_rank.x = (3 >= e ? r.iconx + 14 : 10 > e ? r.iconx + 13 : r.iconx + 10) + a : r.txt_rank.x = (3 >= e ? r.iconx + 14 : 10 > e ? r.iconx + 13 : r.iconx + 10) + a,
             r.txt_rank.y = r.icony + 10 + n
         }
     }
@@ -32326,6 +32582,82 @@ var FangzhouPop = function(e) {
     t
 }(UIBase);
 __reflect(FangzhouPop.prototype, "FangzhouPop");
+var FightResultPop = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.showList = new eui.ArrayCollection,
+        t.showList1 = new eui.ArrayCollection,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.useHomeUIDownClose = !1,
+        this.uiSkin("FightResultPopSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.itemList.itemRenderer = BagEquipRender,
+        e.itemList.dataProvider = e.showList,
+        e.itemList1.itemRenderer = BagEquipRender,
+        e.itemList1.dataProvider = e.showList1,
+        e.btn_go.on(TP, e.closeUI, e),
+        mum.resiger(e)
+    }
+    ,
+    t.prototype.refr = function() {
+        e.prototype.refr.call(this),
+        this.showInfo()
+    }
+    ,
+    t.prototype.showInfo = function() {
+        var e = this;
+        if (e.opd.data) {
+            e.opd.data.bossOwnerName && (e.txt_gs.visible = !0,
+            e.txt_gs.textFlow = Html.toEle("归属者：" + Html.str("" + e.opd.data.bossOwnerName, Html.New101)));
+            var t = [];
+            t = e.opd.data.itemBean ? CommonUtils.getItemList(e.opd.data.itemBean) : CommonUtils.getItemList(e.opd.data.itemBeanList),
+            t.length > 6 ? CommonUtils.showItemList(e.showList, t) : CommonUtils.showItemList(e.showList1, t),
+            e.grp_rwd.visible = t.length > 6,
+            e.grp_rwd1.visible = !e.grp_rwd.visible,
+            e.showDesc()
+        }
+    }
+    ,
+    t.prototype.showDesc = function() {
+        var e = this
+          , t = e.opd.data;
+        if (t)
+            switch (t.dropType) {
+            case 1:
+                e.img_gs.source = "word_gsjl";
+                break;
+            case 0:
+                e.img_gs.source = "word_xzjl"
+            }
+    }
+    ,
+    t.prototype.rollon = function(e) {}
+    ,
+    t.prototype.onResize = function(t, i) {
+        e.prototype.onResize.call(this, t, i);
+        mum.ressize()
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.btn_go.off(TP, t.closeUI, t),
+        t.showList && (t.showList.removeAll(),
+        t.showList = null),
+        t.showList1 && (t.showList1.removeAll(),
+        t.showList1 = null),
+        mum.destory(t.uiType)
+    }
+    ,
+    t
+}(PopUpBase);
+__reflect(FightResultPop.prototype, "FightResultPop");
 var BagPopCompound = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
@@ -34153,6 +34485,317 @@ var rolezs_Item150 = function(e) {
     t
 }(rolezs_Item2);
 __reflect(rolezs_Item150.prototype, "rolezs_Item150");
+var ResolvePop = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.miny = 0,
+        t.maxy = 0,
+        t.set_list = new eui.ArrayCollection,
+        t.listArr = new eui.ArrayCollection,
+        t.btnList = new eui.ArrayCollection,
+        t.nowselect = null,
+        t.selectlist = null,
+        t.overStarId = 0,
+        t.showList = new eui.ArrayCollection,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("ResolvePopSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.list_sel.itemRenderer = ResolveSetRenger,
+        e.list_sel.dataProvider = e.set_list,
+        e.item_list.itemRenderer = BagEquipRender,
+        e.item_list.dataProvider = e.showList,
+        e.list.dataProvider = e.listArr,
+        e.list.itemRenderer = ResolveItem,
+        e.btn_list.itemRenderer = ResolveBtnItemRender,
+        e.btn_list.dataProvider = e.btnList,
+        e.scrol.verticalScrollBar.autoVisibility = !1,
+        e.scrol.horizontalScrollBar.autoVisibility = !1,
+        e.scrol.scrollPolicyH = eui.ScrollPolicy.OFF,
+        e.list.on(eui.ItemTapEvent.ITEM_TAP, e.onSelect, e),
+        e.addAutoEventListener(e.onClick, e.btn, e.item0, e.btn0, e.btn_1, e.btn_close, e.btn_sure, e.btn_set),
+        e.btn_list.on(eui.ItemTapEvent.ITEM_TAP, e.onChange, e),
+        e.resolve_group.visible = !1,
+        e.item0.bgImg.visible = !1,
+        ScrollerManager.ins.init2(e.s, 50)
+    }
+    ,
+    t.prototype.refr = function() {
+        e.prototype.refr.call(this);
+        var t = this;
+        t.bindSubject(gd.bag, gd.forge),
+        t.setGro.visible = !1,
+        t.btn_list.selectedIndex = t.selectValue = 0,
+        t.updateInfo(),
+        t.scrol.scrollPolicyV = eui.ScrollPolicy.AUTO
+    }
+    ,
+    t.prototype.updateInfo = function() {
+        var e = this
+          , t = cm.resolve
+          , i = 0
+          , r = [];
+        e.alllistArr = [];
+        var a = null;
+        for (var n in t) {
+            for (var o in t[n]) {
+                a = t[n][o].condition;
+                break
+            }
+            if (a) {
+                for (var s = a.split("#"), l = !0, c = 0; c < s.length; c++)
+                    if (!Logic.checkCondition(s[c])) {
+                        l = !1;
+                        break
+                    }
+                l && (r.push([{
+                    arrInfo: t[n],
+                    bol: i == e.selectValue
+                }]),
+                e.alllistArr.push(t[n]),
+                i++)
+            } else
+                r.push([{
+                    arrInfo: t[n],
+                    bol: i == e.selectValue
+                }]),
+                e.alllistArr.push(t[n]),
+                i++
+        }
+        r.forEach(function(t) {
+            e.btnList.addItem(t)
+        }),
+        e.updateListInfo()
+    }
+    ,
+    t.prototype.updateListInfo = function(e, t) {
+        void 0 === e && (e = !1),
+        void 0 === t && (t = !1);
+        var i = this;
+        if (e && !t && i.nowselect) {
+            if (i.selectlist != i.nowselect.type)
+                return void (i.nowselect = null);
+            i.nowselect = null
+        }
+        if (i.alllistArr) {
+            i.listArr.removeAll(),
+            i.list.scrollV = 0;
+            var r = []
+              , a = [];
+            i.nowArr = [];
+            var n = gd.bag
+              , o = {};
+            i.opd && i.opd.args && i.opd.args[1] ? i.opd.args[1] : 0;
+            for (var s in n.bagDic) {
+                var l = n.bagDic[s]
+                  , c = cm.item[l.itemId]
+                  , d = l.count
+                  , p = c[8];
+                if ((!p || 17 !== p) && d > 0) {
+                    var u = gd.forge.cloneEquip(l);
+                    u.from = 1,
+                    o[l.gridIndex] = u
+                }
+            }
+            var g = i.alllistArr[i.selectValue];
+            for (var f in g) {
+                i.selectlist = g[f].type,
+                r = [],
+                g[f].txt && (i.show_text.textFlow = Html.toEle(Html.str(g[f].txt, Logic.getCol(187))));
+                for (var h in o)
+                    o[h].config[0] == g[f].itemid && 0 == gd.bag.getStarArmId(o[h].extraType, o[h].extraValue) && r.push(o[h]);
+                if (r.length > 0)
+                    for (var s = 0; s < r.length; s++)
+                        gd.insure.isInsureEquip(r[s].lid) || a.push(r[s]),
+                        i.nowArr.push(r[s])
+            }
+            if (a.length > 0) {
+                var s = cm.item[a[0].itemId][9];
+                a.sort(function(e, t) {
+                    return cm.item[e.itemId][9] < cm.item[t.itemId][9] ? -1 : cm.item[e.itemId][9] > cm.item[t.itemId][9] ? 1 : 0
+                }),
+                a.forEach(function(e) {
+                    i.listArr.addItem(e)
+                })
+            }
+            if (e && t && i.item0.data)
+                for (var s = 0; s < i.listArr.source.length; s++)
+                    i.listArr.source[s].lid == i.item0.data.lid && (i.listArr.source[s].count > i.item0.data.count ? i.listArr.source[s].count = i.listArr.source[s].count - i.item0.data.count : i.listArr.removeItemAt(s))
+        }
+    }
+    ,
+    t.prototype.onChange = function(e) {
+        var t = this;
+        t.selectValue = t.btn_list.selectedIndex,
+        t.selectChange()
+    }
+    ,
+    t.prototype.selectChange = function() {
+        var e = this;
+        e.curCfg = null,
+        e.updateListInfo(!0, !0)
+    }
+    ,
+    t.prototype.onClick = function(e) {
+        var t = this;
+        switch (e.currentTarget) {
+        case t.item0:
+            t.item0.data = null,
+            t.showList.removeAll(),
+            t.resolve_group.visible = !1,
+            t.updateListInfo(!0);
+            break;
+        case t.btn:
+            if (!t.item0.data && !t.nowselect)
+                return void ncm.err("请先放入要分解的道具");
+            1 == t.item0.data.count ? net.DecomposeModel.ins().send1(1, t.nowselect.type, t.nowselect.itemid, t.item0.data.lid, 0) : uim.show(500, new UIData(t.item0.data,t.nowselect.type));
+            break;
+        case t.btn0:
+            if (t.selectlist) {
+                if (t.listArr.length < 1)
+                    return void ncm.err("暂无可分解的道具");
+                gd.bag.allResolve ? net.DecomposeModel.ins().send1(2, t.selectlist, 0, null, 0) : AlertDialog.showAlertById(202, new CallBack3(t.allResCall,t))
+            }
+            break;
+        case t.btn_1:
+            uim.showOrHide(749, new UIData(2096));
+            break;
+        case t.btn_close:
+        case t.btn_sure:
+            t.setGro.visible = !1;
+            break;
+        case t.btn_set:
+            gd.bag.autoRevole && gd.bag.autoRevole > DateUtil.serverNow() / 1e3 ? (t.setGro.visible = !t.setGro.visible,
+            t.setGro.visible && t.showSetGro()) : ncm.err("请激活自动分解卡!")
+        }
+    }
+    ,
+    t.prototype.allResCall = function(e) {
+        var t = this;
+        e == AlertDialog.AGREE ? net.DecomposeModel.ins().send1(2, t.selectlist, 0, null, 0) : e == AlertDialog.AGREE_SELECT && (net.DecomposeModel.ins().send1(2, t.selectlist, 0, null, 0),
+        gd.bag.allResolve = !0)
+    }
+    ,
+    t.prototype.showSetGro = function() {
+        var e = this;
+        e.set_list.removeAll();
+        for (var t in cm.huishou)
+            3 == cm.huishou[t].type && Logic.checkCondition(cm.huishou[t].condition) && e.set_list.addItem(cm.huishou[t].id)
+    }
+    ,
+    t.prototype.onSelect = function(e) {
+        var t = this
+          , i = t.list.selectedItem
+          , r = new ItemGridData
+          , a = (new ItemGridData,
+        null);
+        r.itemId = i.itemId,
+        r.count = i.count,
+        r.config = cm.item[i.itemId],
+        r.lid = i.lid,
+        r.from = 41,
+        t.item0.data = r;
+        var n = cm.resolve;
+        t.showList.removeAll();
+        for (var o in n)
+            for (var s in n[o])
+                if (n[o][s].itemid == i.itemId) {
+                    a = n[o][s].harvest,
+                    t.nowselect = n[o][s];
+                    break
+                }
+        if (a) {
+            for (var l = a.split("&"), c = l[0].split("#"), d = c[0], p = (c[1],
+            0); p < l.length; p++) {
+                var u = l[p].split("#")
+                  , g = new ItemGridData;
+                g.itemId = u[0],
+                g.count = u[1] * r.count,
+                g.config = cm.item[u[0]],
+                t.showList.addItem(g)
+            }
+            var f = String(gd.bag.getCount(d))
+              , h = Logic.getCol(46);
+            t.cost_group.visible = !0,
+            t.img_cost.source = CommonUtils.getMoneyIcon(d),
+            t.showResolveInfo1(f, h, t.txt_price, t.img_cost)
+        }
+        t.resolve_group.visible = !0,
+        t.updateListInfo(!0, !0)
+    }
+    ,
+    t.prototype.showResolveInfo1 = function(e, t, i, r) {
+        var a = Html.str("当前拥有", Logic.getCol(46)) + Html.str("：", Logic.getCol(196)) + "　　" + Html.str("x" + e, t);
+        i.textFlow = Html.toEle(a),
+        i.once(egret.Event.ENTER_FRAME, function() {
+            var e = i.$getLinesArr() ? i.$getLinesArr() : i.$getLinesArr2()
+              , t = 0
+              , a = 0
+              , n = !0;
+            if (e[0]) {
+                for (var o = 0, s = e[0].elements; o < s.length; o++) {
+                    var l = s[o];
+                    n ? t += l.width : a += l.width,
+                    "：" === l.text && (n = !1)
+                }
+                r.x = i.x + t - 3
+            }
+        }, this)
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 3:
+            i.updateListInfo(!0, !0);
+            break;
+        case 700:
+            i.item0.data = null,
+            i.showList.removeAll(),
+            i.resolve_group.visible = !1,
+            i.updateListInfo(!0);
+            break;
+        case 621:
+            i.showSetGro()
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.item0.data = null,
+        t.showList.removeAll(),
+        t.showList = null,
+        t.listArr.removeAll(),
+        t.listArr = null,
+        t.btnList.removeAll(),
+        t.btnList = null,
+        ScrollerManager.ins.dispose(50)
+    }
+    ,
+    t
+}(UIBase);
+__reflect(ResolvePop.prototype, "ResolvePop");
+var ResolveSetRenger = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        t.data && (t.check.selected = !!gd.bag.recycleLog[t.data],
+        t.check.label = "  " + cm.huishou[t.data].name)
+    }
+    ,
+    t
+}(CloudTraderSetRenger);
+__reflect(ResolveSetRenger.prototype, "ResolveSetRenger");
 var EquipItemRender = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
@@ -34341,7 +34984,7 @@ var EquipItemRender = function(e) {
             t.data.lid && gd.insure.isInsureEquip(t.data.lid) && (t.insure.visible = !0);
             var i = e[8];
             t.img_type.x = 40,
-            i && 5 == i ? (t.img_type.source = "grid_shen",
+            i && 5 == i && 58 != t.data.from ? (t.img_type.source = "grid_shen",
             t.img_type.visible = !0) : i && 26 == i ? (t.img_type.source = "grid_long",
             t.img_type.visible = !0) : i && 27 == i ? (t.img_type.source = "grid_sheng",
             t.img_type.visible = !0) : 11 == e[8] ? (t.img_type.source = "grid_jie",
@@ -34464,500 +35107,220 @@ var EquipItemRender = function(e) {
     t
 }(eui.ItemRenderer);
 __reflect(EquipItemRender.prototype, "EquipItemRender");
-var CloudTraderPanel = function(e) {
-    function t() {
-        var t = null !== e && e.apply(this, arguments) || this;
-        return t.lids = {},
-        t.curlids = {},
-        t.effs = [],
-        t
+var StaticEntity = function(e) {
+    function t(t, i) {
+        return e.call(this, t, i) || this
     }
     return __extends(t, e),
-    t.prototype.createChildren = function() {
-        this.uiSkin("CloudTraderPanelSkin")
+    t.prototype.createComponents = function(t) {
+        this.gameObject = t,
+        e.prototype.createComponents.call(this, t)
     }
     ,
-    t.prototype.myCreated = function() {
-        var e = this;
-        e.item_list = new eui.ArrayCollection,
-        e.list_item.itemRenderer = SmeltBagEquipRender,
-        e.list_item.dataProvider = e.item_list,
-        e.show_list = new eui.ArrayCollection,
-        e.list_show.itemRenderer = BagEquipRender,
-        e.list_show.dataProvider = e.show_list,
-        e.show_list12 = new eui.ArrayCollection,
-        e.list_show12.itemRenderer = BagEquipRender42,
-        e.list_show12.dataProvider = e.show_list12,
-        e.set_list = new eui.ArrayCollection,
-        e.list_sel.itemRenderer = CloudTraderSetRenger,
-        e.list_sel.dataProvider = e.set_list,
-        e.addAutoEventListener(e.onClick, e.btn_go, e.btn_set, e.btn_desc, e.btn_close, e.btn_sure, e.btn_auto),
-        e.list_item.on(eui.ItemTapEvent.ITEM_TAP, e.onChangeHandler, e),
-        ScrollerManager.ins.init2(e.s2, 68)
+    t.prototype.initDisplay = function() {}
+    ,
+    t.prototype.update = function(e) {}
+    ,
+    t
+}(Entity);
+__reflect(StaticEntity.prototype, "StaticEntity");
+var SkillBase = function() {
+    function e() {
+        this.enabled = !1,
+        this.end = !1,
+        this.moving = !1,
+        this._showHurt = !1,
+        this._attantion = !1,
+        this.level = 1,
+        this.bindex = 0
+    }
+    return e.prototype.release = function(e, t, i, r, a, n, o, s, l, c, d) {
+        var p = this;
+        p.from = i,
+        this.level = t,
+        p.target = r,
+        p._attantion = !1,
+        p.target ? (p.targetX = r.x,
+        p.targetY = r.y,
+        r && r.fighterObject && 1 == r.fighterObject.group && (p._attantion = !0)) : (p.targetX = a * GameDefine.MAP_GRID_WIDTH + GameDefine.MAP_GRID_WIDTH / 2,
+        p.targetY = n * GameDefine.MAP_GRID_HEIGHT + GameDefine.MAP_GRID_HEIGHT / 2),
+        p.enabled = !0,
+        p._showHurt = l,
+        p.hurtList = c,
+        p.bufferList = d,
+        p.skillid = e,
+        p.config = cm.skill[e],
+        p.end = !1,
+        p.releaseTime = s,
+        i && (0 == p.config.action ? i.setAction(4, o, !0) : 1 == p.config.action && i.setAction(5, o, !0),
+        !p._attantion && i.fighterObject && 1 == i.fighterObject.group && (p._attantion = !0)),
+        gd.player.getSetState(1171) ? p.initEffects() : p.from && 1 == p.from.gameObject.group && p.initEffects(),
+        p.bufferList && p.addBufferList(p.bufferList)
     }
     ,
-    t.prototype.onChangeHandler = function(e) {
-        var t = this
-          , i = e.currentTarget.selectedItem
-          , r = t.list_item.getElementAt(t.list_item.selectedIndex);
-        r && i.lid && (r.select.visible ? t.lids[i.lid.toString()] && delete t.lids[i.lid.toString()] : t.lids[i.lid.toString()] = i.lid,
-        r.select.visible = !r.select.visible,
-        r.data.selected = r.select.visible),
-        t.showCost()
-    }
-    ,
-    t.prototype.refr = function() {
-        var t = this;
-        e.prototype.refr.call(this),
-        t.bindSubject(gd.bag, gd.player),
-        t.btn_auto.selected = gd.bag.autoRonglianBoo,
-        t.showAutoBtn(),
-        t.updateBagInfo(),
-        t.showReward(),
-        t.showSetGro(),
-        t.add_checkIn_eff()
-    }
-    ,
-    t.prototype.showAutoBtn = function() {
-        for (var e = this, t = cm.global[39301].value.split("|"), i = t[0], r = t[1].split("&"), a = 0; a < r.length; a++) {
-            var n = r[a].splitNum("#");
-            if (Vars.platform == n[0])
-                return void (e.btn_auto.visible = Logic.checkCondition(n[1]))
+    e.prototype.initEffects = function() {
+        if (1 != gd.player.getSetState(1155)) {
+            var e = this
+              , t = e.from;
+            t && 1 == t.gameObject.group ? e._needSound = !0 : e._needSound = !1;
+            var i, r, a = cm.skills_condition[e.skillid][e.level], n = cm.skillEffects[a.effLevelID];
+            if (null == n) {
+                cm.skillEffects[e.skillid]
+            }
+            if (t && void 0 == n && 4 == t.entityType) {
+                var o = t.monsterObject.config.model;
+                cm.monsterSkillEffects[o] && (n = cm.monsterSkillEffects[o])
+            }
+            if (n) {
+                for (var s = 0, l = n; s < l.length; s++) {
+                    var c = l[s];
+                    if (0 == c.type) {
+                        if (t) {
+                            var d = c.sound;
+                            t && t.fighterObject && 2 == t.fighterObject.sex && 6 == d && (d = 7),
+                            t instanceof Minion && gd.player.getSetState(2010) || SceneEffectManager.Instance.addEffect(c.effect, null, t.x, t.y, 1 == c.pos ? 7 : 5, 1, c.delaytime, t.dir, e._needSound ? d : null, null, c.scale, c.x, c.y, null, e._attantion)
+                        }
+                    } else
+                        1 == c.type ? (r || (r = []),
+                        r.push(c)) : 2 == c.type && (i = c)
+                }
+                if (e.targetEffect = r,
+                i && t) {
+                    e.moving = !0,
+                    e.bindex = Math.ceil(1e6 * Math.random());
+                    var p = SceneEffectManager.Instance.addSkillBullet(e.id, i.effect, t.x, t.y - GameDefine.SKILL_HitTestY, e.target, e.targetX, e.targetY, 1 == i.pos ? 7 : 5, -1, i.delaytime, void 0, e._needSound ? i.sound : null, null, i.scale, i.x, i.y);
+                    p.bindex = e.bindex,
+                    p || e.flyComplete()
+                } else
+                    e.moving = !1,
+                    e.playTargetEffects()
+            } else
+                e.targetEffect = void 0
         }
-        e.btn_auto.visible = Logic.checkCondition(i)
     }
     ,
-    t.prototype.showCost = function() {
-        var e = this;
-        if (Object.keys(e.lids).length > 0) {
-            e.costGro.visible = !0;
-            var t = 0
-              , i = 0;
-            for (var r in e.lids) {
-                var a = gd.bag.bagDic[r];
-                if (a) {
-                    var n = cm.item[a.itemId]
-                      , o = n ? n[58] : null;
-                    o && (i = o.splitNum("#")[0],
-                    t += o.splitNum("#")[1])
+    e.prototype.flyComplete = function(e) {
+        void 0 === e && (e = 0),
+        this.releaseTime = GameTime.Instance.totalGameTime,
+        this.moving = !1,
+        this.playTargetEffects(GameDefine.SKILL_HitTestY + e)
+    }
+    ,
+    e.prototype.playTargetEffects = function(e) {
+        void 0 === e && (e = 0);
+        var t = this;
+        if (t.targetEffect)
+            for (var i = 0, r = t.targetEffect; i < r.length; i++) {
+                var a = r[i];
+                1 == a.param || (t.target && 1 != t.config.notargeteff ? SceneEffectManager.Instance.addEffect(a.effect, t.target, t.targetX, t.targetY - e, 1 == a.pos ? 7 : 5, 1, a.delaytime, void 0, t._needSound ? a.sound : null, null, a.scale, a.x, a.y, a.rotation, t._attantion) : SceneEffectManager.Instance.addEffect(a.effect, null, t.targetX, t.targetY - e, 1 == a.pos ? 7 : 5, 1, a.delaytime, void 0, t._needSound ? a.sound : null, null, a.scale, a.x, a.y, a.rotation, t._attantion))
+            }
+    }
+    ,
+    e.prototype.update = function(e) {
+        var t = this;
+        t.end ? (SkillManager.Instance.readyToDie(this),
+        t.enabled = !1) : t.moving || e.totalGameTime > t.config.hurtDelay + t.releaseTime && (t.hurtList ? (t.playHurtList(t.hurtList, e),
+        t.end = !0) : e.totalGameTime > t.config.hurtDelay + t.releaseTime + 5e3 && (t.end = !0))
+    }
+    ,
+    e.prototype.delayHurts = function(e, t) {
+        var i = this;
+        i.hurtList = e,
+        i.addBufferList(t),
+        null == i.hurtList && (i.end = !0)
+    }
+    ,
+    e.prototype.addBufferList = function(e) {
+        if (null != e)
+            for (var t = emIns.getAllEntity(), i = 0, r = e; i < r.length; i++) {
+                var a = r[i]
+                  , n = t[a.targetId.toString()];
+                n && (ARpgBuffManager.Instance.addBuff(n, a),
+                void 0 != cm.buff[a.buffid].piaozi && cm.buff[a.buffid].piaozi > 0 && n.showBloodEffect(0, 0, cm.buff[a.buffid].piaozi))
+            }
+    }
+    ,
+    e.prototype.playHurtList = function(e, t) {
+        if (e) {
+            for (var i = this, r = emIns.getAllEntity(), a = 0, n = [], o = 0, s = e; o < s.length; o++) {
+                var l = s[o];
+                if (null != l.id) {
+                    a++;
+                    var c = r[l.id.toString()];
+                    if ((0 != l.plus || 0 != l.hurt || 0 != l.effectValue) && c && c.enabled) {
+                        if (i.targetEffect && i.targetEffect)
+                            for (var d = 0, p = i.targetEffect; d < p.length; d++) {
+                                var u = p[d];
+                                1 == u.param && SceneEffectManager.Instance.addEffect(u.effect, c, c.x, c.y, 1 == u.pos ? 7 : 5, 1, u.delaytime, void 0, i._needSound ? u.sound : null, null, u.scale, u.x, u.y, u.rotation, i._attantion)
+                            }
+                        var g = c.gameObject;
+                        if (g.delayhp = g.truehp,
+                        0 != l.hurt) {
+                            var f = i.from && i.from.fighterObject && 1 == i.from.fighterObject.group;
+                            c.setBlood(g.delayhp, c.gameObject.maxHp, f)
+                        }
+                        if (0 != l.inner && c.setInner(g.delayInner, g.maxInner, !0, g.trueHushen),
+                        c._entityAI.hpChanged(c),
+                        0 != g.delayhp || g.isDead || (n.push(c),
+                        g.isDead = !0),
+                        gd.player.getSetState(1171)) {
+                            if (i.from && i.from.gameObject && 1 == i.from.gameObject.group) {
+                                var h = cm.damage[l.plus];
+                                h && 1 == h.shock && GameSceneManager.Instance.curInstance.shake()
+                            }
+                        } else if (i.from && i.from.gameObject && 1 != i.from.gameObject.group && 1 != g.group)
+                            continue;
+                        if (i._showHurt && i.from && i.from.gameObject) {
+                            var m = 0;
+                            if (i.from && i.from.enabled && (i.from.x > c.x ? m = 1 : i.from.x < c.x && (m = 2)),
+                            (1 == c.gameObject.group || this.from && this.from.gameObject && 1 == this.from.gameObject.group || this.target && this.target.gameObject && 1 == this.target.gameObject.group) && c.showBloodEffect(l.effectValue, m, l.plus, a),
+                            this.from && this.from.gameObject && 1 == this.from.gameObject.group) {
+                                var v = l.plus;
+                                if (1 == c.gameObject.group) {
+                                    var h = cm.damage[v];
+                                    if (null == h)
+                                        return;
+                                    v = h.side
+                                }
+                                var y = cm.damage[v];
+                                y && y.effectid > 0 && SceneEffectManager.Instance.addEffect(y.effectid, c, c.x, c.y, 11, 1, 0, void 0, null, null)
+                            }
+                        }
+                    }
                 }
             }
-            e.txt_cost.text = t + "",
-            e.txt_cost.textColor = gd.bag.getCount(i, !0) >= t ? Logic.getCol(50) : Logic.getCol(49)
-        } else
-            e.costGro.visible = !1
-    }
-    ,
-    t.prototype.onClick = function(e) {
-        var t = this;
-        switch (e.currentTarget) {
-        case t.btn_go:
-            var i = [];
-            for (var r in t.lids)
-                i.push(t.lids[r]);
-            i.length > 0 && net.BourseModel.ins().send21(i);
-            break;
-        case t.btn_set:
-            t.setGro.visible = !t.setGro.visible;
-            break;
-        case t.btn_desc:
-            uim.showOrHide(749, new UIData(1296));
-            break;
-        case t.btn_close:
-        case t.btn_sure:
-            t.setGro.visible = !1;
-            break;
-        case t.btn_auto:
-            if (!t.btn_auto.selected)
-                return void net.RoleModel.ins().send23(2006, !1, null, -1, -1);
-            var a = "";
-            for (var r in cm.monthCard)
-                if (cm.monthCard[r].ronglian && (a = a ? a : cm.monthCard[r].name,
-                gd.player.TQData[r]))
-                    return void net.RoleModel.ins().send23(2006, !0, null, -1, -1);
-            t.btn_auto.selected = !1,
-            ncm.err("需要：" + a)
+            n.forEach(function(e) {
+                e.changeFSMState(EntityDeadFsm.Instance)
+            })
         }
     }
     ,
-    t.prototype.updateBagInfo = function() {
+    e.prototype.doDelay = function(e) {
+        e && (e._entityAI ? e.changeFSMState(EntityDeadFsm.Instance) : emIns.destoryEntity(e.uid))
+    }
+    ,
+    e.prototype.dispose = function() {
         var e = this;
-        e.item_list.removeAll(),
-        e.curlids = {};
-        for (var t in gd.bag.bagDic) {
-            var i = gd.bag.bagDic[t]
-              , r = cm.item[i.itemId]
-              , a = i.count;
-            if (r && a > 0) {
-                var n = GridFactory.createEquipGridVoBag(i.itemId, i.lid, a, 0, i.time, i.bind, i.fromBean, null, i.jiPinBean, !1, i.extraType, i.extraValue, i.business);
-                n.touchEnble = !1,
-                e.lids[i.lid.toString()] ? (n.selected = !0,
-                e.curlids[i.lid.toString()] = i.lid) : !!gd.bag.canReTrader[i.itemId] && (n.selected = !0) && (e.curlids[i.lid.toString()] = i.lid),
-                !e.ifCanRecycle(i.itemId) || gd.bag.getStarArmId(i.extraType, i.extraValue) || gd.bag.getMohunId(i.extraType, i.extraValue) || (n.iconBg = "equip_grid1",
-                n.from = 8,
-                e.item_list.addItem(n))
+        if (e.enabled = !1,
+        e.targetEffect = void 0,
+        e.from = void 0,
+        e.target = void 0,
+        e.targetX = void 0,
+        e.targetY = void 0,
+        e.skillid = void 0,
+        e.hurtList) {
+            for (var t = 0, i = e.hurtList; t < i.length; t++) {
+                var r = i[t];
+                r.dispose()
             }
+            e.hurtList = null
         }
-        e.lids = e.curlids;
-        for (var o = 48, t = e.item_list.source.length; o > t; t++)
-            e.item_list.addItem({
-                iconBg: "equip_grid1"
-            });
-        e.showCost()
+        SkillManager.Instance.returnSkill(this)
     }
     ,
-    t.prototype.ifCanRecycle = function(e) {
-        var t = cm.item[e];
-        if (!t)
-            return !1;
-        var i = !1;
-        for (var r in cm.huishou)
-            if (2 == cm.huishou[r].type && gd.bag.reTraderCfg[r][e] && Logic.checkCondition(cm.huishou[r].condition)) {
-                i = !0;
-                break
-            }
-        return i
-    }
-    ,
-    t.prototype.showReward = function() {
-        var e = this;
-        e.show_list.removeAll(),
-        e.show_list12.removeAll();
-        for (var t = parseInt(cm.global[33702].value), i = cm.global[33701].value.split("&"), r = [], a = 0; a < i.length; a++)
-            for (var n = i[a].splitNum("#"), o = 0; o < n.length; o++) {
-                var s = GridFactory.createItemGridVo(n[o], Long.create(0, 0), 1);
-                0 != a ? (r[a - 1] || (r[a - 1] = []),
-                r[a - 1].push(s),
-                1 == a && e.show_list.addItem(s)) : e.show_list12.addItem(s)
-            }
-        var l = 0;
-        e.tt && egret.clearInterval(e.tt),
-        e.tt = egret.setInterval(function() {
-            l++,
-            l = l >= r.length ? 0 : l,
-            e.show_list.removeAll();
-            for (var t in r[l])
-                e.show_list.addItem(r[l][t]);
-            egret.Tween.get(e.effGro).to({
-                scaleX: -1
-            }, 300).to({
-                scaleX: 1
-            }, 300)
-        }, e, 1e3 * t)
-    }
-    ,
-    t.prototype.showSetGro = function() {
-        var e = this;
-        e.set_list.removeAll();
-        for (var t = e.sortTable(), i = 0; i < t.length; i++)
-            2 == t[i].type && Logic.checkCondition(t[i].condition) && e.set_list.addItem(t[i].id)
-    }
-    ,
-    t.prototype.sortTable = function() {
-        var e = [];
-        for (var t in cm.huishou) {
-            var i = cm.huishou[t];
-            !i || 2 != i.type || i.condition && !Logic.checkCondition(i.condition) || e.push(i)
-        }
-        return e.sort(function(e, t) {
-            return e.index && t.index ? e.index - t.index : e.id - t.id
-        }),
-        e
-    }
-    ,
-    t.prototype.add_checkIn_eff = function() {
-        for (var e = this, t = 0; 3 > t; t++) {
-            var i = new NameMovieClip;
-            e.effGro.addChild(i),
-            i.x = 16,
-            i.y = 1 + 108 * t,
-            i.touchEnabled = !1,
-            NameMovieClipResManager.Instance.getMcByRes("grid_red_eff", i),
-            i.play(-1),
-            e.effs.push(i)
-        }
-    }
-    ,
-    t.prototype.remove_checkIn_eff = function() {
-        var e = this;
-        for (var t in e.effs)
-            e.effs[t] && (e.effs[t].stop(),
-            e.effs[t].removeSelf(),
-            e.effs[t].data = null,
-            e.effs[t] = null)
-    }
-    ,
-    t.prototype.update = function(e, t) {
-        var i = this;
-        switch (e) {
-        case 621:
-            i.showSetGro(),
-            i.updateBagInfo();
-            break;
-        case 3:
-            t && i.updateBagInfo();
-            break;
-        case 223:
-            if (!t || 2006 != t)
-                return;
-            i.btn_auto.selected = gd.bag.autoRonglianBoo
-        }
-    }
-    ,
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        var t = this;
-        ScrollerManager.ins.dispose2(68),
-        t.list_item.off(eui.ItemTapEvent.ITEM_TAP, t.onChangeHandler, t),
-        t.item_list.removeAll(),
-        t.item_list = null,
-        t.show_list.removeAll(),
-        t.show_list = null,
-        t.show_list12.removeAll(),
-        t.show_list12 = null,
-        t.set_list.removeAll(),
-        t.set_list = null,
-        t.effs = null,
-        t.curlids = null,
-        t.lids = null,
-        t.tt && egret.clearInterval(t.tt),
-        egret.Tween.removeTweens(t.effGro),
-        t.remove_checkIn_eff()
-    }
-    ,
-    t
-}(UIBase);
-__reflect(CloudTraderPanel.prototype, "CloudTraderPanel");
-var CloudTraderSetRenger = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        var t = this;
-        Logic.removeNew([t.check, t.mainGroup]),
-        t.off(TP, t.onClickHander, t),
-        t.check = null,
-        t.mainGroup = null
-    }
-    ,
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.mainGroup = new eui.Group,
-        t.mainGroup.width = 120,
-        t.mainGroup.height = 10,
-        t.mainGroup.touchEnabled = !0,
-        t.addChild(t.mainGroup),
-        t.check = new eui.CheckBox,
-        t.check.skinName = "CheckBox8Skin",
-        t.check.y = 10,
-        t.check.touchEnabled = !1,
-        t.mainGroup.addChild(t.check),
-        t.on(TP, t.onClickHander, t),
-        t.width = 120,
-        t.height = 10
-    }
-    ,
-    t.prototype.onClickHander = function() {
-        var e = this;
-        e.data && net.BagModel.ins().send36(e.data, 0, !gd.bag.recycleLog[e.data])
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.check.selected = !1,
-        t.data && (t.check.selected = !!gd.bag.recycleLog[t.data],
-        t.check.label = "  " + cm.huishou[t.data].name)
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(CloudTraderSetRenger.prototype, "CloudTraderSetRenger");
-var SmeltBagEquipRender = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this),
-        this.select.source = "y_select1"
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(SmeltBagEquipRender.prototype, "SmeltBagEquipRender");
-var BagEquipRender42 = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this);
-        var t = this;
-        t.mainGroup.scaleX = t.mainGroup.scaleY = t.touchGroup.scaleX = t.touchGroup.scaleY = .7,
-        t.count.visible = !1
-    }
-    ,
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        switch (t.itemIndex) {
-        case 0:
-            t.mainGroup.x = t.touchGroup.x = 34,
-            t.mainGroup.y = t.touchGroup.y = 8;
-            break;
-        case 1:
-            t.mainGroup.x = t.touchGroup.x = -22,
-            t.mainGroup.y = t.touchGroup.y = 68;
-            break;
-        case 2:
-            t.mainGroup.x = t.touchGroup.x = 21,
-            t.mainGroup.y = t.touchGroup.y = 68;
-            break;
-        case 3:
-            t.mainGroup.x = t.touchGroup.x = -27,
-            t.mainGroup.y = t.touchGroup.y = 8;
-            break;
-        case 5:
-            t.mainGroup.x = t.touchGroup.x = -32,
-            t.mainGroup.y = t.touchGroup.y = 42;
-            break;
-        case 6:
-            t.mainGroup.x = t.touchGroup.x = 31,
-            t.mainGroup.y = t.touchGroup.y = 42;
-            break;
-        case 8:
-            t.mainGroup.x = t.touchGroup.x = 8,
-            t.mainGroup.y = t.touchGroup.y = 2;
-            break;
-        case 9:
-            t.mainGroup.x = t.touchGroup.x = -24,
-            t.mainGroup.y = t.touchGroup.y = 12;
-            break;
-        case 10:
-            t.mainGroup.x = t.touchGroup.x = 24,
-            t.mainGroup.y = t.touchGroup.y = 12;
-            break;
-        case 11:
-            t.mainGroup.x = t.touchGroup.x = -7,
-            t.mainGroup.y = t.touchGroup.y = 2
-        }
-    }
-    ,
-    t
-}(BagEquipRender);
-__reflect(BagEquipRender42.prototype, "BagEquipRender42");
-var ItemRendererBase = function(e) {
-    function t() {
-        var t = e.call(this) || this;
-        return t._inited = !1,
-        t._hasDisposed = !1,
-        t.tweenType = 0,
-        t.initSkinName(),
-        t
-    }
-    return __extends(t, e),
-    t.prototype.initSkinName = function() {
-        this._inited = !1
-    }
-    ,
-    t.prototype.childrenCreated = function() {
-        e.prototype.childrenCreated.call(this),
-        this._inited = !0,
-        this.inited && this.data && this.toInitDataBase()
-    }
-    ,
-    t.prototype.createChildren = function() {
-        e.prototype.createChildren.call(this),
-        this.toInitUIInfo(),
-        this.createAction()
-    }
-    ,
-    t.prototype.createAction = function() {
-        0 != this.tweenType && (this.alpha = .1,
-        1 == this.tweenType ? (this.scaleX = -1,
-        egret.Tween.get(this).to({
-            scaleX: 1,
-            alpha: 1
-        }, 500).call(this.toTweenComplete)) : 2 == this.tweenType && (this.scaleY = -1,
-        egret.Tween.get(this).to({
-            scaleY: 1,
-            alpha: 1
-        }, 500).call(this.toTweenComplete)))
-    }
-    ,
-    t.prototype.toTweenComplete = function() {
-        egret.Tween.removeTweens(this)
-    }
-    ,
-    Object.defineProperty(t.prototype, "inited", {
-        get: function() {
-            return this._inited
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    t.prototype.toInitUIInfo = function() {}
-    ,
-    t.prototype.dataChanged = function() {
-        this.inited && this.data && this.toInitDataBase()
-    }
-    ,
-    t.prototype.toInitDataBase = function() {}
-    ,
-    t.prototype.setSelected = function(e) {}
-    ,
-    Object.defineProperty(t.prototype, "selected", {
-        get: function() {
-            return this._selected
-        },
-        set: function(e) {
-            this._selected != e && (this._selected = e,
-            this.invalidateState()),
-            this.setSelected(this.selected)
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    t.prototype.updateHint = function(e, t, i, r) {
-        void 0 === i && (i = 27),
-        void 0 === r && (r = 0),
-        this.inited && !this._hasDisposed
-    }
-    ,
-    t.prototype.updateUIEff = function(e, t, i) {
-        void 0 === i && (i = egret.BlendMode.ADD),
-        this.inited
-    }
-    ,
-    t.prototype.dispose = function() {
-        this.inited && (egret.Tween.removeTweens(this),
-        this.disposeSkin(this),
-        this._hasDisposed = !0,
-        this.destroy())
-    }
-    ,
-    t.prototype.destroy = function() {}
-    ,
-    t.prototype.disposeSkin = function(e) {
-        var t, i;
-        for (i = e.numChildren,
-        t = 0; i > t; t++) {
-            var r = e.getChildAt(t);
-            r && (r instanceof eui.Image ? r.dispose() : r instanceof eui.List ? (r.$DataGroup[10] = !0,
-            r.removeAllRenderers(),
-            r.dataProvider = null,
-            r.itemRenderer = null) : r instanceof NameMovieClip ? (r.stop(),
-            r.data = null) : this.disposeSkin(r))
-        }
-    }
-    ,
-    t
-}(eui.ItemRenderer);
-__reflect(ItemRendererBase.prototype, "ItemRendererBase");
+    e
+}();
+__reflect(SkillBase.prototype, "SkillBase", ["IUpdateable"]);
 var UnionAllianceList = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
@@ -35333,23 +35696,413 @@ var TipBase = function(e) {
     t
 }(eui.Component);
 __reflect(TipBase.prototype, "TipBase", ["IGameEventHandler"]);
-var StaticEntity = function(e) {
-    function t(t, i) {
-        return e.call(this, t, i) || this
+var ResUrl = function() {
+    function e() {}
+    return e.url = function(t, i, r, a) {
+        void 0 === i && (i = 0),
+        void 0 === r && (r = void 0),
+        void 0 === a && (a = e.PNGExt);
+        var n = ""
+          , o = !0
+          , s = ""
+          , l = t
+          , c = ""
+          , d = "";
+        if (js_gameVars.isAdroid && e.modelName)
+            switch (i) {
+            case 0:
+                var p = e.modelName.model;
+                p && p[r] && p[r][t] && (o = !1,
+                c = p[r][t]);
+                break;
+            case 3:
+                var u = e.modelName.map;
+                u && u[r] && u[r][t] && (o = !1,
+                c = u[r][t]);
+                break;
+            case 15:
+                var g = e.modelName.audio;
+                g && g[t + ".mp3"] && (o = !1,
+                c = g[t + ".mp3"]);
+                break;
+            case 54:
+            case 9:
+            case 21:
+            case 8:
+                var f = e.modelName.tool;
+                f && f[r] && f[r][t + ".png"] && (o = !1,
+                c = f[r][t + ".png"])
+            }
+        if (js_gameVars.isAdroid)
+            switch (i) {
+            case 58:
+                o = !1
+            }
+        switch (i) {
+        case 0:
+            n = e.Model + r,
+            d = "/" + t;
+            break;
+        case 3:
+            n = e.MapBackGround + r,
+            d = "/" + t;
+            break;
+        case 6:
+            n = e.MiniMapGround + t + e.JPGExt;
+            break;
+        case 8:
+            gd.player.platChangeAssets && constants.platChangeAssetsIcon[t] && (t = constants.platChangeAssetsIcon[t]),
+            n = e.ToolIcon + t + e.PNGExt;
+            break;
+        case 40:
+            n = e.JueXing + t + e.PNGExt;
+            break;
+        case 7:
+            n = l;
+            break;
+        case 13:
+            return l = e.Data + t + e.ConfigDataBinExt;
+        case 14:
+            return l = e.Data + t + e.ConfigZipExt + e.defaultVersion;
+        case 12:
+            return l = e.Data + t + e.ConfigDataExt;
+        case 10:
+            n = e.HeadIcon + t + e.PNGExt;
+            break;
+        case 15:
+            var h = !0;
+            150 == Vars.platform && (h = !1),
+            n = Capability.mobileUI || 1 == Vars.client || 3 == Vars.client || h ? e.AudioIcon + t + e.mp3Ext : e.AudioIcon + t + e.AudioExt;
+            break;
+        case 9:
+            n = e.SkillIcon + t + a;
+            break;
+        case 11:
+            n = e.ShowIcon + t + e.PNGExt;
+            break;
+        case 16:
+            n = e.UIModel + t + e.UIModelExt;
+            break;
+        case 17:
+            n = e.UIModel + t + e.JsonExt;
+            break;
+        case 18:
+            n = e.ActiveBtn + t + e.PNGExt;
+            break;
+        case 19:
+            n = e.MenuBtn + t + e.PNGExt;
+            break;
+        case 20:
+            n = e.Way + t + e.PNGExt;
+            break;
+        case 21:
+            n = e.Title + t + e.PNGExt;
+            break;
+        case 62:
+            n = e.Huiji + t + e.PNGExt;
+            break;
+        case 23:
+            n = e.NpcTitle + t + e.PNGExt;
+            break;
+        case 22:
+            n = e.Activity + t + a;
+            break;
+        case 24:
+            n = e.Exhibition + t + a;
+            break;
+        case 25:
+            n = e.TIANFU_CARD + t + a;
+            break;
+        case 26:
+            n = e.SHENQI + t + e.PNGExt;
+            break;
+        case 27:
+            n = e.JUNXIAN + t + e.PNGExt;
+            break;
+        case 28:
+            n = e.WODERFUL + t + e.PNGExt;
+            break;
+        case 29:
+            n = e.SHENLONG + t + e.PNGExt;
+            break;
+        case 30:
+            n = e.TUJIAN + t + e.PNGExt;
+            break;
+        case 31:
+            n = e.VIP + t + e.PNGExt;
+            break;
+        case 32:
+            n = e.DailyIcon + t + e.PNGExt;
+            break;
+        case 33:
+            n = e.DailyActivityIcon + t + e.PNGExt;
+            break;
+        case 34:
+            n = e.MapTitle + t + e.PNGExt;
+            break;
+        case 35:
+            n = e.Activitypic + t + a;
+            break;
+        case 36:
+            n = e.Activitypage + t + e.PNGExt;
+            break;
+        case 38:
+            n = e.FuliRetrieve + t + e.PNGExt;
+            break;
+        case 39:
+            n = e.Shenbing + t + e.PNGExt;
+            break;
+        case 5:
+            n = e.Coin + t + e.PNGExt;
+            break;
+        case 41:
+            n = e.AdvanceTitle + t + e.PNGExt;
+            break;
+        case 42:
+            n = e.huanshowName + t + e.PNGExt;
+            break;
+        case 43:
+            n = e.wingName + t + e.PNGExt;
+            break;
+        case 44:
+            n = e.bagua + t + e.PNGExt;
+            break;
+        case 45:
+            n = e.Talent + t + e.PNGExt;
+            break;
+        case 46:
+            n = e.QrCode + t + e.PNGExt;
+            break;
+        case 47:
+            n = e.SoulPet + t + e.PNGExt;
+            break;
+        case 48:
+            n = e.LongHuang + t + e.PNGExt;
+            break;
+        case 49:
+            n = e.MeiNv + t + e.JPGExt;
+            break;
+        case 60:
+            n = e.SuperVipEwm + t + e.JPGExt;
+            break;
+        case 50:
+            n = e.Wenchangge + t + e.PNGExt;
+            break;
+        case 51:
+            n = e.Wanfayugao + t + e.JPGExt;
+            break;
+        case 52:
+            n = e.Touzi + t + e.PNGExt;
+            break;
+        case 53:
+            n = e.Master + t + e.PNGExt;
+            break;
+        case 54:
+            gd.player.platChangeAssets && constants.platChangeAssetsFashion[t] && (t = constants.platChangeAssetsFashion[t]),
+            n = e.Fashion + t + e.PNGExt;
+            break;
+        case 55:
+            n = e.ZhuHun + t + e.PNGExt;
+            break;
+        case 56:
+            n = e.BIG_HEAD + t + e.JPGExt;
+            break;
+        case 37:
+            n = e.ActivityTitle + t + e.PNGExt;
+            break;
+        case 57:
+            n = e.Scene_Effect + t + e.JsonExt;
+            break;
+        case 58:
+            n = e.NTILE_DATA + t + e.ConfigDataBinExt;
+            break;
+        case 59:
+            n = e.NTILE_MAP + t;
+            break;
+        case 61:
+            n = e.ZhanHun + t + e.PNGExt;
+            break;
+        case 63:
+            n = e.WeiWang + t + e.PNGExt;
+            break;
+        case 64:
+            n = e.ZhenFaPifu + t + e.PNGExt;
+            break;
+        case 65:
+            n = e.ZhenFaPifuName + t + e.PNGExt;
+            break;
+        case 66:
+            n = e.QiShiErBian + t + e.PNGExt;
+            break;
+        case 67:
+            n = e.QiShiErBianName + t + e.PNGExt;
+            break;
+        case 68:
+            n = e.XINGPANNAME + t + e.PNGExt;
+            break;
+        case 69:
+            n = e.ASTROLABE + t + e.JPGExt;
+            break;
+        case 70:
+            n = e.JINGJIENAME + t + e.JPGExt;
+            break;
+        case 71:
+            n = e.GONGZHONGHAO + t + e.PNGExt;
+            break;
+        case 72:
+            n = e.RedEnvelope + t + e.PNGExt;
+            break;
+        case 73:
+            n = e.DouChaRw + t + e.PNGExt;
+            break;
+        case 74:
+            n = e.KAPIAN + t + e.PNGExt;
+            break;
+        case 75:
+            n = e.TIANF + t + e.PNGExt;
+            break;
+        case 76:
+            n = e.XIALV + t + e.PNGExt;
+            break;
+        case 77:
+            n = e.KitchenGod + t + e.PNGExt;
+            break;
+        case 78:
+            n = e.QIPAO + t + e.PNGExt;
+            break;
+        case 79:
+            n = e.DIAOYU + t + e.PNGExt;
+            break;
+        case 80:
+            n = e.YUCHANG + t + a;
+            break;
+        case 81:
+            n = e.Sidebar + t + e.PNGExt;
+            break;
+        case 82:
+            n = e.wechatoa + t + e.JPGExt
+        }
+        if (this.NoCache)
+            l = e.ImageServer + n + d + e.defaultVersion;
+        else if (o)
+            cm.version[n + d] ? (s = cm.version[n + d] + "/",
+            l = e.ImageServer + s + n + d + e.defaultVersion) : cm.version[n] ? (s = cm.version[n] + "/",
+            l = e.ImageServer + s + n + d + e.defaultVersion) : l = e.ImageServer + s + n + d + e.defaultVersion;
+        else if (js_gameVars.iosResource) {
+            var m = d.split(".");
+            l = js_gameVars.iosResource + "/" + js_gameVars.iosResource + c + "." + m[1]
+        } else
+            l = "severResource/" + n + d + e.defaultVersion;
+        return l
     }
-    return __extends(t, e),
-    t.prototype.createComponents = function(t) {
-        this.gameObject = t,
-        e.prototype.createComponents.call(this, t)
+    ,
+    e.getSourceID = function(e, t, i) {
+        return 1e3 * e + 10 * t + i
     }
     ,
-    t.prototype.initDisplay = function() {}
-    ,
-    t.prototype.update = function(e) {}
-    ,
-    t
-}(Entity);
-__reflect(StaticEntity.prototype, "StaticEntity");
+    e.MapBackGround = "map/",
+    e.MiniMapGround = "minimap/",
+    e.JueXing = "icon/juexing/",
+    e.Model = "model/",
+    e.ddsModel = "ddsmodel/",
+    e.PvrModel = "pvrmodel/",
+    e.PvrMap = "pvrmap/",
+    e.ToolIcon = "icon/tool/",
+    e.HeadIcon = "icon/head/",
+    e.AudioIcon = "audio/",
+    e.SkillIcon = "icon/skills/",
+    e.ShowIcon = "icon/show/",
+    e.UIModel = "uiModel/",
+    e.ActiveBtn = "icon/actbtn/",
+    e.MenuBtn = "icon/menubtn/",
+    e.Way = "icon/way/",
+    e.Title = "icon/title/",
+    e.Huiji = "icon/huiji/",
+    e.NpcTitle = "icon/npctitle/",
+    e.Exhibition = "icon/exhibition/",
+    e.MINIMAP_ATLAS = "minimap/minimaps",
+    e.TIANFU_CARD = "icon/tianfu/",
+    e.SHENQI = "icon/shenqi/",
+    e.JUNXIAN = "icon/junxian/",
+    e.WODERFUL = "icon/xianshijingcai/",
+    e.SHENLONG = "icon/shenlong_tower/",
+    e.TUJIAN = "icon/tujian/",
+    e.VIP = "icon/vip/",
+    e.DailyIcon = "icon/daily/",
+    e.DailyActivityIcon = "icon/dailyicon/",
+    e.MapTitle = "icon/maptitle/",
+    e.Activitypic = "icon/activity_pic/",
+    e.Activitypage = "icon/activity_page/",
+    e.FuliRetrieve = "icon/ziyuanzhaohui/",
+    e.Shenbing = "icon/shenbing/",
+    e.Coin = "icon/coin/",
+    e.AdvanceTitle = "icon/huodongyugao/",
+    e.huanshowName = "icon/huanshou/",
+    e.wingName = "icon/guangyi/",
+    e.bagua = "icon/bagua/",
+    e.Talent = "icon/talent/",
+    e.QrCode = "icon/erweima/",
+    e.SoulPet = "icon/lingchong/",
+    e.LongHuang = "icon/longhuang/",
+    e.MeiNv = "icon/meinv/",
+    e.Wenchangge = "icon/cangpin/",
+    e.Wanfayugao = "icon/wanfayugao/",
+    e.Touzi = "icon/touzi/",
+    e.Master = "icon/master/",
+    e.Fashion = "icon/fashion/",
+    e.ZhuHun = "icon/zhuhun/",
+    e.BIG_HEAD = "icon/head_big/",
+    e.ActivityTitle = "icon/activity_title/",
+    e.Scene_Effect = "scene_effect/",
+    e.NTILE_DATA = "tilemap/tiledata/",
+    e.NTILE_MAP = "tilemap/",
+    e.SuperVipEwm = "icon/chaojihuiyuan/",
+    e.ZhanHun = "icon/zhanhun/",
+    e.WeiWang = "icon/weiming/",
+    e.ZhenFaPifu = "icon/zhenfapifu/",
+    e.ZhenFaPifuName = "icon/zhenfapifuname/",
+    e.QiShiErBian = "icon/qishierbian/",
+    e.QiShiErBianName = "icon/qsebname/",
+    e.XINGPANNAME = "icon/xingpanname/",
+    e.ASTROLABE = "icon/astrolabe/",
+    e.JINGJIENAME = "icon/jingjie/",
+    e.GONGZHONGHAO = "icon/gongzhonghao/",
+    e.RedEnvelope = "icon/hongbao/",
+    e.DouChaRw = "icon/doucharenwu/",
+    e.KAPIAN = "icon/kapian/",
+    e.TIANF = "icon/tianf/",
+    e.XIALV = "icon/xialv/",
+    e.KitchenGod = "icon/chushen/",
+    e.QIPAO = "icon/qipao/",
+    e.DIAOYU = "icon/diaoyu/",
+    e.YUCHANG = "icon/yuchangbj/",
+    e.Sidebar = "icon/cebianlan/",
+    e.wechatoa = "icon/wechatoa/",
+    e.Activity = "icon/activity/",
+    e.Data = "http://192.168.5.66:8082/",
+    e.ImageServer = "http://192.168.5.66:8081/",
+    e.ConfigDataExt = ".csv",
+    e.ConfigDataBinExt = ".bin",
+    e.ConfigZipExt = ".dat",
+    e.AudioExt = ".wav",
+    e.mp3Ext = ".mp3",
+    e.UIModelExt = ".png",
+    e.PNGExt = ".png",
+    e.JPGExt = ".jpg",
+    e.JsonExt = ".json",
+    e.defaultVersion = "",
+    e.NoCache = !1,
+    e.modelName = {},
+    e.resName = {
+        8: "tool",
+        9: "skills",
+        21: "title",
+        54: "fashion"
+    },
+    e.mgResName = {},
+    e
+}();
+__reflect(ResUrl.prototype, "ResUrl");
 var Capability = function() {
     function e() {}
     return e.changeByLevel = function(e) {
@@ -35610,6 +36363,10 @@ var GameObserverManager = function() {
         net.FcmModel.ins().addObserver(e),
         e = new EmailControl,
         net.EmailModel.ins().addObserver(e),
+        e = new CatchFishControl,
+        net.CatchfishModel.ins().addObserver(e),
+        e = new FishPondControl,
+        net.FishpondModel.ins().addObserver(e),
         e = new FuliControl,
         net.WelfareModel.ins().addObserver(e),
         net.LogingiftModel.ins().addObserver(e),
@@ -37738,7 +38495,7 @@ var Logic = function() {
     ,
     e.getOperLv = function() {
         var e = Number(Vars.$channel);
-        return 2 === e || 34 === e || 36 === e || 37 === e || 14 === e || 16 === e || 15 === e || 17 === e ? Number(Vars.otherneedmsg) : gd.operData.operLv
+        return 2 === e || 34 === e || 36 === e || 37 === e || 14 === e || 16 === e || 15 === e || 17 === e || 39 === e ? Number(Vars.otherneedmsg) : gd.operData.operLv
     }
     ,
     e.getReinLvStr = function(e, t) {
@@ -38114,6 +38871,23 @@ var Logic = function() {
             return 0;
         var t = gd.bag.getStarArmId(e.extraType, e.extraValue);
         return t && cm.star[t] && cm.star[t].itemid ? cm.star[t].itemid : e.itemId ? e.itemId : 0
+    }
+    ,
+    e.checkSidShow = function(e) {
+        return e ? (e >= 1e5 && (e -= 1e4),
+        e + "") : ""
+    }
+    ,
+    e.checkWeekOfMonth = function(e) {
+        var t, i = new Date(DateUtil.serverNow()), r = i.getDate();
+        t = r % 7;
+        var a = 0 == t ? 7 : t;
+        t = i.getDay();
+        var n = 0 == t ? 7 : t;
+        t = n - a,
+        t = 0 > t ? t + 7 : t;
+        var o = Math.ceil((t + r) / 7);
+        return o == e ? !0 : !1
     }
     ,
     e.nameFirstArr = ["", "迪文", "正楠", "没华", "思凯", "乔伊", "爱玲", "冰心", "力宏", "敬腾", "田芳", "小刚", "技师", "蕴和", "继光", "邓超", "美玲", "嫣儿", "翠柏", "涵菡", "思默", "如茹", "傲冬", "青枫", "向露", "夜梅", "含蕊", "代荷", "海莲", "傲南", "冰绿", "灵凡", "春冬", "听安", "瑶菏", "念露", "白翠", "霞客", "杰克", "小娴", "志明", "春娇", "祖义", "广人", "学通", "振东", "正冬", "科伟", "文杰", "鸿卓", "孝天", "左拉", "子华", "健龙", "亦巧", "碧春", "春雁", "愁予", "书芹", "李白", "雨果", "仁甫", "迎天", ""],
@@ -38630,6 +39404,9 @@ var ARPGEntityControl = function() {
                 break;
             case 67063:
                 this.curInstance.updatePlayerInvisibale(t);
+                break;
+            case 67075:
+                this.curInstance.updatePlayerInvisibale2(t);
                 break;
             case 67068:
                 this.curInstance.updatePlayerPunishment(t);
@@ -39527,7 +40304,19 @@ var BagControl = function() {
             gd.chefgod.getKitchenGodBagInfo(t);
             break;
         case 10074:
-            gd.chefgod.updateKitchenGodBagInfo(t)
+            gd.chefgod.updateKitchenGodBagInfo(t);
+            break;
+        case 10077:
+            gd.bag.setFishinfo(t);
+            break;
+        case 10076:
+            gd.bag.changeFishinfo(t);
+            break;
+        case 10080:
+            gd.fishpond.setFishFryinfo(t);
+            break;
+        case 10079:
+            gd.fishpond.changeFishFryinfo(t)
         }
     }
     ,
@@ -39804,6 +40593,40 @@ var CangBaoTuControl = function() {
     e
 }();
 __reflect(CangBaoTuControl.prototype, "CangBaoTuControl", ["IObserver"]);
+var CatchFishControl = function() {
+    function e() {}
+    return e.prototype.update = function(e, t) {
+        switch (e) {
+        case 245002:
+            var i = emIns.getEntity(t.rid.toString());
+            if (t.rid.toString() != emIns.firstPlayer.playerObject.userId.toString() && i) {
+                if (t.success) {
+                    var r = cm.global[39007].value.splitNum("#");
+                    i.bianshen(1 == i.playerObject.sex ? r[0] : r[1], i.fighterObject.FishId ? i.fighterObject.FishId : r[2], 1, !1)
+                }
+                return
+            }
+            gd.arpgInst.sendNotif(1027, t);
+            break;
+        case 245004:
+            var a = new UIData(t);
+            uim.show(363, a),
+            gd.arpgInst.sendNotif(1029, !0);
+            break;
+        case 245007:
+            gd.player.CatchFishTuJianList = t.fishList,
+            gd.player.CatchFishSuitList = t.fishRewardInfoList;
+            for (var n = 0, o = gd.player.CatchFishSuitList; n < o.length; n++) {
+                var s = o[n];
+                gd.player.CatchFishSuitDic[s.suitId] = s
+            }
+            gd.arpgInst.sendNotif(1031)
+        }
+    }
+    ,
+    e
+}();
+__reflect(CatchFishControl.prototype, "CatchFishControl", ["IObserver"]);
 var ChatControl = function() {
     function e() {
         this.delayDeal = [],
@@ -39873,7 +40696,10 @@ var ChatControl = function() {
             gd.chat.removeMsgByUid(t);
             break;
         case 6021:
-            gd.chat.updateNextChatTime(t)
+            gd.chat.updateNextChatTime(t);
+            break;
+        case 6022:
+            gd.chat.setGlobalSetInfo(t)
         }
     }
     ,
@@ -40323,6 +41149,27 @@ var FengmoControl = function() {
     e
 }();
 __reflect(FengmoControl.prototype, "FengmoControl", ["IObserver"]);
+var FishPondControl = function() {
+    function e() {}
+    return e.prototype.update = function(e, t) {
+        switch (e) {
+        case 246002:
+            gd.fishpond.setInfo(t);
+            break;
+        case 246004:
+            gd.fishpond.updateDevourFish(t);
+            break;
+        case 246006:
+            gd.fishpond.updateLevelUpFish(t);
+            break;
+        case 246009:
+            gd.fishpond.showReward(t)
+        }
+    }
+    ,
+    e
+}();
+__reflect(FishPondControl.prototype, "FishPondControl", ["IObserver"]);
 var FlyControl = function() {
     function e() {}
     return e.prototype.update = function(e, t) {
@@ -44084,6 +44931,16 @@ var ActivityData = function(e) {
         return ActivityTimeUtil.checkActivityState(t) && Logic.checkCondition(t.conditions) ? !0 : !1
     }
     ,
+    t.prototype.checkShowTypeOpen = function(e) {
+        var t = cm.activitys;
+        for (var i in t) {
+            var r = t[i];
+            if (r.showType == e && ActivityTimeUtil.checkActivityState(r) && Logic.checkCondition(r.conditions))
+                return r
+        }
+        return null
+    }
+    ,
     t.prototype.checkReqActivityData = function() {
         var e = ""
           , t = [];
@@ -45430,6 +46287,7 @@ var AnglerData = function(e) {
         t.treasureBJAnger = !1,
         t.treasureLLAnger = !1,
         t.treasureSWAnger = !1,
+        t.treasureSSAnger = !1,
         t.operTingHint = !1,
         t.operTeQuanHint = !1,
         t.operSpecHint = !1,
@@ -45493,6 +46351,9 @@ var AnglerData = function(e) {
         t.xialvHint = !1,
         t.tianti_times = 0,
         t.votePkHint = !1,
+        t.FishPondAct1 = 0,
+        t.FishCKHint = 0,
+        t.FishFirstOpen = 0,
         t
     }
     return __extends(t, e),
@@ -45538,7 +46399,7 @@ var AnglerData = function(e) {
     }
     ,
     t.prototype.prepareCheckAll = function() {
-        this.prepareCheck("checkActivityAngler", "checkActivitySingle", "checkActivityRecycle", "checkUnionAngler", "checkFabaoCrownHint", "checkYuanShenHertHint", "checkFanTianAddHint", "checkTuluHint", "checkYuanShenHint", "checkNewFakeVipHint", "checkForgeCompoundAngler", "checkBaoshiCompoundAngler", "checkLingshiCompoundAngler", "checkRoleReinLevelUp", "checkTianFuAngle", "checkOperHint", "checkHasItemCanBeUse", "checkEmailRead", "checkFuliQDAngler", "checkWeeklyAngler", "checkFirstCharge", "checkDailyCharge", "checkFashionAnger", "checkCuillian", "checkFlyUp", "checkYhdxRedHint", "checkLdshRedHint", "checkShblRedHint", "checkSevenAngler", "checkTreasureAnger", "checkFuliOnline", "checkFuliRetrieve", "checkCsBaoYuRedHint", "checkCsLingShiRedHint", "checkXzHint", "checkAstrolabeHint", "checkPersonalBossHint", "checkZhuHunHint", "checkFaqiHint", "checkFaqiUpHint", "checkNTGMHint", "checkShenZhuangHint", "checkBaoshiHint", "checkLingshiHint", "checkShouHunHint", "checkHuijiHint", "updateAwakeHint", "checkLeishenHint", "checkDevourHit", "checkshenxuanqhHint", "checkMoChaoJiFenHint", "checkTianFuHint", "checkTianFuJueXingHint", "checkXiaLvHint", "checkInvitationHint", "checkVotePkHint")
+        this.prepareCheck("checkActivityAngler", "checkActivitySingle", "checkActivityRecycle", "checkUnionAngler", "checkFabaoCrownHint", "checkYuanShenHertHint", "checkFanTianAddHint", "checkTuluHint", "checkYuanShenHint", "checkNewFakeVipHint", "checkForgeCompoundAngler", "checkBaoshiCompoundAngler", "checkLingshiCompoundAngler", "checkRoleReinLevelUp", "checkTianFuAngle", "checkOperHint", "checkHasItemCanBeUse", "checkEmailRead", "checkFuliQDAngler", "checkWeeklyAngler", "checkFirstCharge", "checkDailyCharge", "checkFashionAnger", "checkCuillian", "checkFlyUp", "checkYhdxRedHint", "checkLdshRedHint", "checkShblRedHint", "checkSevenAngler", "checkTreasureAnger", "checkFuliOnline", "checkFuliRetrieve", "checkCsBaoYuRedHint", "checkCsLingShiRedHint", "checkXzHint", "checkAstrolabeHint", "checkPersonalBossHint", "checkZhuHunHint", "checkFaqiHint", "checkFaqiUpHint", "checkNTGMHint", "checkShenZhuangHint", "checkBaoshiHint", "checkLingshiHint", "checkShouHunHint", "checkHuijiHint", "updateAwakeHint", "checkLeishenHint", "checkDevourHit", "checkshenxuanqhHint", "checkMoChaoJiFenHint", "checkTianFuHint", "checkTianFuJueXingHint", "checkXiaLvHint", "checkInvitationHint", "checkVotePkHint", "checkFishCKUp", "checkFishFirstOpen", "checkFishPondCKUp")
     }
     ,
     t.prototype.checkAllAngler = function() {
@@ -46473,12 +47334,14 @@ var AnglerData = function(e) {
               , r = gd.trea.checkAngerByType(2)
               , a = gd.trea.checkAngerByType(3)
               , n = gd.trea.checkAngerByType(4)
-              , o = gd.trea.checkAngerByType(14);
-            (t.treasureYZAnger != i || t.treasureBBAnger != r || t.treasureBJAnger != a || t.treasureLLAnger != n || t.treasureSWAnger != o) && (t.treasureYZAnger = i,
+              , o = gd.trea.checkAngerByType(14)
+              , s = gd.trea.checkAngerByType(15);
+            (t.treasureYZAnger != i || t.treasureBBAnger != r || t.treasureBJAnger != a || t.treasureLLAnger != n || t.treasureSWAnger != o || t.treasureSSAnger != s) && (t.treasureYZAnger = i,
             t.treasureBBAnger = r,
             t.treasureBJAnger = a,
             t.treasureLLAnger = n,
             t.treasureSWAnger = o,
+            t.treasureSSAnger = s,
             e && t.sendNotif(108))
         }
     }
@@ -46956,19 +47819,23 @@ var AnglerData = function(e) {
             var t = this;
             t.KaoshangHint = !1;
             for (var i in gd.activity.KaoshangdDic) {
-                var r = gd.activity.KaoshangdDic[i];
-                for (var a in r) {
-                    var n = r[a];
-                    if (1 == n.freeRewardState) {
-                        t.KaoshangHint = !0;
-                        break
-                    }
-                    if (gd.activity.buyKaoshangDic[i] && 1 == n.payRewardState) {
-                        t.KaoshangHint = !0;
-                        break
+                var r = cm.activitys[i];
+                if (61301 != r.showType) {
+                    var a = gd.activity.KaoshangdDic[i];
+                    for (var n in a) {
+                        var o = a[n];
+                        if (1 == o.freeRewardState) {
+                            t.KaoshangHint = !0;
+                            break
+                        }
+                        if (gd.activity.buyKaoshangDic[i] && 1 == o.payRewardState) {
+                            t.KaoshangHint = !0;
+                            break
+                        }
                     }
                 }
             }
+            t.checkFishPondCKUp(),
             e && t.sendNotif(108)
         }
     }
@@ -47403,6 +48270,50 @@ var AnglerData = function(e) {
         e.sendNotif(108)
     }
     ,
+    t.prototype.checkFishPondCKUp = function(e) {
+        void 0 === e && (e = !0);
+        var t = this;
+        if (gd.serv.enterComp) {
+            t.FishPondAct1 = 0;
+            var i = gd.activity.checkShowTypeOpen(61301);
+            i && (t.FishPondAct1 = t.checkFishPondCKUpHint(i.id)),
+            e && t.sendNotif(108)
+        }
+    }
+    ,
+    t.prototype.checkFishPondCKUpHint = function(e) {
+        var t, i, r = 0, a = gd.activity.KaoshangdDic[e + ""], n = !!gd.activity.buyKaoshangDic[e + ""];
+        for (var o in a)
+            if (t = a[o],
+            i = cm.milin[t.miLingid]) {
+                if (i.reward && 1 == t.freeRewardState) {
+                    r = 1;
+                    break
+                }
+                if (i.reward2 && n && 1 == t.payRewardState) {
+                    r = 1;
+                    break
+                }
+            }
+        return r
+    }
+    ,
+    t.prototype.checkFishCKUp = function(e) {
+        void 0 === e && (e = !0);
+        var t = this;
+        gd.serv.enterComp && (t.FishCKHint = 0,
+        Logic.checkOpenLevel(367, 0) && (gd.fishpond.checkRedHint() && (t.FishCKHint = 1),
+        e && t.sendNotif(108)))
+    }
+    ,
+    t.prototype.checkFishFirstOpen = function(e) {
+        void 0 === e && (e = !0);
+        var t = this;
+        gd.serv.enterComp && (t.FishFirstOpen = 0,
+        gd.fishpond.checkFishGetHint() && (t.FishOpenTime ? gd.fishpond.lastGetTime > 0 && t.FishOpenTime + 432e5 <= DateUtil.serverNow() && (t.FishFirstOpen = 1) : gd.fishpond.lastGetTime > 0 && (t.FishFirstOpen = 1)),
+        e && t.sendNotif(108))
+    }
+    ,
     t
 }(DataBase);
 __reflect(AnglerData.prototype, "AnglerData", ["IUpdateLogicable"]);
@@ -47745,6 +48656,7 @@ var BagData = function(e) {
         t.showGiftBagPopAlert = !0,
         t.globalObj = {},
         t.recycleLids = {},
+        t.CatchFishDic = {},
         t.warriorCardList = [],
         t.boxReward = {},
         t.qxItemCount = {},
@@ -48053,6 +48965,48 @@ var BagData = function(e) {
         t.sendNotif(3, !0)
     }
     ,
+    t.prototype.setFishinfo = function(e) {
+        var t = this;
+        t.CatchFishDic = {},
+        t.emptyItemGridCountFish = e.emptyGridCount,
+        t.maxItemGridCountFish = e.maxGridCount;
+        for (var i = 0, r = e.fishList; i < r.length; i++) {
+            var a = r[i];
+            t.CatchFishDic[a.lid.toString()] = a
+        }
+        t.sendNotif(1032, !0)
+    }
+    ,
+    t.prototype.changeFishinfo = function(e) {
+        var t, i = this, r = cm.item, a = "";
+        i.showArrs = [];
+        for (var n, o = 0, s = e.fishList; o < s.length; o++) {
+            var l = s[o]
+              , c = l.itemId;
+            t = r[c];
+            var d = i.CatchFishDic[l.lid.toString()];
+            n = d ? l.count - d.count : l.count,
+            a = Html.str("获得 ", Logic.getCol(50)) + t[2] + (n > 1 ? "*" + n : ""),
+            i.showArrs.push(a),
+            i.CatchFishDic[l.lid.toString()] = l
+        }
+        for (var p = e.removedIdList, u = 0; u < p.length; ) {
+            var g = p[u].toString();
+            if (i.CatchFishDic[g]) {
+                var f = i.CatchFishDic[g]
+                  , c = f.itemId;
+                t = r[c],
+                delete i.CatchFishDic[p[u].toString()],
+                a = Html.str("消耗 ", Logic.getCol(49)) + t[2] + (f.count > 1 ? "*" + f.count : ""),
+                i.showArrs.push(a),
+                p.splice(u, 1)
+            } else
+                u++
+        }
+        i.showArrs.length > 0 && ncm.show(i.showArrs),
+        i.sendNotif(1032, !0)
+    }
+    ,
     t.prototype.canUseHandItem = function(e) {
         return e >= this.handItemGridStartIndex
     }
@@ -48264,7 +49218,7 @@ var BagData = function(e) {
                     break
                 }
             if (D.length > 0)
-                return void net.BagModel.ins().send7(D);
+                return void net.BagModel.ins().send7(D, 1);
             D = null
         }
     }
@@ -48521,7 +49475,11 @@ var BagData = function(e) {
             break;
         case 154:
             r = t - a.coin_154,
-            a.coin_154 = t
+            a.coin_154 = t;
+            break;
+        case 150:
+            r = t - a.honour,
+            a.honour = t
         }
         if (i)
             if (r > 0) {
@@ -50780,6 +51738,13 @@ var ChatData = function(e) {
         t.sendNotif(1024)
     }
     ,
+    t.prototype.setGlobalSetInfo = function(e) {
+        if (gd.player.globalSetInfo = {},
+        e && !(e.length <= 0))
+            for (var t = 0; t < e.length; t++)
+                gd.player.globalSetInfo[e[t].id] = e[t]
+    }
+    ,
     t
 }(DataBase);
 __reflect(ChatData.prototype, "ChatData");
@@ -51409,7 +52374,8 @@ var DataManager = function() {
         gd.peakRace = new PeakRaceData,
         gd.tianti = new TianTiData,
         gd.chefgod = new ChefgodData,
-        gd.votepk = new VotepkData
+        gd.votepk = new VotepkData,
+        gd.fishpond = new FishPondData
     }
     ,
     e.Instance = new e,
@@ -51896,6 +52862,7 @@ var FameData = function(e) {
             a[e.titleId].type == title_type.cloth ? (r.fashionId = e.titleId,
             t.sendNotif(143, e.titleId)) : a[e.titleId].type == title_type.weapon ? (r.weaponId = e.titleId,
             t.sendNotif(143, e.titleId)) : a[e.titleId].type == title_type.foot ? (r.footId = e.titleId,
+            t.sendNotif(143, e.titleId)) : a[e.titleId].type == title_type.fish ? (r.fishId = e.titleId,
             t.sendNotif(143, e.titleId)) : a[e.titleId].type == title_type.title ? gd.player.titleId = e.titleId : a[e.titleId].type == title_type.huiji ? (r.huiJiId = e.titleId,
             t.sendNotif(143, e.titleId)) : a[e.titleId].type == title_type.zuoqi ? (r.zqId = e.titleId,
             t.sendNotif(143, e.titleId)) : a[e.titleId].type == title_type.dengchang ? (r.dengChangId = e.titleId,
@@ -51936,7 +52903,8 @@ var FameData = function(e) {
             t.sendNotif(144)) : a.type == title_type.zuoqi ? i.zqId == e && (i.zqId = 0,
             t.sendNotif(144)) : a.type == title_type.huiji ? i.huiJiId == e && (i.huiJiId = 0,
             t.sendNotif(144)) : a.type == title_type.dengchang ? i.dengChangId == e && (i.dengChangId = 0,
-            t.sendNotif(144)) : a.type == title_type.qipao && i.qipaoId == e.titleId && (i.qipaoId = 0,
+            t.sendNotif(144)) : a.type == title_type.qipao ? i.qipaoId == e.titleId && (i.qipaoId = 0,
+            t.sendNotif(144)) : a.type == title_type.fish && i.fishId == e && (i.fishId = 0,
             t.sendNotif(144))
     }
     ,
@@ -51946,7 +52914,7 @@ var FameData = function(e) {
         gd.player);
         t.titleDic[e.titleId] = e;
         var r = cm.title;
-        r[e.titleId].type == title_type.title ? gd.player.titleId = e.titleId : r[e.titleId].type == title_type.cloth ? i.fashionId = e.titleId : r[e.titleId].type == title_type.weapon ? i.weaponId = e.titleId : r[e.titleId].type == title_type.foot ? i.footId = e.titleId : r[e.titleId].type == title_type.zuoqi ? i.zqId = e.titleId : r[e.titleId].type == title_type.huiji ? i.huiJiId = e.titleId : r[e.titleId].type == title_type.dengchang ? i.dengChangId = e.titleId : r[e.titleId].type == title_type.qipao && (i.qipaoId = e.titleId),
+        r[e.titleId].type == title_type.title ? gd.player.titleId = e.titleId : r[e.titleId].type == title_type.cloth ? i.fashionId = e.titleId : r[e.titleId].type == title_type.weapon ? i.weaponId = e.titleId : r[e.titleId].type == title_type.foot ? i.footId = e.titleId : r[e.titleId].type == title_type.zuoqi ? i.zqId = e.titleId : r[e.titleId].type == title_type.huiji ? i.huiJiId = e.titleId : r[e.titleId].type == title_type.dengchang ? i.dengChangId = e.titleId : r[e.titleId].type == title_type.qipao ? i.qipaoId = e.titleId : r[e.titleId].type == title_type.fish && (i.fishId = e.titleId),
         t.sendNotif(143)
     }
     ,
@@ -51961,7 +52929,7 @@ var FameData = function(e) {
         var t, i = this, r = gd.player;
         t = gd.player.uid;
         var a = cm.title;
-        a[e].type == title_type.title ? gd.player.titleId = 0 : a[e].type == title_type.cloth ? r.fashionId = 0 : a[e].type == title_type.weapon ? r.weaponId = 0 : a[e].type == title_type.foot ? r.footId = 0 : a[e].type == title_type.zuoqi ? r.zqId = 0 : a[e].type == title_type.huiji ? r.huiJiId = 0 : a[e].type == title_type.dengchang ? r.dengChangId = 0 : a[e].type == title_type.qipao && (r.qipaoId = 0),
+        a[e].type == title_type.title ? gd.player.titleId = 0 : a[e].type == title_type.cloth ? r.fashionId = 0 : a[e].type == title_type.weapon ? r.weaponId = 0 : a[e].type == title_type.foot ? r.footId = 0 : a[e].type == title_type.zuoqi ? r.zqId = 0 : a[e].type == title_type.huiji ? r.huiJiId = 0 : a[e].type == title_type.dengchang ? r.dengChangId = 0 : a[e].type == title_type.qipao ? r.qipaoId = 0 : a[e].type == title_type.fish && (r.fishId = 0),
         i.sendNotif(144)
     }
     ,
@@ -52067,6 +53035,7 @@ var title_type;
     e[e.dengchang = 6] = "dengchang",
     e[e.qipao = 7] = "qipao",
     e[e.singleTitle = 10] = "singleTitle",
+    e[e.fish = 12] = "fish",
     e[e.zuoqi = 15] = "zuoqi"
 }(title_type || (title_type = {}));
 var FaqiData = function(e) {
@@ -52157,6 +53126,131 @@ var FcmData = function(e) {
     t
 }(DataBase);
 __reflect(FcmData.prototype, "FcmData");
+var FishPondData = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.pondLv = 0,
+        t.pondMax = 0,
+        t.rewardList = [],
+        t.lastGetTime = 0,
+        t.totalExp = 0,
+        t.fishDic = {},
+        t.ckDic = {},
+        t.setDic = {},
+        t
+    }
+    return __extends(t, e),
+    t.prototype.setInfo = function(e) {
+        var t = this;
+        t.pondLv = e.level,
+        t.pondMax = e.capacity,
+        t.rewardList = e.rewardList,
+        t.lastGetTime = e.lastGetTime,
+        this.sendNotif(1033)
+    }
+    ,
+    t.prototype.updateDevourFish = function(e) {
+        e.success && this.sendNotif(1035, e.fishFryBean)
+    }
+    ,
+    t.prototype.updateLevelUpFish = function(e) {
+        var t = this;
+        e.success ? (t.fishDic[e.fishFryBean.lid.toString()] ? t.fishDic[e.fishFryBean.lid.toString()] = e.fishFryBean : t.ckDic[e.fishFryBean.lid.toString()] ? t.ckDic[e.fishFryBean.lid.toString()] = e.fishFryBean : ncm.err("鱼塘升级返回存在问题", e.fishFryBean.fryId),
+        this.sendNotif(1036, e.fishFryBean)) : ncm.err("鱼塘升级失败")
+    }
+    ,
+    t.prototype.showReward = function(e) {
+        var t = new UIData(e,1);
+        gd.angler.FishOpenTime = DateUtil.serverNow(),
+        gd.angler.checkFishFirstOpen(),
+        uim.show(363, t)
+    }
+    ,
+    t.prototype.checkRedHint = function(e) {
+        void 0 === e && (e = 0);
+        for (var t = this, i = cm.fishlv, r = 0 == e || 1 == e ? Object.keys(t.fishDic) : [], a = 0; a < r.length; a++)
+            if (t.fishDic[r[a]]) {
+                var n = t.fishDic[r[a]]
+                  , o = i[n.fryId];
+                if (o.cost && Logic.checkCostItems(o.cost) && n.exp >= o.cost1)
+                    return !0
+            }
+        r = 0 == e || 2 == e ? Object.keys(t.ckDic) : [];
+        for (var a = 0; a < r.length; a++)
+            if (t.ckDic[r[a]]) {
+                var n = t.ckDic[r[a]]
+                  , o = i[n.fryId];
+                if (o.cost && Logic.checkCostItems(o.cost) && n.exp >= o.cost1)
+                    return !0
+            }
+        return !1
+    }
+    ,
+    t.prototype.checkFishGetHint = function() {
+        for (var e = this, t = Object.keys(e.fishDic), i = 0; i < t.length; i++)
+            if (e.fishDic[t[i]]) {
+                var r = e.fishDic[t[i]];
+                if (r.fishBuffList.length > 0)
+                    return !0
+            }
+        return !1
+    }
+    ,
+    t.prototype.setFishFryinfo = function(e) {
+        var t = this;
+        t.fishDic = {},
+        t.ckDic = {},
+        t.emptyGridCount = e.emptyGridCount,
+        t.maxGridCount = e.maxGridCount,
+        t.totalExp = e.totalExp;
+        for (var i = 0, r = e.pondFishList; i < r.length; i++) {
+            var a = r[i];
+            a && (t.fishDic[a.lid.toString()] = a)
+        }
+        for (var n = 0, o = e.bagFishList; n < o.length; n++) {
+            var a = o[n];
+            a && (t.ckDic[a.lid.toString()] = a)
+        }
+        gd.angler.checkFishCKUp(),
+        t.sendNotif(1034, !0)
+    }
+    ,
+    t.prototype.changeFishFryinfo = function(e) {
+        var t = this;
+        cm.item;
+        t.showArrs = [];
+        for (var i = 0, r = e.pondFishList; i < r.length; i++) {
+            var a = r[i];
+            t.fishDic[a.lid.toString()] = a
+        }
+        for (var n = 0, o = e.bagFishList; n < o.length; n++) {
+            var a = o[n];
+            t.ckDic[a.lid.toString()] = a
+        }
+        for (var s = e.removedIdList, l = 0; l < s.length; ) {
+            var c = s[l].toString();
+            if (t.fishDic[c]) {
+                t.fishDic[c];
+                s.splice(l, 1)
+            } else if (t.ckDic[c]) {
+                t.ckDic[c];
+                s.splice(l, 1)
+            } else
+                l++
+        }
+        t.showArrs.length > 0 && ncm.show(t.showArrs),
+        gd.angler.checkFishCKUp(),
+        t.sendNotif(1034, !0)
+    }
+    ,
+    t.prototype.setSetting = function(e) {
+        var t = this;
+        2040 == e.key ? t.setDic[1] = e.state : 2041 == e.key ? t.setDic[2] = e.state : 2042 == e.key ? t.setDic[3] = e.state : 2043 == e.key && (t.setDic[0] = e.state)
+    }
+    ,
+    t
+}(DataBase);
+__reflect(FishPondData.prototype, "FishPondData");
 var FlyData = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
@@ -56066,17 +57160,29 @@ var MoChaoData = function(e) {
     return __extends(t, e),
     t.prototype.setMoChaoInfo = function(e) {
         if (e) {
-            var t = this;
-            t.moChaoInfo = {};
-            for (var i = e.moChaoInfoList, r = 0; r < i.length; r++) {
-                var a = i[r];
-                a && (t.moChaoInfo[a.moChaoId] = a)
-            }
+            var t = this
+              , i = e.moChaoInfoList;
+            if (999 === e.type) {
+                t.moChaoInfo = {};
+                for (var r = 0, a = i; r < a.length; r++) {
+                    var n = a[r];
+                    n && null != n.moChaoId && (t.moChaoInfo[n.moChaoId] = n)
+                }
+            } else if (0 === e.type) {
+                var o = t.getMyMoChaoData()
+                  , s = i[0];
+                o ? s ? o.moChaoId === s.moChaoId ? t.moChaoInfo[s.moChaoId] = s : (delete t.moChaoInfo[o.moChaoId],
+                t.moChaoInfo[s.moChaoId] = s) : delete t.moChaoInfo[o.moChaoId] : s && null != s.moChaoId && (t.moChaoInfo[s.moChaoId] = s)
+            } else
+                for (var l = 0, c = i; l < c.length; l++) {
+                    var n = c[l];
+                    n && null != n.moChaoId && (t.moChaoInfo[n.moChaoId] = n)
+                }
             t.myMoChaoInfo = e.roleMoChaoBean,
             t.moChaoJifen = e.moChaoJiFen;
-            for (var n = e.moChaoJiFenList, r = 0; r < n.length; r++) {
-                var a = n[r];
-                a && (t.moChaoRewardInfo[a.jiFenId] = a)
+            for (var d = e.moChaoJiFenList, p = 0; p < d.length; p++) {
+                var n = d[p];
+                n && (t.moChaoRewardInfo[n.jiFenId] = n)
             }
             gd.angler.checkMoChaoJiFenHint(),
             t.sendNotif(982)
@@ -57344,6 +58450,8 @@ var PlayerData = function(e) {
         t.dengChangId = 0,
         t.qipaoId = 0,
         t.wingId = 0,
+        t.fishId = 0,
+        t.autoFishing = !1,
         t.totalPower = 0,
         t.isExpBuff = !1,
         t.bufferMark = {},
@@ -57388,6 +58496,10 @@ var PlayerData = function(e) {
         t.iconList = {},
         t.platChangeAssets = !1,
         t.isGWGuide = !1,
+        t.CatchFishTuJianList = [],
+        t.CatchFishSuitList = [],
+        t.CatchFishSuitDic = {},
+        t.globalSetInfo = {},
         t.createClient = -1,
         t.gmShenZhuangLevel = {},
         t.otherPlayerEquip = {},
@@ -58597,6 +59709,7 @@ var PlayerData = function(e) {
         t.dengChangId = e.announceFashion,
         t.zqId = e.zuoJi,
         t.qipaoId = e.qiPaoId,
+        t.fishId = e.fishingRod,
         Capability.changeByLevel(e.level);
         var i = cm.activitygoals[113];
         for (var r in i)
@@ -58673,17 +59786,18 @@ var PlayerData = function(e) {
         t.levelNbvalue = e.levelPower;
         var i = e.curLevel;
         if (i > t.level) {
-            if (t.level = i,
+            t.level = i,
             Capability.changeByLevel(i),
             t.sendNotif(70),
-            AudioManager.Instance.playSound(2002),
-            PlatformManager.Instance.pushRoleLevel(Vars.username, Vars.roleid, i, Math.round(DateUtil.serverNow() / 1e3), Vars.platform),
+            AudioManager.Instance.playSound(2002);
+            var r = gd.union && gd.union.unionName ? gd.union.unionName : "无";
+            if (PlatformManager.Instance.pushRoleLevel(Vars.username, Vars.roleid, i, Math.round(DateUtil.serverNow() / 1e3), Vars.platform, t.power, t.attribute[5], r),
             gd.angler.checkRoleReinLevelUp(),
             t.level >= t.levjjMin)
-                for (var r in t.levjj)
-                    if (t.level >= parseInt(r) && 0 == t.levjj[r]) {
+                for (var a in t.levjj)
+                    if (t.level >= parseInt(a) && 0 == t.levjj[a]) {
                         net.ActivityModel.ins().send3(cm.activitys[113].group),
-                        t.levjj[r] = 1;
+                        t.levjj[a] = 1;
                         break
                     }
             egret.localStorage.setItem(Vars.serverid + "_" + Vars.username + "_level", String(t.level)),
@@ -58694,10 +59808,10 @@ var PlayerData = function(e) {
             t.level = i;
         t.sendNotif(21),
         t.sendNotif(660);
-        var a = cm.open_level[595];
-        if (a && t.xuanshangbol) {
-            var n = a[0];
-            n && Logic.checkCondition(n.openCondition) && (t.xuanshangbol = !1,
+        var n = cm.open_level[595];
+        if (n && t.xuanshangbol) {
+            var o = n[0];
+            o && Logic.checkCondition(o.openCondition) && (t.xuanshangbol = !1,
             gd.task.sendNotif(526))
         }
         t.checkShowFirstDialog(),
@@ -58917,7 +60031,7 @@ var PlayerData = function(e) {
                     Capability.mobileUI && GameSceneManager.Instance.setRootScale(o)
                 } else
                     1175 == a.key ? t.xunbaoCKLv = a.value : 2006 == a.key ? gd.bag.autoRonglianBoo = a.state : 2013 == a.key ? gd.insure.autoTouBaoBoo = a.state : 2033 == a.key ? gd.bag.autoXYRLBoo = a.state : 1227 == a.key || 1229 == a.key ? this.setCustomShortCutkey(a) : 1171 == a.key ? (net.RoleModel.ins().send23(1159, a.state, null, -1, -1),
-                    net.RoleModel.ins().send23(1201, !a.state, null, -1, -1)) : 2007 == a.key && gd.arpgInst.changeMonsterSModel();
+                    net.RoleModel.ins().send23(1201, !a.state, null, -1, -1)) : 2007 == a.key ? gd.arpgInst.changeMonsterSModel() : a.key >= 2040 && a.key <= 2043 && gd.fishpond.setSetting(a);
                 var s = cm.pickup_id[a.key];
                 s && (this.settingSqDic[s.itemid] = a.state,
                 this.settingXsDic[s.itemid] = a.state1)
@@ -58992,6 +60106,8 @@ var PlayerData = function(e) {
                 gd.angler.checkFaqiUpHint();
             else if (2030 == e.key)
                 this.sendNotif(900, e);
+            else if (e.key >= 2040 && e.key <= 2043)
+                gd.fishpond.setSetting(e);
             else {
                 var a = cm.pickup_id[e.key];
                 if (a) {
@@ -60057,6 +61173,7 @@ var SettingData = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
         return t.main_show = !0,
+        t.fishCKLv = 1,
         t.mapDeadCount = 0,
         t.mapUseRandom = 0,
         t.allmapid = [],
@@ -61104,6 +62221,7 @@ var StoreData = function(e) {
     t.Store_157 = 157,
     t.Store_KitchenGod = 210,
     t.Store_KitchenPotGod = 211,
+    t.Store_Fish = 310,
     t.Store_500 = 500,
     t.Daily_Oper_Store_2144 = 801,
     t.Week_Oper_Store_2144 = 802,
@@ -69504,7 +70622,10 @@ var GameObjectCreator = function() {
                 t.fashionHuiJiId = c.fashionId;
                 break;
             case 15:
-                t.fashionZuoqiId = n = c.fashionId
+                t.fashionZuoqiId = n = c.fashionId;
+                break;
+            case 12:
+                t.FishId = c.fashionId
             }
         }
         if (e.performerEquipBean)
@@ -69552,6 +70673,7 @@ var GameObjectCreator = function() {
         t.blueBean = e.bean,
         t.yellowBean = e.extraBean,
         t.wanka = e.bigPlayerLv,
+        t.isCatchFish = e.isCatchFish,
         t.assistState = e.assistState,
         t.assistTargetId = e.assistTargetId,
         t.lingbaoType = e.spiType,
@@ -72214,7 +73336,7 @@ ResUrl.mgResName = {
         "resource/jpg/sy_start_bg.png": 1,
         "y_activeBtn-sheet_json": 1,
         "y_common-sheet_json": 1,
-        "y_h5Home-sheet_json": 1,
+        "y_h5home-sheet_json": 1,
         "y_lefttop-sheet_json": 1
     }
 };
@@ -76575,14 +77697,15 @@ var NoticeManager = function() {
     }
     ,
     e.prototype.show = function(e, t) {
-        if (void 0 === t && (t = 0),
-        MtwGame.Instance.isActivate)
+        void 0 === t && (t = 0);
+        var i = gd.player.globalSetInfo[48203];
+        if ((!i || 0 != i.status) && MtwGame.Instance.isActivate)
             if (e instanceof Array) {
-                var i = [];
+                var r = [];
                 e.forEach(function(e) {
-                    i.push(new NoticeMsg(e))
+                    r.push(new NoticeMsg(e))
                 }),
-                this._notice.add(i)
+                this._notice.add(r)
             } else
                 this._notice.add(new NoticeMsg(e,t))
     }
@@ -77182,6 +78305,10 @@ var PlatformManager = function() {
         "function" == typeof getErWeiCode1 && getErWeiCode1(e, t, i, r, a, n, o, s, l, c)
     }
     ,
+    e.prototype.appGetErWeiCode2 = function(e, t, i, r, a, n, o, s, l, c) {
+        "function" == typeof getErWeiCode2 && getErWeiCode2(e, t, i, r, a, n, o, s, l, c)
+    }
+    ,
     e.prototype.appSetRealName = function(e) {
         "function" == typeof setRealName && setRealName(e)
     }
@@ -77194,8 +78321,8 @@ var PlatformManager = function() {
         "function" == typeof apiCreateRoleBtnClick && apiCreateRoleBtnClick(Vars.username, Vars.roleid, Math.round(DateUtil.serverNow() / 1e3), Vars.platform, e, t, i, Vars.serverid)
     }
     ,
-    e.prototype.pushRoleLevel = function(e, t, i, r, a) {
-        "function" == typeof apiRoleLevel && apiRoleLevel(e, Vars.roleid, i, r, Vars.platform, Vars.appid, 0, Vars.serverid, gd.player.roleName, gd.bag.allmoney)
+    e.prototype.pushRoleLevel = function(e, t, i, r, a, n, o, s) {
+        "function" == typeof apiRoleLevel && apiRoleLevel(e, Vars.roleid, i, r, Vars.platform, Vars.appid, 0, Vars.serverid, gd.player.roleName, gd.bag.allmoney, n, o + "", s)
     }
     ,
     e.prototype.buyGoods = function(e, t) {
@@ -80650,6 +81777,10 @@ var net;
             i.reg(10072),
             i.reg(10074),
             i.reg(10075),
+            i.reg(10076),
+            i.reg(10077),
+            i.reg(10079),
+            i.reg(10080),
             t
         }
         return __extends(t, e),
@@ -80677,12 +81808,13 @@ var net;
             this.send(10006, t, e)
         }
         ,
-        t.prototype.send7 = function(e, t) {
-            var i = this.getO();
-            i.writeShort(e.length);
-            for (var r = 0; r < e.length; r++)
-                i.writeLong(e[r]);
-            this.send(10007, i, t)
+        t.prototype.send7 = function(e, t, i) {
+            var r = this.getO();
+            r.writeShort(e.length);
+            for (var a = 0; a < e.length; a++)
+                r.writeLong(e[a]);
+            r.writeVarInt(t, !1),
+            this.send(10007, r, i)
         }
         ,
         t.prototype.send14 = function(e, t) {
@@ -80867,6 +81999,11 @@ var net;
         t.prototype.send73 = function(e) {
             var t = this.getO();
             this.send(10073, t, e)
+        }
+        ,
+        t.prototype.send78 = function(e) {
+            var t = this.getO();
+            this.send(10078, t, e)
         }
         ,
         t.prototype.dealBufferMessage = function(t, i) {
@@ -82145,7 +83282,150 @@ var net;
                         cs.business = r.readVarInt(!1)
                     } else
                         os.chefGodList[ls] = null;
-                this.sendNotif(t, os)
+                this.sendNotif(t, os);
+                break;
+            case 10076:
+                var ds = {};
+                ds.action = r.readVarInt(!1);
+                var ps = r.readShort();
+                ds.fishList = [];
+                for (var us = 0; ps > us; us++)
+                    if (0 != r.readByte()) {
+                        var gs = ds.fishList[us] = {};
+                        gs.gridIndex = r.readVarInt(!1),
+                        gs.lid = r.readLong(),
+                        gs.itemId = r.readVarInt(!1),
+                        gs.count = r.readVarInt(!1),
+                        gs.business = r.readVarInt(!1)
+                    } else
+                        ds.fishList[us] = null;
+                var fs = r.readShort();
+                ds.removedIdList = [];
+                for (var hs = 0; fs > hs; hs++)
+                    ds.removedIdList[hs] = r.readLong();
+                this.sendNotif(t, ds);
+                break;
+            case 10077:
+                var ms = {};
+                ms.emptyGridCount = r.readVarInt(!1),
+                ms.maxGridCount = r.readVarInt(!1);
+                var vs = r.readShort();
+                ms.fishList = [];
+                for (var ys = 0; vs > ys; ys++)
+                    if (0 != r.readByte()) {
+                        var _s = ms.fishList[ys] = {};
+                        _s.gridIndex = r.readVarInt(!1),
+                        _s.lid = r.readLong(),
+                        _s.itemId = r.readVarInt(!1),
+                        _s.count = r.readVarInt(!1),
+                        _s.business = r.readVarInt(!1)
+                    } else
+                        ms.fishList[ys] = null;
+                this.sendNotif(t, ms);
+                break;
+            case 10079:
+                var bs = {};
+                bs.action = r.readVarInt(!1);
+                var Is = r.readShort();
+                bs.pondFishList = [];
+                for (var ws = 0; Is > ws; ws++)
+                    if (0 != r.readByte()) {
+                        var Cs = bs.pondFishList[ws] = {};
+                        Cs.lid = r.readLong(),
+                        Cs.itemId = r.readVarInt(!1),
+                        Cs.fryId = r.readVarInt(!1),
+                        Cs.type = r.readVarInt(!1),
+                        Cs.level = r.readVarInt(!1),
+                        Cs.exp = r.readVarInt(!1);
+                        var xs = r.readShort();
+                        Cs.fishBuffList = [];
+                        for (var ks = 0; xs > ks; ks++)
+                            if (0 != r.readByte()) {
+                                var Ts = Cs.fishBuffList[ks] = {};
+                                Ts.buffId = r.readVarInt(!1),
+                                Ts.count = r.readVarInt(!1)
+                            } else
+                                Cs.fishBuffList[ks] = null
+                    } else
+                        bs.pondFishList[ws] = null;
+                var Ss = r.readShort();
+                bs.bagFishList = [];
+                for (var Ls = 0; Ss > Ls; Ls++)
+                    if (0 != r.readByte()) {
+                        var Es = bs.bagFishList[Ls] = {};
+                        Es.lid = r.readLong(),
+                        Es.itemId = r.readVarInt(!1),
+                        Es.fryId = r.readVarInt(!1),
+                        Es.type = r.readVarInt(!1),
+                        Es.level = r.readVarInt(!1),
+                        Es.exp = r.readVarInt(!1);
+                        var As = r.readShort();
+                        Es.fishBuffList = [];
+                        for (var Rs = 0; As > Rs; Rs++)
+                            if (0 != r.readByte()) {
+                                var Bs = Es.fishBuffList[Rs] = {};
+                                Bs.buffId = r.readVarInt(!1),
+                                Bs.count = r.readVarInt(!1)
+                            } else
+                                Es.fishBuffList[Rs] = null
+                    } else
+                        bs.bagFishList[Ls] = null;
+                var Ms = r.readShort();
+                bs.removedIdList = [];
+                for (var Ds = 0; Ms > Ds; Ds++)
+                    bs.removedIdList[Ds] = r.readLong();
+                this.sendNotif(t, bs);
+                break;
+            case 10080:
+                var Ps = {};
+                Ps.emptyGridCount = r.readVarInt(!1),
+                Ps.maxGridCount = r.readVarInt(!1);
+                var Ns = r.readShort();
+                Ps.pondFishList = [];
+                for (var Hs = 0; Ns > Hs; Hs++)
+                    if (0 != r.readByte()) {
+                        var Us = Ps.pondFishList[Hs] = {};
+                        Us.lid = r.readLong(),
+                        Us.itemId = r.readVarInt(!1),
+                        Us.fryId = r.readVarInt(!1),
+                        Us.type = r.readVarInt(!1),
+                        Us.level = r.readVarInt(!1),
+                        Us.exp = r.readVarInt(!1);
+                        var Vs = r.readShort();
+                        Us.fishBuffList = [];
+                        for (var Os = 0; Vs > Os; Os++)
+                            if (0 != r.readByte()) {
+                                var Gs = Us.fishBuffList[Os] = {};
+                                Gs.buffId = r.readVarInt(!1),
+                                Gs.count = r.readVarInt(!1)
+                            } else
+                                Us.fishBuffList[Os] = null
+                    } else
+                        Ps.pondFishList[Hs] = null;
+                var Fs = r.readShort();
+                Ps.bagFishList = [];
+                for (var qs = 0; Fs > qs; qs++)
+                    if (0 != r.readByte()) {
+                        var js = Ps.bagFishList[qs] = {};
+                        js.lid = r.readLong(),
+                        js.itemId = r.readVarInt(!1),
+                        js.fryId = r.readVarInt(!1),
+                        js.type = r.readVarInt(!1),
+                        js.level = r.readVarInt(!1),
+                        js.exp = r.readVarInt(!1);
+                        var zs = r.readShort();
+                        js.fishBuffList = [];
+                        for (var Ws = 0; zs > Ws; Ws++)
+                            if (0 != r.readByte()) {
+                                var Xs = js.fishBuffList[Ws] = {};
+                                Xs.buffId = r.readVarInt(!1),
+                                Xs.count = r.readVarInt(!1)
+                            } else
+                                js.fishBuffList[Ws] = null
+                    } else
+                        Ps.bagFishList[qs] = null;
+                Ps.totalExp = r.readVarInt(!1),
+                this.sendNotif(t, Ps)
             }
         }
         ,
@@ -83514,6 +84794,89 @@ var net;
         function t() {
             var t = e.call(this) || this
               , i = t;
+            return i.reg(245002),
+            i.reg(245004),
+            i.reg(245007),
+            t
+        }
+        return __extends(t, e),
+        t.ins = function() {
+            return this._ins || (this._ins = new t),
+            this._ins
+        }
+        ,
+        t.prototype.send1 = function(e, t) {
+            var i = this.getO();
+            i.writeVarInt(e, !1),
+            this.send(245001, i, t)
+        }
+        ,
+        t.prototype.send3 = function(e) {
+            var t = this.getO();
+            this.send(245003, t, e)
+        }
+        ,
+        t.prototype.send5 = function(e) {
+            var t = this.getO();
+            this.send(245005, t, e)
+        }
+        ,
+        t.prototype.send6 = function(e, t) {
+            var i = this.getO();
+            i.writeVarInt(e, !1),
+            this.send(245006, i, t)
+        }
+        ,
+        t.prototype.dealBufferMessage = function(t, i) {
+            e.prototype.dealBufferMessage.call(this, t, i);
+            var r = this.input;
+            switch (t) {
+            case 245002:
+                var a = {};
+                a.rid = r.readLong(),
+                a.success = r.readBoolean(),
+                this.sendNotif(t, a);
+                break;
+            case 245004:
+                for (var n = r.readShort(), o = [], s = 0; n > s; s++)
+                    if (0 != r.readByte()) {
+                        var l = o[s] = {};
+                        l.itemId = r.readVarInt(!1),
+                        l.count = r.readVarInt(!1)
+                    } else
+                        o[s] = null;
+                this.sendNotif(t, o);
+                break;
+            case 245007:
+                var c = {}
+                  , d = r.readShort();
+                c.fishList = new Array(d);
+                for (var p = 0; d > p; p++)
+                    c.fishList[p] = r.readVarInt(!1);
+                var u = r.readShort();
+                c.fishRewardInfoList = [];
+                for (var g = 0; u > g; g++)
+                    if (0 != r.readByte()) {
+                        var f = c.fishRewardInfoList[g] = {};
+                        f.suitId = r.readVarInt(!1),
+                        f.rewardState = r.readVarInt(!1)
+                    } else
+                        c.fishRewardInfoList[g] = null;
+                this.sendNotif(t, c)
+            }
+        }
+        ,
+        t
+    }(ModelBase);
+    e.CatchfishModel = t,
+    __reflect(t.prototype, "net.CatchfishModel")
+}(net || (net = {}));
+var net;
+!function(e) {
+    var t = function(e) {
+        function t() {
+            var t = e.call(this) || this
+              , i = t;
             return i.reg(6002),
             i.reg(6004),
             i.reg(6007),
@@ -83525,6 +84888,7 @@ var net;
             i.reg(6019),
             i.reg(6020),
             i.reg(6021),
+            i.reg(6022),
             t
         }
         return __extends(t, e),
@@ -84198,7 +85562,8 @@ var net;
                         } else
                             tt.brokenMagicEquipList[Or] = null;
                     tt.yuanShenLevel = r.readVarInt(!1),
-                    tt.yuanShenViewStatus = r.readBoolean()
+                    tt.yuanShenViewStatus = r.readBoolean(),
+                    tt.fishingRod = r.readVarInt(!1)
                 }
                 this.sendNotif(t, tt);
                 break;
@@ -84816,13 +86181,25 @@ var net;
                         } else
                             rn.brokenMagicEquipList[qs] = null;
                     rn.yuanShenLevel = r.readVarInt(!1),
-                    rn.yuanShenViewStatus = r.readBoolean()
+                    rn.yuanShenViewStatus = r.readBoolean(),
+                    rn.fishingRod = r.readVarInt(!1)
                 }
                 this.sendNotif(t, rn);
                 break;
             case 6021:
                 var $s = r.readVarInt(!1);
-                this.sendNotif(t, $s)
+                this.sendNotif(t, $s);
+                break;
+            case 6022:
+                for (var el = r.readShort(), tl = [], il = 0; el > il; il++)
+                    if (0 != r.readByte()) {
+                        var rl = tl[il] = {};
+                        rl.id = r.readVarInt(!1),
+                        rl.status = r.readBoolean(),
+                        rl.value = r.readString()
+                    } else
+                        tl[il] = null;
+                this.sendNotif(t, tl)
             }
         }
         ,
@@ -90210,6 +91587,148 @@ var net;
         function t() {
             var t = e.call(this) || this
               , i = t;
+            return i.reg(246002),
+            i.reg(246004),
+            i.reg(246006),
+            i.reg(246009),
+            t
+        }
+        return __extends(t, e),
+        t.ins = function() {
+            return this._ins || (this._ins = new t),
+            this._ins
+        }
+        ,
+        t.prototype.send1 = function(e) {
+            var t = this.getO();
+            this.send(246001, t, e)
+        }
+        ,
+        t.prototype.send3 = function(e, t, i, r) {
+            var a = this.getO();
+            a.writeLong(e),
+            a.writeVarInt(t, !1),
+            a.writeShort(i.length);
+            for (var n = 0; n < i.length; n++)
+                a.writeLong(i[n]);
+            this.send(246003, a, r)
+        }
+        ,
+        t.prototype.send5 = function(e, t) {
+            var i = this.getO();
+            i.writeLong(e),
+            this.send(246005, i, t)
+        }
+        ,
+        t.prototype.send7 = function(e) {
+            var t = this.getO();
+            this.send(246007, t, e)
+        }
+        ,
+        t.prototype.send8 = function(e, t, i) {
+            var r = this.getO();
+            r.writeLong(e),
+            r.writeVarInt(t, !1),
+            this.send(246008, r, i)
+        }
+        ,
+        t.prototype.send10 = function(e, t) {
+            var i = this.getO();
+            i.writeLong(e),
+            this.send(246010, i, t)
+        }
+        ,
+        t.prototype.dealBufferMessage = function(t, i) {
+            e.prototype.dealBufferMessage.call(this, t, i);
+            var r = this.input;
+            switch (t) {
+            case 246002:
+                var a = {};
+                a.level = r.readVarInt(!1),
+                a.capacity = r.readVarInt(!1);
+                var n = r.readShort();
+                a.rewardList = [];
+                for (var o = 0; n > o; o++)
+                    if (0 != r.readByte()) {
+                        var s = a.rewardList[o] = {};
+                        s.itemId = r.readVarInt(!1),
+                        s.count = r.readVarInt(!1)
+                    } else
+                        a.rewardList[o] = null;
+                a.lastGetTime = r.readVarInt(!1),
+                this.sendNotif(t, a);
+                break;
+            case 246004:
+                var l = {};
+                l.success = r.readBoolean();
+                var c = r.readByte();
+                if (0 != c) {
+                    var d = l.fishFryBean = {};
+                    d.lid = r.readLong(),
+                    d.itemId = r.readVarInt(!1),
+                    d.fryId = r.readVarInt(!1),
+                    d.type = r.readVarInt(!1),
+                    d.level = r.readVarInt(!1),
+                    d.exp = r.readVarInt(!1);
+                    var p = r.readShort();
+                    d.fishBuffList = [];
+                    for (var u = 0; p > u; u++)
+                        if (0 != r.readByte()) {
+                            var g = d.fishBuffList[u] = {};
+                            g.buffId = r.readVarInt(!1),
+                            g.count = r.readVarInt(!1)
+                        } else
+                            d.fishBuffList[u] = null
+                }
+                this.sendNotif(t, l);
+                break;
+            case 246006:
+                var f = {};
+                f.success = r.readBoolean();
+                var h = r.readByte();
+                if (0 != h) {
+                    var m = f.fishFryBean = {};
+                    m.lid = r.readLong(),
+                    m.itemId = r.readVarInt(!1),
+                    m.fryId = r.readVarInt(!1),
+                    m.type = r.readVarInt(!1),
+                    m.level = r.readVarInt(!1),
+                    m.exp = r.readVarInt(!1);
+                    var v = r.readShort();
+                    m.fishBuffList = [];
+                    for (var y = 0; v > y; y++)
+                        if (0 != r.readByte()) {
+                            var _ = m.fishBuffList[y] = {};
+                            _.buffId = r.readVarInt(!1),
+                            _.count = r.readVarInt(!1)
+                        } else
+                            m.fishBuffList[y] = null
+                }
+                this.sendNotif(t, f);
+                break;
+            case 246009:
+                for (var b = r.readShort(), I = [], w = 0; b > w; w++)
+                    if (0 != r.readByte()) {
+                        var C = I[w] = {};
+                        C.itemId = r.readVarInt(!1),
+                        C.count = r.readVarInt(!1)
+                    } else
+                        I[w] = null;
+                this.sendNotif(t, I)
+            }
+        }
+        ,
+        t
+    }(ModelBase);
+    e.FishpondModel = t,
+    __reflect(t.prototype, "net.FishpondModel")
+}(net || (net = {}));
+var net;
+!function(e) {
+    var t = function(e) {
+        function t() {
+            var t = e.call(this) || this
+              , i = t;
             return i.reg(208002),
             t
         }
@@ -94679,9 +96198,10 @@ var net;
             this._ins
         }
         ,
-        t.prototype.send1 = function(e) {
-            var t = this.getO();
-            this.send(233001, t, e)
+        t.prototype.send1 = function(e, t) {
+            var i = this.getO();
+            i.writeVarInt(e, !1),
+            this.send(233001, i, t)
         }
         ,
         t.prototype.send3 = function(e, t, i) {
@@ -94749,6 +96269,7 @@ var net;
                         u.status = r.readVarInt(!1)
                     } else
                         a.moChaoJiFenList[p] = null;
+                a.type = r.readVarInt(!1),
                 this.sendNotif(t, a);
                 break;
             case 233004:
@@ -98438,6 +99959,7 @@ var net;
                 p.punishmentNum = r.readVarInt(!1),
                 p.qiPaoId = r.readVarInt(!1),
                 p.announceFashion = r.readVarInt(!1),
+                p.fishingRod = r.readVarInt(!1),
                 this.sendNotif(t, p);
                 break;
             case 8003:
@@ -106977,6 +108499,7 @@ var net;
             i.reg(67071),
             i.reg(67073),
             i.reg(67074),
+            i.reg(67075),
             t
         }
         return __extends(t, e),
@@ -107167,7 +108690,9 @@ var net;
                         s.zongpai = r.readVarInt(!1),
                         s.zhenFaPiFu = r.readVarInt(!1),
                         s.bigPlayerLv = r.readVarInt(!1),
-                        s.qiShiErBianType = r.readVarInt(!1)
+                        s.qiShiErBianType = r.readVarInt(!1),
+                        s.isCatchFish = r.readBoolean(),
+                        s.stealthToPlayer = r.readBoolean()
                     } else
                         a.addPlayers[o] = null;
                 var x = r.readShort();
@@ -107391,6 +108916,8 @@ var net;
                 Z.zhenFaPiFu = r.readVarInt(!1),
                 Z.bigPlayerLv = r.readVarInt(!1),
                 Z.qiShiErBianType = r.readVarInt(!1),
+                Z.isCatchFish = r.readBoolean(),
+                Z.stealthToPlayer = r.readBoolean(),
                 this.sendNotif(t, Z);
                 break;
             case 67003:
@@ -107897,7 +109424,13 @@ var net;
                 var or = {};
                 or.qiShiErBianId = r.readVarInt(!1),
                 or.rid = r.readLong(),
-                this.sendNotif(t, or)
+                this.sendNotif(t, or);
+                break;
+            case 67075:
+                var sr = {};
+                sr.rid = r.readLong(),
+                sr.stealthToPlayer = r.readBoolean(),
+                this.sendNotif(t, sr)
             }
         }
         ,
@@ -108817,6 +110350,15 @@ var UIManager = function() {
         t[465] = ActivityPkTotalPop,
         t[493] = ActivityPkRanksPop,
         t[694] = FightTianTiResultPop,
+        t[360] = Fish_StoragePop,
+        t[361] = StoreFishPop,
+        t[362] = CatchFishTuJianPop,
+        t[363] = FishResultPop,
+        t[364] = FishPondPop,
+        t[365] = FishPondSSPop,
+        t[367] = FishPondCKPop,
+        t[368] = FishPondActPop,
+        t[369] = FishingMapPop,
         SecondTimerUtil.instance.addSecondTask(new CallBack0(this.updateTime,this))
     }
     ,
@@ -109980,7 +111522,7 @@ var ArmBtnTipDialog = function(e) {
                     return t.closeUI(),
                     void TipsManager.Instance.closeTip();
                 if (e.target == t.btn_recovery)
-                    net.BagModel.ins().send7([t.data.lid]);
+                    net.BagModel.ins().send7([t.data.lid], 1);
                 else if (e.target == t.btn_show)
                     3 == ChatMaxCtrl.lastEnterChannel && (ChatMaxCtrl.lastEnterChannel = 1),
                     Capability.mobileUI ? uim.show(302, new UIData(t.data,0)) : uim.show(204, new UIData(t.data,0));
@@ -112308,12 +113850,45 @@ var ErweiPayAlert2 = function(e) {
                         i.erwewimasp.verticalCenter = 0,
                         i.gro.addChild(i.erwewimasp))
                     }, Vars.username, l, gd.player.roleName, n.rmb, n.id, n.name, n.desc, Vars.serverid, d);
+                if ("function" == typeof getErWeiCode2)
+                    return void PlatformManager.Instance.appGetErWeiCode2(function(e) {
+                        if (e) {
+                            if (r = e,
+                            r && 0 === r.indexOf("data:image/png;base64,"))
+                                return void i.showBase64QRCode(r);
+                            i.erwewimasp = qr.QRCode.create(r, 200, 200, qr.QRErrorCorrectLevel.L, 12),
+                            i.erwewimasp.horizontalCenter = 0,
+                            i.erwewimasp.verticalCenter = 0,
+                            i.gro.addChild(i.erwewimasp)
+                        }
+                    }, Vars.username, l, gd.player.roleName, n.rmb, n.id, n.name, n.desc, Vars.serverid, d);
                 i.erwewimasp = qr.QRCode.create(r, 200, 200),
                 i.erwewimasp.horizontalCenter = 0,
                 i.erwewimasp.verticalCenter = 0,
                 i.gro.addChild(i.erwewimasp)
             }
         }
+    }
+    ,
+    t.prototype.showBase64QRCode = function(e) {
+        var t = this
+          , i = e.replace(/^data:image\/png;base64,/, "");
+        egret.BitmapData.create(null, i, function(e) {
+            var i = new egret.Texture;
+            i._setBitmapData(e);
+            var r = new egret.Bitmap;
+            r.texture = i,
+            r.width = 200,
+            r.height = 200,
+            t.gro ? (r.x = (t.gro.width - r.width) / 2,
+            r.y = (t.gro.height - r.height) / 2) : (r.x = 0,
+            r.y = 0),
+            t.gro.numChildren > 0 && t.gro.removeChildren(),
+            t.erwewimasp && t.erwewimasp.parent && (t.erwewimasp.parent.removeChild(t.erwewimasp),
+            t.erwewimasp = null),
+            t.gro.addChild(r),
+            t.erwewimasp = r
+        })
     }
     ,
     t.prototype.onBackfunc = function(e) {
@@ -112427,7 +114002,9 @@ var ErweiPayAlert2 = function(e) {
         t.webview1 && t.webview1.destroy(),
         t.webview2 && t.webview2.destroy()),
         t.imgBase64 && (t.imgBase64.removeSelf(),
-        t.imgBase64 = null)
+        t.imgBase64 = null),
+        t.erwewimasp && t.erwewimasp.parent && (t.erwewimasp.parent.removeChild(t.erwewimasp),
+        t.erwewimasp = null)
     }
     ,
     t
@@ -113725,7 +115302,7 @@ var KillRoleAlert = function(e) {
             e.allPlay = [];
             for (var i in t) {
                 var r = t[i];
-                r.playerObject && 1 != r.playerObject.isDead && r.playerObject.uid !== emIns.firstPlayer.uid && e.allPlay.push(r.playerObject)
+                r.playerObject && 1 != r.playerObject.isDead && (r.playerObject.invisible2 || r.playerObject.uid !== emIns.firstPlayer.uid && e.allPlay.push(r.playerObject))
             }
             emIns.firstPlayer.gameObject.gridX,
             emIns.firstPlayer.gameObject.gridY;
@@ -114068,7 +115645,7 @@ var KillRoleListAlert = function(e) {
             e.allPlay = [];
             for (var i in t) {
                 var r = t[i];
-                r.playerObject && 1 != r.playerObject.isDead && r.playerObject.uid !== emIns.firstPlayer.uid && e.allPlay.push(r.playerObject)
+                r.playerObject && 1 != r.playerObject.isDead && (r.playerObject.invisible2 || r.playerObject.uid !== emIns.firstPlayer.uid && e.allPlay.push(r.playerObject))
             }
             emIns.firstPlayer.gameObject.gridX,
             emIns.firstPlayer.gameObject.gridY;
@@ -116759,6 +118336,13 @@ var ConfigManager = function() {
         this.pingwei = {},
         this.poxusuit = {},
         this.qipao = {},
+        this.fishpond = {},
+        this.fishbuff = {},
+        this.fishlv = {},
+        this.fish_tujian = {},
+        this.fish_tujian_group = {},
+        this.fish_tujian_suit = {},
+        this.fish_map = {},
         this.loadedCfgZipCount = 0,
         this.loadCfgFileNums = 0,
         this.loadCfgFileNums2 = 0
@@ -121342,6 +122926,358 @@ var DigButtonCtrl = function(e) {
     t
 }(UIBase);
 __reflect(DigButtonCtrl.prototype, "DigButtonCtrl");
+var FishProgressCtrl = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.autoState = !1,
+        t.timeKey = 0,
+        t.erid = [],
+        t.ListState = !1,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        var e = this;
+        e.uiSkin("FishProgressSkin", !0)
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.maskShape || (e.maskShape = new egret.Shape,
+        e.maskShape.graphics.drawRect(e.img_pro.x, e.img_pro.y, 55, 55),
+        e.maskShape.x = e.img_pro.x,
+        e.maskShape.y = e.img_pro.y,
+        e.addChild(e.maskShape),
+        e.img_pro.mask = e.maskShape),
+        e.showList = new eui.ArrayCollection,
+        e.elist.itemRenderer = FisherRender,
+        e.elist.dataProvider = e.showList,
+        e.addAutoEventListener(e.onClick, e.img_bg, e.grp_item, e.btn_Gro, e.img_icon, e.img_icon1, e.img_icon2, e.btn_Gro0, e.btn_bag, e.ck_auto)
+    }
+    ,
+    t.prototype.FishCallBack = function(e) {
+        e == AlertDialog.AGREE && (ncm.err("主动请求停止钓鱼"),
+        gd.arpgInst.sendNotif(1029))
+    }
+    ,
+    t.prototype.onClick = function(e) {
+        var t = this;
+        switch (e.currentTarget) {
+        case t.img_bg:
+            if (!t.realUid)
+                return;
+            if (t.timeKey > 0 || "捕鱼中" == t.txt_ms.text) {
+                var i = new CallBack3(t.FishCallBack,t);
+                return void AlertDialog.showAlertById(224, i)
+            }
+            if (gd.bag.emptyItemGridCountFish <= 0)
+                return void ncm.err("请清理鱼获背包");
+            net.CatchfishModel.ins().send1(t.costItemId);
+            break;
+        case t.btn_Gro:
+        case t.btn_Gro0:
+            t.showOrHideTween();
+            break;
+        case t.img_icon:
+            t.setCostItemId(t.erid[0]);
+            break;
+        case t.img_icon1:
+            t.setCostItemId(t.erid[1]);
+            break;
+        case t.img_icon2:
+            t.setCostItemId(t.erid[2]);
+            break;
+        case t.btn_bag:
+            uim.show(360);
+            break;
+        case t.ck_auto:
+            t.autoState = t.ck_auto.selected = !gd.player.autoFishing,
+            gd.player.autoFishing = t.autoState
+        }
+    }
+    ,
+    t.prototype.showOrHideTween = function() {
+        var e = this
+          , t = 200
+          , i = 60;
+        e.ListState ? (e.ListState = !1,
+        egret.Tween.removeTweens(e.grp_list),
+        egret.Tween.get(e.grp_list).to({
+            y: 0
+        }, t).call(function() {
+            e.grp_list.visible = !1
+        }),
+        egret.Tween.removeTweens(e.grp_bg),
+        egret.Tween.get(e.grp_bg).to({
+            height: i,
+            y: 0,
+            alpha: 0
+        }, t).call(function() {
+            e.btn_Gro0.visible = !0
+        })) : (e.ListState = !0,
+        egret.Tween.removeTweens(e.grp_list),
+        egret.Tween.get(e.grp_list).to({
+            y: -(i + 3)
+        }, t).call(function() {
+            e.grp_list.visible = !0
+        }),
+        egret.Tween.removeTweens(e.grp_bg),
+        egret.Tween.get(e.grp_bg).to({
+            height: 4 * (i + 3),
+            y: 3 * -(i + 3),
+            alpha: 1
+        }, t).call(function() {
+            e.btn_Gro0.visible = !1
+        }))
+    }
+    ,
+    t.prototype.startFishing = function() {
+        var e = this;
+        "可钓鱼" == e.txt_ms.text;
+        var t = cm.item[e.costItemId][22]
+          , i = t.split(";")
+          , r = new CallBack3(this.fishCallBack,this)
+          , a = {
+            totalTime: parseInt(i[0]) + 1,
+            limitTime: parseInt(i[0]) + 1,
+            typeStr: "捕鱼中",
+            callback: r,
+            digType: 0
+        };
+        gd.arpgInst.sendNotif(1028, a)
+    }
+    ,
+    t.prototype.fishCallBack = function() {
+        var e = this;
+        emIns.firstPlayer.setAction(1, emIns.firstPlayer.dir),
+        net.CatchfishModel.ins().send3(),
+        e.resetState()
+    }
+    ,
+    t.prototype.refr = function() {
+        e.prototype.refr.call(this);
+        var t = this;
+        t.bindSubject(gd.arpgInst, gd.bag),
+        t.opd && (t.realUid = t.opd.data,
+        t.setCostTween(),
+        t.setCostItemId(gd.player.CatchFishItem),
+        t.checkMsTxt(),
+        t.setElist(),
+        t.autoState = t.ck_auto.selected = gd.player.autoFishing)
+    }
+    ,
+    t.prototype.setElist = function() {
+        var e = this;
+        e.showList.removeAll(),
+        e.erid = cm.global[39008].value.splitNum("#");
+        for (var t = 0; t < e.erid.length; t++)
+            e.showList.addItem(e.erid[t])
+    }
+    ,
+    t.prototype.setCostItemId = function(e) {
+        var t = this;
+        t.costItemId = 3001701,
+        e ? t.costItemId = e : null,
+        gd.player.CatchFishItem = t.costItemId,
+        t.btn_Gro.source = ResUrl.url(cm.item[Number(t.costItemId)][19] + "", 8),
+        e && (t.ListState = !0,
+        t.showOrHideTween()),
+        t.txt_txt.text = gd.bag.getCount(t.costItemId) + ""
+    }
+    ,
+    t.prototype.setCostTween = function() {
+        var e = this;
+        e.ListState = !1,
+        e.grp_item.visible = !0,
+        e.grp_bg.height = 60,
+        e.grp_bg.y = 0,
+        e.grp_bg.alpha = 0,
+        e.grp_list.y = 0,
+        e.grp_list.visible = !1
+    }
+    ,
+    t.prototype.checkMsTxt = function() {
+        var e = this;
+        if (!e.realUid)
+            return void (e.txt_ms.text = "可采集 参数realUid 存在问题");
+        var t = "可钓鱼";
+        e.realUid.toString();
+        e.txt_ms.text = t
+    }
+    ,
+    t.prototype.getIngMsTxt = function() {
+        var e = this
+          , t = "钓鱼中";
+        return e.realUid,
+        t
+    }
+    ,
+    t.prototype.showProgress = function(e) {
+        var t = this;
+        t.txt_ms.text = t.getIngMsTxt(),
+        t.typeStr = e.typeStr,
+        t.digType = e.digType,
+        e.typeStr && (t.txt_ms.text = e.typeStr),
+        t.totalTime = e.totalTime,
+        t.limitTime = e.limitTime,
+        t.callback = e.callback,
+        t.lastTime = t.totalTime - t.limitTime,
+        t.endTime = Math.floor(DateUtil.serverNow() / 1e3 + t.limitTime),
+        t.act2Time = DateUtil.serverNow() + 1500,
+        t.act3Time = 1e3 * t.endTime - 1500,
+        t.act1 = t.act2 = t.act3 = !1,
+        t.limitTime > 0 && 0 == t.timeKey && (t.timeKey = egret.setInterval(t.toUpdateTime, t, 1e3 / 30))
+    }
+    ,
+    t.prototype.toUpdateTime = function() {
+        var e = this
+          , t = e.endTime - DateUtil.serverNow() / 1e3;
+        if (t > 0) {
+            e.act1 || (emIns.firstPlayer.setAction(4, emIns.firstPlayer.dir),
+            e.act1 = !0),
+            !e.act2 && DateUtil.serverNow() >= e.act2Time && (emIns.firstPlayer.setAction(1, emIns.firstPlayer.dir),
+            e.act2 = !0),
+            !e.act3 && DateUtil.serverNow() >= e.act3Time && (emIns.firstPlayer.setAction(5, emIns.firstPlayer.dir),
+            e.act3 = !0);
+            var i = e.limitTime - t + e.lastTime
+              , r = e.totalTime;
+            e.drawMask(i, r)
+        } else
+            e.clearTime(),
+            e.callback && e.callback.exec()
+    }
+    ,
+    t.prototype.drawMask = function(e, t) {
+        var i = this
+          , r = 27
+          , a = e / t * 360;
+        i.maskShape.graphics.clear(),
+        i.maskShape.graphics.beginFill(16711680),
+        i.maskShape.graphics.moveTo(r, r),
+        i.maskShape.graphics.lineTo(r, 0),
+        i.maskShape.graphics.drawArc(r, r, r, -90 * Math.PI / 180, (a - 90) * Math.PI / 180, !1),
+        i.maskShape.graphics.lineTo(r, r),
+        i.maskShape.graphics.endFill()
+    }
+    ,
+    t.prototype.resetState = function(e) {
+        void 0 === e && (e = !1);
+        var t = this;
+        t.clearTime(),
+        t.drawMask(0, 1),
+        t.checkMsTxt()
+    }
+    ,
+    t.prototype.closeComplete = function() {}
+    ,
+    t.prototype.resizePos = function() {
+        var e = this
+          , t = new egret.Point
+          , i = emIns.firstPlayer;
+        if (i && i.display) {
+            var r = i.display.localToGlobal(0, 0);
+            r && (t.x = r.x - e.skin.width / 2,
+            t.y = r.y - 20)
+        }
+        return t
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 390:
+            t == i.costItemId && (i.autoState = !1);
+            break;
+        case 3:
+            t && (i.txt_txt.text = gd.bag.getCount(i.costItemId) + "",
+            i.setElist());
+            break;
+        case 1030:
+            i.setCostItemId(t);
+            break;
+        case 1029:
+            t && i.autoState && net.CatchfishModel.ins().send1(i.costItemId);
+            break;
+        case 1027:
+            if (t.rid.toString() != i.realUid.toString())
+                break;
+            if (t.success) {
+                var r = cm.global[39007].value.splitNum("#");
+                emIns.firstPlayer.bianshen(1 == gd.player.sex ? r[0] : r[1], emIns.firstPlayer.fighterObject.FishId ? emIns.firstPlayer.fighterObject.FishId : r[2], 1, !1),
+                i.startFishing()
+            } else
+                i.timeKey && ncm.err("钓鱼失败"),
+                i.resetState()
+        }
+    }
+    ,
+    t.prototype.clearTime = function() {
+        var e = this;
+        e.timeKey && (egret.clearInterval(e.timeKey),
+        e.timeKey = 0)
+    }
+    ,
+    t.prototype.onResize = function(e, t) {
+        var i = this
+          , r = (e - i.skin.width) / 2
+          , a = i.y = t - 500
+          , n = i.resizePos();
+        (0 != n.x || 0 != n.y) && (r = n.x,
+        a = n.y + 50),
+        i.x = r,
+        i.y = a
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.clearTime(),
+        t.maskShape && (t.maskShape.removeSelf(),
+        t.maskShape = null)
+    }
+    ,
+    t
+}(UIBase);
+__reflect(FishProgressCtrl.prototype, "FishProgressCtrl");
+var FisherRender = function(e) {
+    function t() {
+        var t = e.call(this) || this;
+        t.timeId = 0,
+        t.time = 0;
+        var i = t;
+        return i.complete = !1,
+        i.once(eui.UIEvent.COMPLETE, i.onComplete, i),
+        i.skinName = "FisherRenderSkin",
+        t
+    }
+    return __extends(t, e),
+    t.prototype.onComplete = function() {
+        var e = this;
+        e.complete = !0,
+        e.img_icon.on(TP, e.onclick, e),
+        e.dataChanged()
+    }
+    ,
+    t.prototype.onclick = function() {
+        var e = this;
+        e.complete && e.data && gd.arpgInst.sendNotif(1030, e.data)
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        e.complete && e.data && (e.img_icon.source = ResUrl.url(cm.item[e.data][19] + "", 8),
+        e.txt_num.text = gd.bag.getCount(e.data) + "")
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.img_icon.off(TP, t.onclick, t)
+    }
+    ,
+    t
+}(eui.ItemRenderer);
+__reflect(FisherRender.prototype, "FisherRender");
 var FBButtonID;
 !function(e) {
     e[e.hj = 1] = "hj",
@@ -122141,7 +124077,7 @@ var HomeUiDownCtrl = function(e) {
     t.prototype.myCreated = function() {
         var e = this;
         e.initUI(),
-        e.addAutoEventListener(e.onClickBtn, e.btn_role, e.btn_union, e.btn_bag, e.fcm, e.fcm1, e.btn_forge, e.btn_paimai, e.tianguan, e.maiyao, e.spboss, e.email, e.unionRedbag, e.friend, e.btn_baoshi, e.btn_jishou, e.deal, e.deal0, e.invite, e.apply, e.firstget, e.paimai, e.asuram, e.alliance, e.btn_cosplay, e.btn_smelt, e.btn_hecheng, e.btn_set, e.btn_run, e.btn_upgrade, e.img_bgMS, e.btn_store, e.btn_friend, e.btn_rein, e.btn_rank, e.btn_map, e.btn_npcTips, e.btn_pet, e.btn_pet_suo, e.btn_pet_fight, e.btn_pet_flow, e.btn_pet_rest, e.btn_out, e.btn_setting, e.btn_skill, e.btn_quit, e.btn_help, e.btn_zq, e.btn_chat, e.privateMsg, e.btn_leishen, e.btn_tianfu, e.legendInvite, e.btn_kill, e.tvtInvite, e.btn_gw, e.grp_liveassist, e.btn_tfqh),
+        e.addAutoEventListener(e.onClickBtn, e.btn_role, e.btn_union, e.btn_bag, e.fcm, e.fcm1, e.btn_forge, e.btn_paimai, e.tianguan, e.maiyao, e.spboss, e.email, e.unionRedbag, e.friend, e.btn_baoshi, e.btn_jishou, e.deal, e.deal0, e.invite, e.apply, e.firstget, e.paimai, e.asuram, e.alliance, e.btn_cosplay, e.btn_smelt, e.btn_hecheng, e.btn_fishpond, e.btn_set, e.btn_run, e.btn_upgrade, e.img_bgMS, e.btn_store, e.btn_friend, e.btn_rein, e.btn_rank, e.btn_map, e.btn_npcTips, e.btn_pet, e.btn_pet_suo, e.btn_pet_fight, e.btn_pet_flow, e.btn_pet_rest, e.btn_out, e.btn_setting, e.btn_skill, e.btn_quit, e.btn_help, e.btn_zq, e.btn_chat, e.privateMsg, e.btn_leishen, e.btn_tianfu, e.legendInvite, e.btn_kill, e.tvtInvite, e.btn_gw, e.grp_liveassist, e.btn_tfqh),
         e.updateGlobalPoint(),
         e.updatePunchShow(),
         e.touchEnabled = !0,
@@ -122943,6 +124879,7 @@ var HomeUiDownCtrl = function(e) {
         e.updateHint(e.btn_leishen, t.checkOneLeishenHint(1) || t.checkOneLeishenHint(2) || t.checkOneLeishenHint(3) || t.checkOneLeishenHint(5) || t.checkOneLeishenHint(6)),
         e.updateHint(e.btn_tianfu, t.tianfuHint || t.tianfujxHint),
         e.updateHint(e.btn_cosplay, t.shenzhuangHint || t.huijiHint || gd.fame.checkFamesLvAngle() || gd.xingyue.checkLevelUp()),
+        e.updateHint(e.btn_fishpond, t.treasureSSAnger || 1 == t.FishCKHint),
         e.upgradeTimer > 0 && (clearTimeout(e.upgradeTimer),
         e.upgradeTimer = 0),
         e.upgradeTimer = setTimeout(e.checkUpgradableInfo.bind(this), 100)
@@ -123062,6 +124999,8 @@ var HomeUiDownCtrl = function(e) {
         case t.btn_smelt:
             uim.showOrHide(560);
             break;
+        case t.btn_fishpond:
+            return void uim.show(364);
         case t.btn_pet:
             t.petStateBtnGro.visible = !t.petStateBtnGro.visible;
             break;
@@ -125531,7 +127470,7 @@ var ActiveButton = function(e) {
             return void PlatformManager.Instance.openOnlineHPYL();
         if (10055 != t.btnMsg.id) {
             if (!t.btnMsg.clickLink)
-                return 20013 == t.btnMsg.id || 20014 == t.btnMsg.id || 20023 == t.btnMsg.id || 20084 == t.btnMsg.id ? void PlatformManager.Instance.openOnlineKf() : 20021 == t.btnMsg.id || 20020 == t.btnMsg.id || 20022 == t.btnMsg.id || 20029 == t.btnMsg.id || 20046 == t.btnMsg.id || 20060 == t.btnMsg.id || 20081 == t.btnMsg.id || 20121 == t.btnMsg.id || 20139 == t.btnMsg.id || 20145 == t.btnMsg.id || 20033 == t.btnMsg.id ? void PlatformManager.Instance.openWXCustomer() : 20051 == t.btnMsg.id || 20151 == t.btnMsg.id ? void PlatformManager.Instance.openTTCustomer() : 20032 == t.btnMsg.id || 20037 == t.btnMsg.id || 20043 == t.btnMsg.id || 20058 == t.btnMsg.id || 20061 == t.btnMsg.id || 20062 == t.btnMsg.id || 20068 == t.btnMsg.id || 20086 == t.btnMsg.id || 20127 == t.btnMsg.id || 20130 == t.btnMsg.id || 20165 == t.btnMsg.id ? void PlatformManager.Instance.openWXCustomer() : 30003 == t.btnMsg.id ? void PlatformManager.Instance.openZB() : void (27 == t.btnMsg.id ? PlatformManager.Instance.apiFocus() : 43 == t.btnMsg.id || 44 == t.btnMsg.id ? platform.onActiveBtnBeClick(t.btnMsg.id) : 111 == t.btnMsg.id ? (net.UserModel.ins().send17(),
+                return 20013 == t.btnMsg.id || 20014 == t.btnMsg.id || 20023 == t.btnMsg.id || 20084 == t.btnMsg.id ? void PlatformManager.Instance.openOnlineKf() : 20021 == t.btnMsg.id || 20020 == t.btnMsg.id || 20022 == t.btnMsg.id || 20029 == t.btnMsg.id || 20046 == t.btnMsg.id || 20060 == t.btnMsg.id || 20081 == t.btnMsg.id || 20121 == t.btnMsg.id || 20139 == t.btnMsg.id || 20145 == t.btnMsg.id || 20033 == t.btnMsg.id ? void PlatformManager.Instance.openWXCustomer() : 20051 == t.btnMsg.id || 20151 == t.btnMsg.id || 20171 == t.btnMsg.id || 20172 == t.btnMsg.id ? void PlatformManager.Instance.openTTCustomer() : 20032 == t.btnMsg.id || 20037 == t.btnMsg.id || 20043 == t.btnMsg.id || 20058 == t.btnMsg.id || 20061 == t.btnMsg.id || 20062 == t.btnMsg.id || 20068 == t.btnMsg.id || 20086 == t.btnMsg.id || 20127 == t.btnMsg.id || 20130 == t.btnMsg.id || 20165 == t.btnMsg.id ? void PlatformManager.Instance.openWXCustomer() : 30003 == t.btnMsg.id ? void PlatformManager.Instance.openZB() : void (27 == t.btnMsg.id ? PlatformManager.Instance.apiFocus() : 43 == t.btnMsg.id || 44 == t.btnMsg.id ? platform.onActiveBtnBeClick(t.btnMsg.id) : 111 == t.btnMsg.id ? (net.UserModel.ins().send17(),
                 PlatformManager.Instance.openWindowsUrl("", 0, 4)) : 999 == t.btnMsg.id ? CommonUtils.quickGetItem(8244) : 1002 == t.btnMsg.id ? ActivityRemindManager.instance.openAdvance() : Logic.checkLinkOpen(t.btnMsg.data));
             if (20003 == t.btnMsg.id) {
                 var i = Vars.roleid
@@ -126559,6 +128498,8 @@ var ActiveButtonUtil = function() {
             var d = gd.operData.checkHideActBtn(0);
             return !d
         }
+        if (201 == e.id && js_gameVars.TTGS)
+            return !1;
         if (27 == e.id)
             return Vars.$focusbonus && !Vars.$focus;
         if (28 == e.id)
@@ -127049,7 +128990,7 @@ var ActiveButtonUtil = function() {
                                                 if (162 != o.showType) {
                                                     if (2e4 != o.showType) {
                                                         if (21e3 != o.showType) {
-                                                            if (29 == o.activityType || 46 == o.showType || 509 == o.activityType || 509 == o.showType || 233003 == o.showType || 233002 == o.showType || 233004 == o.showType) {
+                                                            if (29 == o.activityType || 46 == o.showType || 509 == o.activityType || 509 == o.showType || 233003 == o.showType || 233002 == o.showType || 233004 == o.showType || 234004 == o.showType) {
                                                                 if (!gd.activity.isFirstOpenLim[n]) {
                                                                     i = !0;
                                                                     break
@@ -129067,36 +131008,39 @@ var H5CapTureStrongholdCtrl = function(e) {
             AlertDialog.showAlertById(70, r);
             break;
         case i.img_help:
-            uim.showOrHide(749, new UIData(1187));
+            var a = cm.global[26315] ? cm.global[26315].value : ""
+              , n = gd.player.globalSetInfo[26315];
+            n && n.value && (a = n.value),
+            uim.showOrHide(749, new UIData(0,a));
             break;
         case i.txt_name0:
             if (t = cm.kuafuduodian[1]) {
-                var a = t.position.split("#");
-                gd.map.gotoStagePoint(parseInt(a[0]), parseInt(a[1]), gd.map.config.id)
+                var o = t.position.split("#");
+                gd.map.gotoStagePoint(parseInt(o[0]), parseInt(o[1]), gd.map.config.id)
             }
             break;
         case i.txt_name1:
             if (t = cm.kuafuduodian[2]) {
-                var a = t.position.split("#");
-                gd.map.gotoStagePoint(parseInt(a[0]), parseInt(a[1]), gd.map.config.id)
+                var o = t.position.split("#");
+                gd.map.gotoStagePoint(parseInt(o[0]), parseInt(o[1]), gd.map.config.id)
             }
             break;
         case i.txt_name2:
             if (t = cm.kuafuduodian[3]) {
-                var a = t.position.split("#");
-                gd.map.gotoStagePoint(parseInt(a[0]), parseInt(a[1]), gd.map.config.id)
+                var o = t.position.split("#");
+                gd.map.gotoStagePoint(parseInt(o[0]), parseInt(o[1]), gd.map.config.id)
             }
             break;
         case i.txt_name3:
             if (t = cm.kuafuduodian[4]) {
-                var a = t.position.split("#");
-                gd.map.gotoStagePoint(parseInt(a[0]), parseInt(a[1]), gd.map.config.id)
+                var o = t.position.split("#");
+                gd.map.gotoStagePoint(parseInt(o[0]), parseInt(o[1]), gd.map.config.id)
             }
             break;
         case i.txt_name4:
             if (t = cm.kuafuduodian[5]) {
-                var a = t.position.split("#");
-                gd.map.gotoStagePoint(parseInt(a[0]), parseInt(a[1]), gd.map.config.id)
+                var o = t.position.split("#");
+                gd.map.gotoStagePoint(parseInt(o[0]), parseInt(o[1]), gd.map.config.id)
             }
             break;
         case i.btn_get:
@@ -132721,7 +134665,7 @@ var H5RightActiveCtrl = function(e) {
             t.clickAbandon();
             break;
         case t.btn_question:
-            t.type == HomeRightActiveType.gangFightingWNFC ? uim.show(749, new UIData(2316)) : t.type == HomeRightActiveType.BaiGuJing ? uim.show(749, new UIData(2970)) : t.type == HomeRightActiveType.biqi && uim.show(749, new UIData(2972));
+            t.type == HomeRightActiveType.gangFightingWNFC ? uim.show(749, new UIData(2316)) : t.type == HomeRightActiveType.BaiGuJing ? uim.show(749, new UIData(2970)) : t.type == HomeRightActiveType.biqi ? uim.show(749, new UIData(2972)) : t.type == HomeRightActiveType.fish && uim.show(749, new UIData(445));
             break;
         case t.btn_lock:
             t.UpdataLockstage()
@@ -133194,7 +135138,9 @@ var H5RightActiveCtrl = function(e) {
                 t = HomeRightActiveType.petpart
             }
         }
-        return e > 6001 && 6010 > e && (t = HomeRightActiveType.lsmg),
+        e > 6001 && 6010 > e && (t = HomeRightActiveType.lsmg);
+        var a = gd.map.config;
+        return 98 == a.cls && (t = HomeRightActiveType.fish),
         t
     }
     ,
@@ -133204,6 +135150,7 @@ var H5RightActiveCtrl = function(e) {
         case HomeRightActiveType.gangFightingWNFC:
         case HomeRightActiveType.BaiGuJing:
         case HomeRightActiveType.biqi:
+        case HomeRightActiveType.fish:
             return !0
         }
         return !1
@@ -133522,6 +135469,7 @@ var HomeRightActiveType;
     e[e.dfdjReady = 122] = "dfdjReady",
     e[e.dfdjStart = 123] = "dfdjStart",
     e[e.dfdjyuxuan = 124] = "dfdjyuxuan",
+    e[e.fish = 125] = "fish",
     e[e.tianti = 3] = "tianti",
     e[e.biqi = 4] = "biqi",
     e[e.sbk = 5] = "sbk",
@@ -137127,7 +139075,14 @@ var H5ChatmaxCtrl = function(e) {
             t.radioChangeHandler(gd.chat.lastEnterChannel);
         t.changeShowOrHide(!0),
         t.bindSubject(gd.chat),
-        t.txt_input2.inputType = egret.TextFieldInputType.TEXT
+        t.txt_input2.inputType = egret.TextFieldInputType.TEXT,
+        t.checkShowBtnAqts()
+    }
+    ,
+    t.prototype.checkShowBtnAqts = function() {
+        var e = this
+          , t = gd.player.globalSetInfo[48202];
+        return t ? void (e.txt_aqts.visible = t.status) : void (e.txt_aqts.visible = !1)
     }
     ,
     t.prototype.onFocusIn = function() {
@@ -137210,9 +139165,9 @@ var H5ChatmaxCtrl = function(e) {
         var t = this;
         if (0 === t.txt_input.text.trim().length)
             return void ncm.err("发言内容不能为空");
-        if ("@gm" == t.txt_input.text && Vars.serverid >= 90001)
+        if ("@gm" == t.txt_input.text && Vars.serverid >= 90001 && Vars.serverid <= 99999)
             return void uim.show(901);
-        if ("iospay" == t.txt_input.text && Vars.serverid >= 90001)
+        if ("iospay" == t.txt_input.text && Vars.serverid >= 90001 && Vars.serverid <= 99999)
             return void uim.show(520);
         if ("@fighterror" == t.txt_input.text && Vars.debug)
             return void (js_gameVars.fighterror = !0);
@@ -137595,10 +139550,10 @@ var H5HomeUIDownCtrl = function(e) {
         e.prototype.myCreated.call(this),
         js_gameVars.debug ? t.btn_gm.visible = !0 : t.btn_gm.visible = !1,
         GameEventCenter.Instance.addListener(13, t),
-        t.addAutoEventListener(t.onClickBtn, t.btn_role, t.btn_union, t.btn_cskill, t.unionRedbag, t.fcm, t.fcm1, t.btn_forge, t.btn_friend, t.maiyao, t.spboss, t.email, t.friend, t.deal, t.invite, t.apply, t.firstget, t.paimai, t.privateMsg, t.btn_run, t.btn_shangcheng, t.btn_hecheng, t.btn_auto, t.alliance, t.tianguan, t.btn_help, t.btn_toggle, t.btn_option, t.btn_rank, t.btn_upgrade, t.btn_gm, t.btn_pet, t.btn_pet_suo, t.btn_pet_fight, t.btn_pet_flow, t.btn_pet_rest, t.btn_rein, t.btn_paimai, t.btn_cosplay, t.btn_ms, t.grp_b0, t.grp_b1, t.img_moveState, t.btn_npcTips, t.btn_bag, t.btn_skill, t.btn_soulpet, t.btn_baoshi, t.btn_smelt, t.btn_cbtPanel, t.btn_zq, t.btn_jishou, t.btn_random, t.btn_doushen, t.btn_kill, t.legendInvite, t.tvtInvite, t.btn_gw, t.grp_liveassist, t.btn_tfqh, t.btn_tianfu),
-        t.addClickEff(t.btn_role, t.btn_toggle, t.btn_rank, t.btn_option, t.btn_hecheng, t.btn_shangcheng, t.btn_smelt, t.btn_friend, t.btn_union, t.btn_forge, t.btn_upgrade, t.btn_pet, t.btn_rein, t.btn_paimai, t.btn_cosplay, t.btn_skill, t.btn_soulpet, t.btn_baoshi, t.btn_bag, t.btn_auto, t.img_moveState, t.btn_cbtPanel, t.btn_jishou, t.btn_doushen, t.btn_gw, t.btn_tfqh, t.btn_tianfu),
+        t.addAutoEventListener(t.onClickBtn, t.btn_role, t.btn_union, t.btn_cskill, t.unionRedbag, t.fcm, t.fcm1, t.btn_forge, t.btn_friend, t.maiyao, t.spboss, t.email, t.friend, t.deal, t.invite, t.apply, t.firstget, t.paimai, t.privateMsg, t.btn_run, t.btn_shangcheng, t.btn_hecheng, t.btn_auto, t.alliance, t.tianguan, t.btn_help, t.btn_toggle, t.btn_option, t.btn_rank, t.btn_upgrade, t.btn_gm, t.btn_pet, t.btn_pet_suo, t.btn_pet_fight, t.btn_pet_flow, t.btn_pet_rest, t.btn_rein, t.btn_paimai, t.btn_cosplay, t.btn_ms, t.grp_b0, t.grp_b1, t.img_moveState, t.btn_npcTips, t.btn_bag, t.btn_skill, t.btn_soulpet, t.btn_baoshi, t.btn_smelt, t.btn_cbtPanel, t.btn_zq, t.btn_jishou, t.btn_random, t.btn_doushen, t.btn_kill, t.legendInvite, t.tvtInvite, t.btn_gw, t.grp_liveassist, t.btn_tfqh, t.btn_tianfu, t.btn_fishpond),
+        t.addClickEff(t.btn_role, t.btn_toggle, t.btn_rank, t.btn_option, t.btn_hecheng, t.btn_shangcheng, t.btn_smelt, t.btn_friend, t.btn_union, t.btn_forge, t.btn_upgrade, t.btn_pet, t.btn_rein, t.btn_paimai, t.btn_cosplay, t.btn_skill, t.btn_soulpet, t.btn_baoshi, t.btn_bag, t.btn_auto, t.img_moveState, t.btn_cbtPanel, t.btn_jishou, t.btn_doushen, t.btn_gw, t.btn_tfqh, t.btn_tianfu, t.btn_fishpond),
         t.hpeff || (t.hpeff = new QsMovieClip,
-        t.hpeff.init("y_h_hp", 12, 12, "y_h5Home-sheet_json"),
+        t.hpeff.init("y_h_hp", 12, 12, "y_h5home-sheet_json"),
         t.hpGro.addChild(t.hpeff),
         t.hpeff.play(-1),
         t.hpeff.x = -7,
@@ -137606,7 +139561,7 @@ var H5HomeUIDownCtrl = function(e) {
         t.hpeff.scaleX = t.hpeff.scaleY = .65,
         t.hpeff.touchEnabled = !1),
         t.mpeff || (t.mpeff = new QsMovieClip,
-        t.mpeff.init("y_h_mp", 12, 12, "y_h5Home-sheet_json"),
+        t.mpeff.init("y_h_mp", 12, 12, "y_h5home-sheet_json"),
         t.mpGro.addChild(t.mpeff),
         t.mpeff.play(-1),
         t.mpeff.x = -42,
@@ -137643,10 +139598,10 @@ var H5HomeUIDownCtrl = function(e) {
     t.prototype.initSysBtns = function() {
         var e = this;
         e.hideSysBtnsInfo = void 0,
-        js_gameVars.banshu ? (e.sysBtnsInfoMatrix = [[e.btn_skill, 501, RolePopRadio.jn], [e.btn_friend, 526], [e.btn_rein, 507], [e.btn_smelt, 560], [e.btn_forge, 513], [e.btn_union, 506], [e.btn_cosplay, 545], [e.btn_option, 579], [e.btn_hecheng, 518], [e.btn_soulpet, 587], [e.btn_baoshi, 646], [e.btn_doushen, 511], [e.btn_tianfu, 577]],
+        js_gameVars.banshu ? (e.sysBtnsInfoMatrix = [[e.btn_skill, 501, RolePopRadio.jn], [e.btn_friend, 526], [e.btn_rein, 507], [e.btn_smelt, 560], [e.btn_forge, 513], [e.btn_union, 506], [e.btn_cosplay, 545], [e.btn_option, 579], [e.btn_hecheng, 518], [e.btn_soulpet, 587], [e.btn_baoshi, 646], [e.btn_doushen, 511], [e.btn_tianfu, 577], [e.btn_fishpond, 364]],
         e.btn_jishou.visible = !1,
         e.btn_paimai.visible = !1,
-        e.btn_shangcheng.visible = !1) : (e.sysBtnsInfoMatrix = [[e.btn_skill, 501, RolePopRadio.jn], [e.btn_friend, 526], [e.btn_rein, 507], [e.btn_smelt, 560], [e.btn_forge, 513], [e.btn_union, 506], [e.btn_cosplay, 545], [e.btn_option, 579], [e.btn_shangcheng, 520], [e.btn_hecheng, 518], [e.btn_paimai, 591], [e.btn_soulpet, 587], [e.btn_baoshi, 646], [e.btn_jishou, 571], [e.btn_doushen, 511], [e.btn_tianfu, 577]],
+        e.btn_shangcheng.visible = !1) : (e.sysBtnsInfoMatrix = [[e.btn_skill, 501, RolePopRadio.jn], [e.btn_friend, 526], [e.btn_rein, 507], [e.btn_smelt, 560], [e.btn_forge, 513], [e.btn_union, 506], [e.btn_cosplay, 545], [e.btn_option, 579], [e.btn_shangcheng, 520], [e.btn_hecheng, 518], [e.btn_paimai, 591], [e.btn_soulpet, 587], [e.btn_baoshi, 646], [e.btn_jishou, 571], [e.btn_doushen, 511], [e.btn_tianfu, 577], [e.btn_fishpond, 364]],
         e.btn_jishou.visible = !0,
         e.btn_paimai.visible = !0,
         e.btn_shangcheng.visible = !0);
@@ -138862,13 +140817,13 @@ var H5HomeUIDownCtrl = function(e) {
     ,
     t.prototype.addExpPercentComponent = function() {
         var e = this;
-        e.bitl_exp || (e.bitl_exp = new BitmapComponent("y_h_bitl_","y_h5Home-sheet_json"),
+        e.bitl_exp || (e.bitl_exp = new BitmapComponent("y_h_bitl_","y_h5home-sheet_json"),
         e.grp_exp.addChild(e.bitl_exp))
     }
     ,
     t.prototype.addLVComponent = function() {
         var e = this;
-        e.bitl_lv || (e.bitl_lv = new BitmapComponent("y_h_bitl_","y_h5Home-sheet_json"),
+        e.bitl_lv || (e.bitl_lv = new BitmapComponent("y_h_bitl_","y_h5home-sheet_json"),
         e.grp_lv.addChild(e.bitl_lv))
     }
     ,
@@ -139421,7 +141376,7 @@ var H5Shortcutkey = function(e) {
                     t.addChildAt(o, 3),
                     t.grp_cd = o
                 }
-                var s = new BitmapComponent("y_h_jncd_","y_h5Home-sheet_json");
+                var s = new BitmapComponent("y_h_jncd_","y_h5home-sheet_json");
                 s.rotation = t.getRotation(),
                 t.grp_cd.addChild(s),
                 s.visible = !1,
@@ -144587,6 +146542,7 @@ var ActivityPages = function() {
         233003: ActivityAnniversaryKoi,
         233004: ActivityAnniversaryCosplay,
         234001: ActivityHoliday,
+        234004: ActivityFestivalLimited,
         235001: ActivityQQ20th1,
         235002: ActivityQQ20th2,
         235003: ActivityQQ20th3,
@@ -145085,6 +147041,11 @@ var ActivityPop = function(e) {
                                                                 continue
                                                             }
                                                         } else if (233004 == l.showType) {
+                                                            if (!gd.activity.isFirstOpenLim[s]) {
+                                                                e.radioDic[s].hint.visible = !0;
+                                                                continue
+                                                            }
+                                                        } else if (234004 == l.showType) {
                                                             if (!gd.activity.isFirstOpenLim[s]) {
                                                                 e.radioDic[s].hint.visible = !0;
                                                                 continue
@@ -153854,7 +155815,7 @@ var RecyclePop = function(e) {
             var e = [];
             for (var t in gd.bag.recycleLids)
                 gd.bag.bagDic[t] && e.push(gd.bag.recycleLids[t]);
-            e.length > 0 && net.BagModel.ins().send7(e),
+            e.length > 0 && net.BagModel.ins().send7(e, 1),
             gd.bag.recycleLids = {}
         }
     }
@@ -159955,7 +161916,7 @@ var DragonEmpire = function(e) {
             var p = i > 4 ? e["txt_eqf" + c] : e["txt_qf" + c];
             if (p) {
                 var u = r[c];
-                u ? p.textFlow = Html.toEle(Html.str("s." + u.sid, Logic.getCol(50))) : p.textFlow = Html.toEle(Html.str("未连接到次元裂缝", Logic.getCol(71)))
+                u ? p.textFlow = Html.toEle(Html.str("s." + Logic.checkSidShow(u.sid), Logic.getCol(50))) : p.textFlow = Html.toEle(Html.str("未连接到次元裂缝", Logic.getCol(71)))
             }
         }
         e.addSpiralEff(i)
@@ -161194,6 +163155,2039 @@ var YgzcBossListRender = function(e) {
     t
 }(eui.ItemRenderer);
 __reflect(YgzcBossListRender.prototype, "YgzcBossListRender");
+var CatchFishTuJianPop = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.tujianList = new eui.ArrayCollection,
+        t.suitList = new eui.ArrayCollection,
+        t.tabIndex = 1,
+        t.type = 1,
+        t.group = 1,
+        t.level = 1,
+        t.roleType = 1,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("CatchFishTuJianPopSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.list1.itemRenderer = CatchFishTuJianAllRender,
+        e.list1.dataProvider = e.tujianList,
+        e.list2.itemRenderer = CatchFishTuJianRender,
+        e.list2.dataProvider = e.suitList,
+        e.occupation = new eui.RadioButtonGroup,
+        e.radio_btn0.group = e.occupation,
+        e.radio_btn0.value = 1,
+        e.radio_btn1.group = e.occupation,
+        e.radio_btn1.value = 2,
+        e.radio_btn2.group = e.occupation,
+        e.radio_btn2.value = 3,
+        e.occupation.selectedValue = 1,
+        e.occupation.on(eui.UIEvent.CHANGE, e.radioChangeHandler, e),
+        e.addAutoEventListener(e.clickHandler, e.closeBtn, e.btn_attr)
+    }
+    ,
+    t.prototype.radioChangeHandler = function(e) {
+        var t = this
+          , i = e.target;
+        t.tabIndex = i.selectedValue,
+        t.s1.stopAnimation(),
+        t.s2.stopAnimation(),
+        t.s1.viewport.scrollV = t.s2.viewport.scrollV = 0,
+        t.toInitBaseInfo()
+    }
+    ,
+    t.prototype.clickHandler = function(e) {
+        var t = this;
+        switch (e.currentTarget) {
+        case t.btn_attr:
+            uim.show(743, new UIData({
+                type: 4
+            }));
+            break;
+        case t.closeBtn:
+            t.closeUI()
+        }
+    }
+    ,
+    t.prototype.refr = function() {
+        var t = this;
+        e.prototype.refr.call(this),
+        t.tabIndex = 1,
+        t.opd && t.opd.args && t.opd.args[0] && (t.tabIndex = t.opd.args[0],
+        t.occupation.selectedValue = t.opd.args[0]),
+        t.bindSubject(gd.arpgInst),
+        t.toInitBaseInfo(),
+        t.updateRed()
+    }
+    ,
+    t.prototype.updateRed = function() {
+        var e = this;
+        e.updateUIEff(e.radio_btn1, null);
+        for (var t = 0; t < gd.player.CatchFishSuitList.length; t++) {
+            var i = gd.player.CatchFishSuitList[t];
+            if (1 == i.rewardState)
+                return void e.updateUIEff(e.radio_btn1, UIEffect.BUTTON_EFF_RED)
+        }
+    }
+    ,
+    t.prototype.toInitBaseInfo = function() {
+        var e = this;
+        e.grp_tj.visible = e.grp_suit.visible = e.btn_attr.visible = !1,
+        1 == e.tabIndex ? (e.grp_tj.visible = e.btn_attr.visible = !0,
+        e.initTuJian(),
+        e.img_title.source = "fish_title1",
+        e.img_bg.source = "resource/jpg/FishTuJianBg1.jpg") : 2 == e.tabIndex && (e.grp_suit.visible = !0,
+        e.initSuit(),
+        e.img_title.source = "fish_title2",
+        e.img_bg.source = "resource/jpg/FishTuJianBg2.jpg")
+    }
+    ,
+    t.prototype.initTuJian = function() {
+        var e = this;
+        e.tujianList.removeAll();
+        var t = cm.fish_tujian_group;
+        for (var i in t) {
+            var r = t[i];
+            e.tujianList.addItem(r)
+        }
+    }
+    ,
+    t.prototype.initSuit = function() {
+        var e = this;
+        e.suitList.removeAll();
+        var t = cm.fish_tujian_suit
+          , i = []
+          , r = []
+          , a = [];
+        for (var n in t) {
+            var o = t[n]
+              , s = gd.player.CatchFishSuitDic[o.id];
+            if (s) {
+                if (1 == s.rewardState) {
+                    i.push(o);
+                    continue
+                }
+                if (2 == s.rewardState) {
+                    a.push(o);
+                    continue
+                }
+            } else
+                r.push(o)
+        }
+        i.push.apply(i, r),
+        i.push.apply(i, a);
+        for (var l = 0, c = i; l < c.length; l++) {
+            var o = c[l];
+            e.suitList.addItem(o)
+        }
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 108:
+            i.updateRed();
+            break;
+        case 1031:
+            i.toInitBaseInfo(),
+            i.updateRed()
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this),
+        this.tujianList.removeAll(),
+        this.tujianList = null,
+        this.suitList.removeAll(),
+        this.suitList = null,
+        this.Timer && egret.clearTimeout(this.Timer),
+        this.Timer = 0
+    }
+    ,
+    t
+}(PopUpBase);
+__reflect(CatchFishTuJianPop.prototype, "CatchFishTuJianPop");
+var CatchFishTuJianAllRender = function(e) {
+    function t() {
+        var t = e.call(this) || this
+          , i = t;
+        return i.complete = !1,
+        i.once(eui.UIEvent.COMPLETE, i.onComplete, i),
+        i.skinName = "CatchFishTuJianAllRenderSkin",
+        t
+    }
+    return __extends(t, e),
+    t.prototype.onComplete = function() {
+        var e = this;
+        e.complete = !0,
+        e.listData = new eui.ArrayCollection,
+        e.list0.itemRenderer = FishBagEquipRender,
+        e.list0.dataProvider = e.listData,
+        e.dataChanged()
+    }
+    ,
+    t.prototype.onListShow = function(e) {
+        var t = this
+          , i = 72 * e;
+        t.height = t.list0.y + i
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        if (e.complete && e.data) {
+            var t = e.data;
+            e.listData.removeAll();
+            var i = void 0
+              , r = [];
+            for (var a in t) {
+                var n = t[a];
+                i = n.groupName,
+                r.push(n)
+            }
+            r.sort(function(e, t) {
+                var i = cm.item[e.itemId][4]
+                  , r = cm.item[t.itemId][4];
+                return i - r
+            });
+            for (var o = 0, s = r; o < s.length; o++) {
+                var n = s[o]
+                  , l = GridFactory.createItemGridVo(n.itemId, new Long(0,0), 1);
+                e.listData.addItem(l)
+            }
+            e.onListShow(Math.ceil(r.length / 8)),
+            e.txt_name.text = i
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.listData.removeAll(),
+        t.listData = null
+    }
+    ,
+    t
+}(eui.ItemRenderer);
+__reflect(CatchFishTuJianAllRender.prototype, "CatchFishTuJianAllRender");
+var CatchFishTuJianRender = function(e) {
+    function t() {
+        var t = e.call(this) || this
+          , i = t;
+        return i.complete = !1,
+        i.once(eui.UIEvent.COMPLETE, i.onComplete, i),
+        i.skinName = "CatchFishTuJianRenderSkin",
+        t
+    }
+    return __extends(t, e),
+    t.prototype.onComplete = function() {
+        var e = this;
+        e.complete = !0,
+        e.suitList = new eui.ArrayCollection,
+        e.list0.itemRenderer = FishBagEquipRender,
+        e.list0.dataProvider = e.suitList,
+        e.rewardList = new eui.ArrayCollection,
+        e.list1.itemRenderer = BagEquipRender,
+        e.list1.dataProvider = e.rewardList,
+        e.btn_lj.on(TP, e.onclick, e),
+        e.dataChanged()
+    }
+    ,
+    t.prototype.onListShow = function(e) {
+        var t = this
+          , i = 72 * e;
+        t.height = t.list0.y + i
+    }
+    ,
+    t.prototype.onclick = function() {
+        var e = this;
+        net.CatchfishModel.ins().send6(e.data.id)
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        if (e.complete && e.data) {
+            var t = e.data;
+            e.txt_name.text = t.groupName,
+            t.txt ? e.txt_attr.text = "奖励属性:" + t.txt : e.txt_attr.text = "";
+            var i = !0;
+            e.suitList.removeAll();
+            for (var r = t.item ? t.item.splitNum("#") : [], a = 0, n = r; a < n.length; a++) {
+                var o = n[a]
+                  , s = GridFactory.createItemGridVo(o, new Long(0,0), 1);
+                e.suitList.addItem(s);
+                var l = gd.player.CatchFishTuJianList.indexOf(o);
+                0 > l && (i = !1)
+            }
+            e.onListShow(Math.ceil(r.length / 5)),
+            e.rewardList.removeAll();
+            for (var c = t.reward ? t.reward.split("&") : [], d = 0, p = c; d < p.length; d++) {
+                var u = p[d]
+                  , g = u.splitNum("#")
+                  , s = GridFactory.createItemGridVo(g[0], new Long(0,0), g[1]);
+                e.rewardList.addItem(s)
+            }
+            if (e.btn_lj.visible = e.img_ylq.visible = e.img_red.visible = !1,
+            i) {
+                e.btn_lj.label = "已领取";
+                var g = gd.player.CatchFishSuitDic[t.id];
+                g && 1 == g.rewardState ? (e.btn_lj.label = "领 取",
+                e.img_red.visible = e.btn_lj.visible = !0) : g && 2 == g.rewardState && (e.img_ylq.visible = !0)
+            }
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.rewardList.removeAll(),
+        t.rewardList = null,
+        t.suitList.removeAll(),
+        t.suitList = null,
+        t.btn_lj.off(TP, t.onclick, t)
+    }
+    ,
+    t
+}(eui.ItemRenderer);
+__reflect(CatchFishTuJianRender.prototype, "CatchFishTuJianRender");
+var FishBagEquipRender = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        e.prototype.createChildren.call(this)
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this;
+        if (t.data && t.data.config) {
+            var i = t.data
+              , r = i.config
+              , a = gd.player.CatchFishTuJianList.indexOf(r[0]);
+            t.bgImg.source = "fish_grid" + r[4],
+            t.img || (t.img = new eui.Image("fish_suo"),
+            t.addChild(t.img),
+            t.img.verticalCenter = 0,
+            t.img.horizontalCenter = 0),
+            t.img.touchEnabled = !1,
+            0 > a ? t.img.visible = !0 : t.img.visible = !1
+        }
+    }
+    ,
+    t.prototype.showTips = function() {
+        var e = this;
+        if (e.data.config) {
+            var t = e.data
+              , i = Logic.getEquipCopy(t);
+            if (2 == t.config[1]) {
+                var r = 4
+                  , a = t.lid;
+                if (a) {
+                    var n = t.config[23]
+                      , o = gd.player.equipInfo[n];
+                    o && a.toString() == o.lid.toString() ? r = 2 : (2 == n && (o = gd.player.equipInfo[9]),
+                    3 == n && (o = gd.player.equipInfo[10]),
+                    o && a.toString() == o.lid.toString() && (r = 2))
+                }
+                1 == t.from && (r = 1),
+                32 == t.from && (r = 21),
+                TipsManager.Instance.showTips(0, i, 2)
+            } else
+                TipsManager.Instance.showTips(1, i, 31)
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        Logic.removeNew([t.img])
+    }
+    ,
+    t
+}(BagEquipRender);
+__reflect(FishBagEquipRender.prototype, "FishBagEquipRender");
+var FishingMapPop = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.selectIdx = 0,
+        t.mapInfo = [],
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("FishingMapPopSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.listData = new eui.ArrayCollection,
+        e.list.dataProvider = e.listData,
+        e.list.itemRenderer = fishingMapRender,
+        e.addAutoEventListener(e.clickHandler, e.closeBtn, e.btn_go),
+        e.list.on(eui.ItemTapEvent.ITEM_TAP, e.onClickList, e)
+    }
+    ,
+    t.prototype.clickHandler = function(e) {
+        var t = this;
+        switch (e.currentTarget) {
+        case t.btn_go:
+            Logic.deliverToFindNpc(t.mapInfo[t.selectIdx].deliver);
+            break;
+        case t.closeBtn:
+            t.closeUI()
+        }
+    }
+    ,
+    t.prototype.onClickList = function(e) {
+        var t = this;
+        if (t.selectIdx != t.list.selectedIndex) {
+            var i = t.list.selectedItem;
+            i && (t.selectIdx = t.list.selectedIndex,
+            t.showInfo())
+        }
+    }
+    ,
+    t.prototype.refr = function() {
+        var t = this;
+        e.prototype.refr.call(this),
+        t.showList(),
+        t.showInfo()
+    }
+    ,
+    t.prototype.showInfo = function() {
+        var e = this;
+        e.txt_desc.textFlow = Html.toEle(e.mapInfo[e.selectIdx].describe),
+        e.img_fish.source = ResUrl.url(e.mapInfo[e.selectIdx].fishing + "_2", 80)
+    }
+    ,
+    t.prototype.showList = function() {
+        var e = this;
+        e.listData.removeAll();
+        var t = cm.fish_map;
+        for (var i in t)
+            for (var r in t[i]) {
+                e.mapInfo.push(t[i][r]),
+                e.listData.addItem(t[i][r]);
+                break
+            }
+        e.selectIdx = e.list.selectedIndex = 0
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this)
+    }
+    ,
+    t
+}(PopUpBase);
+__reflect(FishingMapPop.prototype, "FishingMapPop");
+var fishingMapRender = function(e) {
+    function t() {
+        var t = e.call(this) || this
+          , i = t;
+        return i.once(eui.UIEvent.COMPLETE, i.onComplete, i),
+        i.skinName = "fishingMapRenderSkin",
+        t
+    }
+    return __extends(t, e),
+    t.prototype.onComplete = function(e) {
+        var t = this;
+        t._init = !0,
+        t.toInitBase()
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        e._init && e.data && e.toInitBase()
+    }
+    ,
+    t.prototype.toInitBase = function() {
+        var e = this;
+        e._init && e.data && (e.img_bg.source = ResUrl.url(e.data.fishing + "_1", 80, null, ResUrl.JPGExt))
+    }
+    ,
+    t.prototype.setSelected = function(e) {
+        this.img_select.visible = e
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this)
+    }
+    ,
+    t
+}(ItemRendererBase);
+__reflect(fishingMapRender.prototype, "fishingMapRender");
+var FishPondActPop = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.myCreated = function() {
+        e.prototype.myCreated.call(this);
+        var t = this;
+        t.radioName = ["奖励", "任务"],
+        t.data_sel = new eui.ArrayCollection,
+        t.list_sel.dataProvider = t.data_sel,
+        t.addAutoEventListener(t.clickHandler, t.btn_buy)
+    }
+    ,
+    t.prototype.clickHandler = function(e) {
+        var t = this;
+        Logic.toPayByCfg(cm.recharge[t.rechargeId])
+    }
+    ,
+    t.prototype.refr = function() {
+        var t = this;
+        e.prototype.refr.call(this),
+        t.bindSubject(gd.activity, gd.bag),
+        net.ActivityModel.ins().send3(130)
+    }
+    ,
+    t.prototype.createChildren = function() {
+        this.uiSkin("FishPondActPopSkin")
+    }
+    ,
+    t.prototype.onRadioSelected = function(t) {
+        var i = this;
+        i.list_sel.parent.scrollV = 0,
+        i.currSelectRadioIndex = t,
+        i.setLabelTitle(i.radioName[t]),
+        i.changeTab(!0),
+        e.prototype.onRadioSelected.call(this, t)
+    }
+    ,
+    t.prototype.createRadio = function(e, t, i) {
+        void 0 === t && (t = 0);
+        var r = this;
+        r.page_list = new eui.List,
+        r.scro && r.scro.parent && (r.scro.removeSelf(),
+        r.scro = null),
+        r.scro = new eui.Scroller,
+        r.page_list.itemRenderer = radioFFActBtn,
+        r.page_list.dataProvider = e,
+        r.page_list.scrollEnabled = !1;
+        var a = new eui.TileLayout;
+        return a.requestedColumnCount = 1,
+        a.requestedRowCount = e.length,
+        a.verticalGap = 1,
+        a.columnWidth = 33,
+        a.rowHeight = 70,
+        r.scro.x = 360,
+        r.scro.y = 85,
+        r.scro.width = 57,
+        r.scro.height = 350,
+        r.page_list.layout = a,
+        r.scro.viewport = r.page_list,
+        r.addChild(r.scro),
+        r.page_list
+    }
+    ,
+    t.prototype.showBtnHint = function(e) {
+        var t = this;
+        switch (e.value) {
+        case 0:
+            t.updateHint(e, 1 == gd.angler.FishPondAct1);
+            break;
+        case 1:
+        }
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 896:
+        case 172:
+            i.changeTab();
+            break;
+        case 11:
+            0 == i.currSelectRadioIndex && i.changeTab()
+        }
+    }
+    ,
+    t.prototype.changeTab = function(e) {
+        void 0 === e && (e = !1);
+        var t = this;
+        if (t.grp_buy.visible = t.topBg0.visible = t.topBg.visible = !1,
+        0 == t.currSelectRadioIndex) {
+            if (t.topBg.visible = !0,
+            t.s1.y = 40,
+            t.s1.height = 354,
+            t.actMsg = gd.activity.checkShowTypeOpen(61301),
+            !t.actMsg)
+                return;
+            var i = t.actMsg.param && t.actMsg.param.split("#");
+            i[1] ? (t.itemNum.text = gd.bag.getCount(parseInt(i[1]), !0) + "",
+            t.icon.source = ResUrl.url(cm.item[parseInt(i[1])][19].toString(), 8),
+            t.rechargeId = i[0]) : (t.itemNum.text = "",
+            t.icon.source = "",
+            t.rechargeId = t.actMsg.param),
+            t.grp_buy.visible = !0,
+            t.list_sel.itemRenderer = FishPondKSRender,
+            t.list_sel.layout.gap = 0,
+            t.updateList(e)
+        } else if (1 == t.currSelectRadioIndex) {
+            if (t.topBg0.visible = !0,
+            t.s1.y = 0,
+            t.s1.height = 394,
+            t.actMsg = gd.activity.checkShowTypeOpen(61302),
+            !t.actMsg)
+                return;
+            t.list_sel.itemRenderer = FishPondKSRender2,
+            t.list_sel.layout.gap = 6,
+            t.updateList2()
+        }
+    }
+    ,
+    t.prototype.updateList = function(e) {
+        void 0 === e && (e = !1);
+        var t = this
+          , i = 0;
+        if (t.data_sel.removeAll(),
+        t.actMsg) {
+            var r = []
+              , a = gd.activity.KaoshangdDic[t.actMsg.id]
+              , n = gd.activity.buyKaoshangDic[t.actMsg.id]
+              , o = a ? Object.keys(a) : []
+              , s = !0;
+            for (var l in a)
+                if (l == o[o.length - 1] ? r.push([a[l], n, t.actMsg, "-1"]) : r.push([a[l], n, t.actMsg, l]),
+                "" != t.itemNum.text && s) {
+                    Number(t.itemNum.text),
+                    cm.milin[a[l].miLingid];
+                    2 == a[l].freeRewardState && 2 == a[l].payRewardState ? i += 72 : s = !1
+                }
+            t.data_sel.source = r,
+            t.btn_buy.touchEnabled = !gd.activity.buyKaoshangDic[t.actMsg.id],
+            t.btn_buy.filters = gd.activity.buyKaoshangDic[t.actMsg.id] ? [FilterUtil.FILTER_GRAY()] : null,
+            t.btn_buy.label = gd.activity.buyKaoshangDic[t.actMsg.id] ? "已解锁" : cm.recharge[t.rechargeId].rmb + "元解锁",
+            e && (i > 0 && i >= t.s1.viewport.measuredHeight - t.s1.height ? i = t.s1.viewport.measuredHeight - t.s1.height : null,
+            t.s1.viewport.scrollV = i)
+        }
+    }
+    ,
+    t.prototype.updateList2 = function() {
+        var e = this;
+        if (e.data_sel.removeAll(),
+        e.actMsg) {
+            var t = cm.activitygoals[e.actMsg.id];
+            t.sort(e.compare),
+            t.forEach(function(t) {
+                e.data_sel.addItem({
+                    config: t,
+                    msg: e.actMsg
+                })
+            })
+        }
+    }
+    ,
+    t.prototype.compare = function(e, t) {
+        var i = gd.activity.getActivityBean(e.id, e.goal, e.type)
+          , r = gd.activity.getActivityBean(t.id, t.goal, t.type)
+          , a = ActivityTimeUtil.checkActivityReach(e) ? 1 : 2
+          , n = ActivityTimeUtil.checkActivityReach(t) ? 1 : 2;
+        return i && (a = 2,
+        1 == i.rewardState ? a = 1 : 2 == i.rewardState && (a = 3)),
+        r && (n = 2,
+        1 == r.rewardState ? n = 1 : 2 == r.rewardState && (n = 3)),
+        a > n ? 1 : n > a ? -1 : e.type > t.type ? 1 : e.type < t.type ? -1 : e.goal > t.goal ? 1 : e.goal < t.goal ? -1 : 0
+    }
+    ,
+    t.prototype.sortKs = function(e, t) {
+        var i = e[0]
+          , r = t[0];
+        return 1 == i.freeRewardState || e[1] && 1 == i.payRewardState ? -1 : 1 != i.freeRewardState && e[1] && 1 != i.payRewardState ? 2 != r.freeRewardState || t[1] && 2 != r.payRewardState ? 1 : i.freeRewardState < r.freeRewardState ? -1 : e[1] && t[1] && i.payRewardState < r.payRewardState ? -1 : i.miLingid - r.miLingid : i.miLingid - r.miLingid
+    }
+    ,
+    t
+}(PopCommon);
+__reflect(FishPondActPop.prototype, "FishPondActPop");
+var radioFFActBtn = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.radio = new eui.RadioButton,
+        this.radio.skinName = "RadioButtonBottomSkin",
+        this.addChild(this.radio)
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        e.prototype.dataChanged.call(this);
+        var t = this
+          , i = t.data;
+        if (i) {
+            var r = "" == i.showDesc ? "ff_btn14" : "ff_btn13";
+            t.radio.bg_up.source = r,
+            t.radio.bg_down.source = "ff_btn14",
+            t.radio.txt_up.x = 6,
+            t.radio.txt_down.x = 6
+        }
+    }
+    ,
+    Object.defineProperty(t.prototype, "selected", {
+        set: function(e) {
+            var t = this;
+            if (t.parent)
+                if (e) {
+                    var i = t.parent.dataProvider;
+                    i && t.parent.setChildIndex(t, i.length - 1)
+                } else
+                    t.parent.setChildIndex(t, t.data ? t.data.index : 0)
+        },
+        enumerable: !0,
+        configurable: !0
+    }),
+    t
+}(radioBottom);
+__reflect(radioFFActBtn.prototype, "radioFFActBtn");
+var FishPondKSRender = function(e) {
+    function t() {
+        var t = e.call(this) || this
+          , i = t;
+        return i.once(eui.UIEvent.COMPLETE, i.onComplete, i),
+        i.skinName = "FishPondKSRenderSkin",
+        t
+    }
+    return __extends(t, e),
+    t.prototype.onComplete = function(e) {
+        var t = this;
+        t._init = !0,
+        t.grp_recyNor.on(TP, t.onClickHandler, t),
+        t.grp_recySpe.on(TP, t.onClickHandler, t),
+        t.speArr = new eui.ArrayCollection,
+        t.listSpe.itemRenderer = BagEquipRender,
+        t.listSpe.dataProvider = t.speArr,
+        t.listrewArr = new eui.ArrayCollection,
+        t.list_rew.itemRenderer = BagEquipRender,
+        t.list_rew.dataProvider = t.listrewArr,
+        t.dataChanged()
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        if (e._init && e.data) {
+            var t = e.data[0]
+              , i = e.data[2];
+            if (e.cfg = cm.milin[t.miLingid],
+            e.bar1.visible = !1,
+            e.bar2.visible = !1,
+            e.cfg) {
+                var r = BoxUtil.getItemOrBox(e.cfg.reward);
+                e.listrewArr.removeAll();
+                for (var a in r)
+                    e.listrewArr.addItem(r[a]);
+                var n = BoxUtil.getItemOrBox(e.cfg.reward2);
+                e.speArr.removeAll();
+                for (var a in n)
+                    e.speArr.addItem(n[a]);
+                e.img_lqNor.visible = 2 == t.freeRewardState,
+                e.img_lqSpe.visible = 2 == t.payRewardState;
+                var o = e.data[1]
+                  , s = e.cfg.goal && cm.goals[e.cfg.goal]
+                  , l = t.process ? t.process : 0
+                  , c = s && s.count;
+                if (i && i.param) {
+                    var d = i.param.split("#");
+                    if (d[1]) {
+                        var p = cm.item[parseInt(d[1])];
+                        p && (l = gd.bag.getCount(p[0], !0),
+                        c = e.cfg.count ? e.cfg.count : 0)
+                    }
+                }
+                var u = Html.str(c, l >= c ? Logic.getCol(50) : Logic.getCol(49));
+                e.goal_num.textFlow = Html.toEle(u),
+                e.img_redNor.visible = e.grp_recyNor.visible = 2 != t.freeRewardState && l >= c,
+                e.img_redSpe.visible = e.grp_recySpe.visible = 2 != t.payRewardState && l >= c && o,
+                c > l ? e.bar1.visible = !1 : l == c ? e.bar1.visible = !0 : (e.bar1.visible = !0,
+                e.bar2.visible = !0),
+                0 == e.itemIndex ? (e.barbg1.visible = !1,
+                e.bar1.visible = !1) : "-1" == e.data[3] && (e.barbg2.visible = !1,
+                e.bar2.visible = !1)
+            }
+        }
+    }
+    ,
+    t.prototype.onClickHandler = function(e) {
+        var t = this;
+        if (t.cfg)
+            switch (e.currentTarget) {
+            case t.grp_recyNor:
+                net.ActivityModel.ins().send138(t.cfg.id, 0),
+                e.stopPropagation();
+                break;
+            case t.grp_recySpe:
+                net.ActivityModel.ins().send138(t.cfg.id, 1),
+                e.stopPropagation()
+            }
+    }
+    ,
+    t.prototype.dispose = function() {
+        var t = this;
+        e.prototype.dispose.call(this),
+        t.grp_recyNor.off(TP, t.onClickHandler, t),
+        t.grp_recySpe.off(TP, t.onClickHandler, t),
+        t.itemNor && (t.itemNor.removeSelf(),
+        t.itemNor.dispose(),
+        t.itemNor = null),
+        t.listrewArr.removeAll(),
+        t.listrewArr = null,
+        t.speArr.removeAll(),
+        t.speArr = null
+    }
+    ,
+    t
+}(eui.ItemRenderer);
+__reflect(FishPondKSRender.prototype, "FishPondKSRender");
+var FishPondKSRender2 = function(e) {
+    function t() {
+        var t = e.call(this) || this;
+        t.showList = new eui.ArrayCollection,
+        t._uiEff = new ViewHint,
+        t.status = 0;
+        var i = t;
+        return i.once(eui.UIEvent.COMPLETE, i.onComplete, i),
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        var e = this;
+        e.skinName = "FishPondKSRender2Skin"
+    }
+    ,
+    t.prototype.onComplete = function(e) {
+        var t = this;
+        t._init = !0,
+        t.listSpe.itemRenderer = BagEquipRender,
+        t.listSpe.dataProvider = t.showList,
+        t.btn_recyNor.on(TP, t.onClickHandler, t),
+        t.dataChanged()
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        if (e._init && e.data) {
+            var t = e.data.msg
+              , i = e.data.config;
+            cm.goals[i.goal];
+            e.txt_info.textFlow = Html.toEle(i.goalShow),
+            e.status = 0,
+            e.img_mr.visible = "1" == i.param,
+            e.showList.removeAll();
+            var r = BoxUtil.getItemOrBox(i.showReward);
+            for (var a in r)
+                e.showList.addItem(r[a]);
+            var n = gd.activity.getActivityBean(i.id, i.goal, i.type);
+            if (e.btn_recyNor.enabled = !0,
+            e.btn_recyNor.filters = null,
+            e.img_redNor.visible = !1,
+            n) {
+                var o = n.now
+                  , s = cm.goals[i.goal].count
+                  , l = s > o ? Logic.getCol(49) : Logic.getCol(50);
+                e.txt_count.textFlow = Html.toEle(Html.str("(" + o + "/" + s + ")", l)),
+                2 === n.rewardState ? (e.btn_recyNor.label = Lang.get("已领取"),
+                e.status = 2) : i.count && n.leftCount <= 0 ? (e.btn_recyNor.label = Lang.get("已领完"),
+                e.status = 3) : 1 == n.rewardState ? (e.img_redNor.visible = !0,
+                e.btn_recyNor.label = Lang.get("领取奖励"),
+                e.status = 1) : 0 == n.rewardState && (202 == t.activityType ? (e.btn_recyNor.label = Lang.get("前 往"),
+                e.status = 99) : (e.btn_recyNor.visible = !1,
+                e.txt_ylq.textFlow = Html.getHTML("条件不足", Logic.getCol(48)),
+                e.status = 0,
+                e.txt_ylq.visible = !0))
+            } else
+                e.btn_recyNor.visible = !1,
+                e.txt_count.text = "",
+                e.txt_ylq.textFlow = Html.getHTML("条件不足", Logic.getCol(48)),
+                e.status = 0,
+                e.txt_ylq.visible = !0;
+            if (1 == e.status) {
+                var c = ActivityTimeUtil.checkActivityLastTime(e.data.msg);
+                c && (c.open ? c.timedis <= 0 && (e.status = 4,
+                e.btn_recyNor.label = Lang.get("已结束")) : (e.status = 4,
+                e.btn_recyNor.label = Lang.get("未开启")))
+            }
+            e.txt_ylq.visible = 0 == e.status || 2 == e.status || "已领完" == e.btn_recyNor.label,
+            e.txt_ylq.visible && ("已领完" == e.btn_recyNor.label ? e.txt_ylq.textFlow = Html.getHTML("无剩余", Logic.getCol(49)) : 0 != e.status && (e.txt_ylq.textFlow = Html.getHTML("已领取", Logic.getCol(46)))),
+            e.btn_recyNor.visible = !e.txt_ylq.visible,
+            e._uiEff.updateHint(e.btn_recyNor, 1 == e.status && e.btn_recyNor.visible),
+            (4 == e.status || 2 == e.status || 3 == e.status) && (e.btn_recyNor.enabled = !1,
+            e.btn_recyNor.filters = [FilterUtil.FILTER_GRAY()])
+        }
+    }
+    ,
+    t.prototype.onClickHandler = function(e) {
+        var t = this;
+        if (99 == t.status) {
+            var i = t.data.msg;
+            Logic.checkLinkOpen(i.link)
+        } else
+            net.ActivityModel.ins().send1(t.data.msg.id, t.data.config.type, t.data.config.goal, 1)
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t._uiEff.dispose(),
+        t._uiEff = null,
+        t.btn_recyNor.off(TP, t.onClickHandler, t),
+        t.showList.removeAll(),
+        t.showList = null
+    }
+    ,
+    t
+}(eui.ItemRenderer);
+__reflect(FishPondKSRender2.prototype, "FishPondKSRender2");
+var FishPondCKPop = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t._curSelect = 0,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.myCreated = function() {
+        e.prototype.myCreated.call(this);
+        var t = this;
+        t.radioName = ["仓库"]
+    }
+    ,
+    t.prototype.onRadioSelected = function(t, i) {
+        void 0 === i && (i = 0);
+        var r = this;
+        switch (r.currSelectRadioIndex = t,
+        r.page && (r.group_page.removeChild(r.page),
+        r.page.hide(),
+        r.page.preDis(),
+        r.page = null),
+        r.setLabelTitle(r.radioName[t]),
+        t) {
+        case 0:
+            r.page = new FishCKPanel
+        }
+        r.page && e.prototype.onRadioSelected.call(this, t),
+        r._curSelect = t
+    }
+    ,
+    t.prototype.refr = function() {
+        var t = this;
+        e.prototype.refr.call(this),
+        t.updaRedHint(),
+        t.bindSubject(gd.angler)
+    }
+    ,
+    t.prototype.showBtnHint = function(e) {
+        var t = this;
+        switch (e.value) {
+        case 0:
+            t.updateHint(e, 1 == gd.angler.FishCKHint)
+        }
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        switch (e) {
+        case 108:
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this)
+    }
+    ,
+    t
+}(PopCommon);
+__reflect(FishPondCKPop.prototype, "FishPondCKPop");
+var FishCKPanel = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.itemListIndex = 1,
+        t.eatData = [],
+        t.startEat = !1,
+        t.eatCount = 0,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("FishPondCKSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.radioGrop = new eui.RadioButtonGroup,
+        e.radio_1.value = 1,
+        e.radio_2.value = 2,
+        e.radio_1.group = e.radioGrop,
+        e.radio_2.group = e.radioGrop,
+        e.fishlistData = new eui.ArrayCollection,
+        e.itemList.itemRenderer = FishPondItemRender,
+        e.itemList.dataProvider = e.fishlistData,
+        e.itemList.on(eui.ItemTapEvent.ITEM_TAP, e.onRenderList, e),
+        e.skilllistData = new eui.ArrayCollection,
+        e.List.itemRenderer = FishPondSkillRender,
+        e.List.dataProvider = e.skilllistData,
+        e.fightlistData = new eui.ArrayCollection,
+        e.List2.itemRenderer = FishPondSkillRender,
+        e.List2.dataProvider = e.fightlistData,
+        e.setlistData = new eui.ArrayCollection,
+        e.list_sel.itemRenderer = ResolveSetRenger2,
+        e.list_sel.dataProvider = e.setlistData,
+        e.addAutoEventListener(e.onClick, e.btn_up, e.btn_in, e.btn_out, e.btn_eat, e.btn_set, e.btn_close, e.btn_sure, e.btn_fj, e.btn_skill1, e.btn_skill2, e.btn_eatAll),
+        e.radioGrop.on(eui.UIEvent.CHANGE, e.onTouchHandler, e)
+    }
+    ,
+    t.prototype.onRenderList = function(e) {
+        for (var t = this, i = e.currentTarget.selectedItem, r = e.currentTarget.selectedIndex, a = t.itemList.getElementAt(r), n = 0; n < t.itemList.numElements; n++) {
+            var o = t.itemList.getElementAt(n);
+            o && (t.startEat ? o.data && t.selData && !o.data.undata && t.selData.lid.equals(o.data.lid) ? o.img_sel.visible = !0 : o.img_sel.visible = !1 : n == t.itemList.selectedIndex && o.data && !o.data.undata ? (t.selData = o.data,
+            t.updateInfo(),
+            o.img_sel.visible = !0) : o.img_sel.visible = !1)
+        }
+        if (t.startEat && i.lid && !i.lid.equals(t.selData.lid) && !a.img_sel.visible) {
+            for (var s = cm.fishlv[t.selData.fryId], l = t.selData.exp, c = 0, d = t.eatData; c < d.length; c++) {
+                var n = d[c]
+                  , p = n.toString();
+                if (gd.fishpond.fishDic[p]) {
+                    var u = cm.fishlv[gd.fishpond.fishDic[p].fryId];
+                    l += u && u.exp
+                }
+                if (gd.fishpond.ckDic[p]) {
+                    var u = cm.fishlv[gd.fishpond.ckDic[p].fryId];
+                    l += u && u.exp
+                }
+            }
+            var g = t.eatData.indexOf(i.lid);
+            g >= 0 ? (t.eatData.splice(g, 1),
+            a.img_sel0.visible = !1,
+            t.updateInfo(!0)) : l < s.cost1 ? (t.eatData.push(i.lid),
+            a.img_sel0.visible = !0,
+            t.updateInfo(!0)) : ncm.err("升级所需经验已满")
+        }
+    }
+    ,
+    t.prototype.onRenderList0 = function(e) {
+        var t = this;
+        if (t.selData)
+            for (var i = 0; i < t.itemList.numElements; i++) {
+                var r = t.itemList.getElementAt(i);
+                r && (r.data && !r.data.undata && t.selData.lid.equals(r.data.lid) ? r.img_sel.visible = !0 : r.img_sel.visible = !1,
+                t.startEat && t.eatData.length > 0 && (t.eatData.indexOf(r.data.lid) >= 0 ? r.img_sel0.visible = !0 : r.img_sel0.visible = !1))
+            }
+    }
+    ,
+    t.prototype.onTouchHandler = function(e) {
+        var t = this
+          , i = e.target;
+        t.radioGrop.selectedValue = i.selectedValue,
+        t.s_fish.viewport.scrollV = 0,
+        t.ChageItemList(i.selectedValue)
+    }
+    ,
+    t.prototype.ChageItemList = function(e) {
+        var t = this;
+        t.btn_out.visible = 1 == e,
+        t.btn_in.visible = 2 == e,
+        t.setpondTxt(),
+        t.setExpTxt(),
+        t.updateUIEff(t.radio_1, gd.fishpond.checkRedHint(1)),
+        t.updateUIEff(t.radio_2, gd.fishpond.checkRedHint(2)),
+        t.fishlistData.removeAll();
+        var i = 2 == e ? gd.fishpond.ckDic : gd.fishpond.fishDic
+          , r = Object.keys(i)
+          , a = r.length >= 22 ? r.length : 22;
+        gd.fishpond.maxGridCount && 2 == e && (a = gd.fishpond.maxGridCount);
+        for (var n = 0; a > n; n++)
+            i[r[n]] ? t.fishlistData.addItem(i[r[n]]) : t.fishlistData.addItem({
+                undata: !0
+            });
+        t.itemList.once(eui.ItemTapEvent.RENDER, t.onRenderList0, t)
+    }
+    ,
+    t.prototype.onClick = function(e) {
+        var t = this;
+        switch (e.currentTarget) {
+        case t.btn_up:
+            if (t.startEat)
+                return void ncm.err("请先取消吞噬");
+            t.selData ? net.FishpondModel.ins().send5(t.selData.lid) : ncm.err("请选中鱼苗");
+            break;
+        case t.btn_in:
+            if (t.startEat)
+                return void ncm.err("请先取消吞噬");
+            t.selData ? net.FishpondModel.ins().send8(t.selData.lid, 1) : ncm.err("请选中鱼苗");
+            break;
+        case t.btn_out:
+            if (t.startEat)
+                return void ncm.err("请先取消吞噬");
+            t.selData ? net.FishpondModel.ins().send8(t.selData.lid, 2) : ncm.err("请选中鱼苗");
+            break;
+        case t.btn_eatAll:
+            t.selData || ncm.err("请选中鱼苗");
+            var i = [];
+            t.eatData = [];
+            for (var r in gd.fishpond.ckDic) {
+                var a = gd.fishpond.ckDic[r];
+                a.type == t.selData.type && t.selData.level >= a.level && a.lid.toString() != t.selData.lid.toString() && (1 == a.level && gd.fishpond.setDic[1] && i.push(a),
+                2 == a.level && gd.fishpond.setDic[2] && i.push(a),
+                3 == a.level && gd.fishpond.setDic[3] && i.push(a))
+            }
+            if (i.length > 0) {
+                i.sort(function(e, t) {
+                    return e.level - t.level
+                });
+                for (var n = 0, o = i; n < o.length; n++) {
+                    var r = o[n];
+                    if (t.eatData.length >= 300)
+                        break;
+                    t.eatData.push(r.lid)
+                }
+                net.FishpondModel.ins().send3(t.selData.lid, gd.player.settingDic[2043] && gd.player.settingDic[2043].state && gd.fishpond.totalExp > 0 ? 1 : 0, t.eatData)
+            } else
+                gd.fishpond.totalExp > 0 && gd.player.settingDic[2043] && gd.player.settingDic[2043].state ? net.FishpondModel.ins().send3(t.selData.lid, 1, []) : ncm.err("暂无经验值可用于一键吞噬");
+            break;
+        case t.btn_fj:
+            if (t.selData) {
+                var s = cm.fishlv[t.selData.fryId]
+                  , l = new CallBack3(t.fjcallBack,t);
+                AlertDialog.showAlertById(226, l, [s.exp])
+            } else
+                ncm.err("请选中鱼苗");
+            break;
+        case t.btn_skill1:
+            t.btn_skill1.icon1.source = "ff_btn7",
+            t.btn_skill2.icon1.source = "ff_btn6",
+            t.s1.visible = !0,
+            t.s2.visible = !1;
+            break;
+        case t.btn_skill2:
+            t.btn_skill1.icon1.source = "ff_btn8",
+            t.btn_skill2.icon1.source = "ff_btn5",
+            t.s2.visible = !0,
+            t.s1.visible = !1;
+            break;
+        case t.btn_set:
+            t.setGro.visible = !0,
+            t.setGrpSetList();
+            break;
+        case t.btn_close:
+        case t.btn_sure:
+            t.setGro.visible = !1
+        }
+    }
+    ,
+    t.prototype.fjcallBack = function(e) {
+        var t = this;
+        e == AlertDialog.AGREE && (net.FishpondModel.ins().send10(t.selData.lid),
+        t.selData = null,
+        t.updateInfo())
+    }
+    ,
+    t.prototype.refr = function() {
+        var e = this;
+        e.bindSubject(gd.bag, gd.fishpond),
+        e.grp_bar.visible = e.grp_cost.visible = e.btn_up.visible = e.grp_model.visible = e.btn_eatAll.visible = e.setGro.visible = !1,
+        e.s1.visible = !0,
+        e.s2.visible = !1,
+        e.radioGrop.selectedValue = 1,
+        e.ChageItemList(1),
+        e.addeff()
+    }
+    ,
+    t.prototype.updateInfo = function(e) {
+        void 0 === e && (e = !1);
+        var t = this;
+        if (!t.selData)
+            return t.grp_bar.visible = t.grp_cost.visible = t.btn_up.visible = t.grp_model.visible = t.btn_eatAll.visible = !1,
+            t.txt_cur.text = "",
+            t.updateUIEff(t.btn_up, null),
+            t.skilllistData.removeAll(),
+            void t.fightlistData.removeAll();
+        var i = cm.fishlv[t.selData.fryId];
+        if (t.txt_rl.text = "当前鱼容量: " + i.capacity + (i.capacity1 ? "\n下级鱼容量: " + i.capacity1 : ""),
+        t.txt_bar.text = i.cost1 ? (t.selData.exp >= i.cost1 ? i.cost1 : t.selData.exp) + "/" + i.cost1 : "已满级",
+        t.img_bar.scaleX = !i.cost1 || t.selData.exp >= i.cost1 ? 1 : t.selData.exp / i.cost1,
+        t.setSkillList(),
+        i && i.model && t.showMod(i.model),
+        t.btn_up.touchEnabled = !0,
+        t.btn_up.filters = null,
+        t.btn_eatAll.visible = i.cost1 && t.selData.exp < i.cost1,
+        i.cost) {
+            var r = new UseConsumptionOb(i.cost,null,null,!1,!0);
+            t.addUseConsumption(r, 20, 0),
+            t.updateUIEff(t.btn_up, Logic.checkCostItems(i.cost) && t.selData.exp >= i.cost1 ? UIEffect.BUTTON_EFF_RED : null),
+            t.btn_up.visible = !0
+        } else
+            t.addUseConsumption(null),
+            t.btn_up.filters = [FilterUtil.FILTER_GRAY()],
+            t.btn_up.touchEnabled = !1,
+            t.updateUIEff(t.btn_up, null),
+            t.btn_up.visible = !1;
+        t.txt_cur.textFlow = Html.toEle(CommonUtils.getAttr(i.attribute, !0, Logic.getCol(46), Logic.getCol(46))),
+        t.grp_bar.visible = t.grp_cost.visible = t.grp_model.visible = !0
+    }
+    ,
+    t.prototype.showMod = function(e) {
+        var t = this;
+        t.Animal || (t.Animal = new UISceneEffectAnimation),
+        t.Animal.init(t.grp_model, parseInt(e)),
+        t.Animal.x = 0,
+        t.Animal.y = 0
+    }
+    ,
+    t.prototype.addeff = function() {
+        var e = this;
+        e.removeEff(),
+        e._eff || (e._eff = new NameMovieClip,
+        e.addChild(e._eff),
+        e._eff.x = 204,
+        e._eff.y = -26,
+        e._eff.touchEnabled = !1),
+        NameMovieClipResManager.Instance.getMcByRes("allSerHelpEff", e._eff),
+        e._eff.play(-1)
+    }
+    ,
+    t.prototype.removeEff = function() {
+        var e = this;
+        e._eff && (e._eff.stop(),
+        e._eff.removeSelf(),
+        e._eff.data = null,
+        e._eff = null)
+    }
+    ,
+    t.prototype.setpondTxt = function() {
+        var e = this;
+        if (!(gd.fishpond.pondLv <= 0)) {
+            var t = cm.fishpond[gd.fishpond.pondLv]
+              , i = t && t.capacity;
+            e.txt_ck.text = "鱼塘容量:" + gd.fishpond.pondMax + "/" + i
+        }
+    }
+    ,
+    t.prototype.setExpTxt = function() {
+        var e = this;
+        gd.fishpond.totalExp < 0 || (e.txt_exp.text = "经验池:" + gd.fishpond.totalExp)
+    }
+    ,
+    t.prototype.setSkillList = function() {
+        for (var e = this, t = [], i = [], r = 0, a = e.selData.fishBuffList; r < a.length; r++) {
+            var n = a[r];
+            if (n.count > 1)
+                for (var o = 0; o < n.count; o++)
+                    t.push(n.buffId);
+            else
+                t.push(n.buffId)
+        }
+        e.skilllistData.removeAll(),
+        e.fightlistData.removeAll();
+        for (var s = 0, l = t; s < l.length; s++) {
+            var n = l[s]
+              , c = cm.fishbuff[n];
+            e.skilllistData.addItem(c)
+        }
+        for (var d = 0, p = i; d < p.length; d++) {
+            var o = p[d]
+              , c = cm.fishbuff[o];
+            e.fightlistData.addItem(c)
+        }
+    }
+    ,
+    t.prototype.setGrpSetList = function() {
+        var e = this;
+        e.setlistData.removeAll(),
+        e.setlistData.addItem({
+            state: 2043,
+            name: "是否使用经验池"
+        });
+        for (var t = 0; 3 > t; t++)
+            e.setlistData.addItem({
+                state: 2040 + t,
+                name: t + 1 + "级鱼苗"
+            })
+    }
+    ,
+    t.prototype.addUseConsumption = function(e, t, i, r) {
+        void 0 === t && (t = 0),
+        void 0 === i && (i = 0),
+        void 0 === r && (r = !0);
+        var a = this;
+        return e ? (a._useConsumption ? (a._useConsumption.data = e,
+        a._useConsumption.reSetX()) : (a._useConsumption = new UseConsumption,
+        a.grp_cost.addChild(a._useConsumption),
+        a._useConsumption.data = e,
+        a._useConsumption.x = t,
+        a._useConsumption.y = i),
+        void (a._useConsumption && a._useConsumption.visible != r && (a._useConsumption.visible = r))) : void (a._useConsumption && (a._useConsumption.visible = !1))
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 1033:
+            i.setpondTxt();
+            break;
+        case 1036:
+            i.selData = t,
+            i.updateInfo(),
+            i.ChageItemList(i.radioGrop.selectedValue);
+            break;
+        case 1035:
+            i.startEat = !1,
+            i.selData = t,
+            i.updateInfo();
+            break;
+        case 1034:
+            i.ChageItemList(i.radioGrop.selectedValue)
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        var t = this;
+        e.prototype.dispose.call(this),
+        t.Animal && (t.Animal.die(),
+        t.Animal = null),
+        t.fishlistData && (t.fishlistData.removeAll(),
+        t.fishlistData = null),
+        t.skilllistData && (t.skilllistData.removeAll(),
+        t.skilllistData = null),
+        t.fightlistData && (t.fightlistData.removeAll(),
+        t.fightlistData = null),
+        t.radioGrop.off(eui.UIEvent.CHANGE, t.onTouchHandler, t),
+        t.selData = null,
+        t.eatData = [],
+        t.startEat = !1,
+        t.eatCount = 0,
+        t.removeEff()
+    }
+    ,
+    t
+}(UIBase);
+__reflect(FishCKPanel.prototype, "FishCKPanel");
+var FishPondItemRender = function(e) {
+    function t() {
+        var t = e.call(this) || this
+          , i = t;
+        return i.once(eui.UIEvent.COMPLETE, i.onComplete, i),
+        i.skinName = "FishPondItemRenderSkin",
+        t
+    }
+    return __extends(t, e),
+    t.prototype.onComplete = function(e) {
+        var t = this;
+        t.init = !0,
+        t.dataChanged()
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        if (e.init && e.data) {
+            var t = e.data;
+            if (e.img_sel.visible = e.img_sel0.visible = e.img_hint.visible = !1,
+            e.data.undata)
+                return e.img_icon.source = "",
+                void (e.txt_lv.text = "");
+            var i = cm.fishlv[t.fryId];
+            e.img_icon.source = ResUrl.url(i.icon, 8),
+            e.txt_lv.text = t.level ? "lv:" + t.level : "",
+            e.img_hint.visible = t.exp >= i.cost1
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.data = null
+    }
+    ,
+    t
+}(eui.ItemRenderer);
+__reflect(FishPondItemRender.prototype, "FishPondItemRender");
+var FishPondSkillRender = function(e) {
+    function t() {
+        var t = e.call(this) || this
+          , i = t;
+        return i.once(eui.UIEvent.COMPLETE, i.onComplete, i),
+        i.skinName = "FishPondSkillRenderSkin",
+        t
+    }
+    return __extends(t, e),
+    t.prototype.onComplete = function(e) {
+        var t = this;
+        t.init = !0,
+        t.dataChanged()
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        if (e.init && e.data) {
+            var t = e.data;
+            e.txt_name.textFlow = Html.toEle(t.txt),
+            t.icon && (e.img_icon.source = ResUrl.url(t.icon, 8))
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.data = null
+    }
+    ,
+    t
+}(eui.ItemRenderer);
+__reflect(FishPondSkillRender.prototype, "FishPondSkillRender");
+var ResolveSetRenger2 = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.dataChanged = function() {
+        var e = this;
+        e.check.selected = !1,
+        e.data && (e.check.selected = gd.player.settingDic[e.data.state].state,
+        e.check.label = "  " + e.data.name)
+    }
+    ,
+    t.prototype.onClickHander = function() {
+        var e = this;
+        e.data && net.RoleModel.ins().send23(e.data.state, e.check.selected, null, -1, -1)
+    }
+    ,
+    t
+}(ResolveSetRenger);
+__reflect(ResolveSetRenger2.prototype, "ResolveSetRenger2");
+var FishPondPop = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.timeid = 0,
+        t.productAll = [],
+        t._timeOutHandler = void 0,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("FishpondPopSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.addAutoEventListener(e.clickHandler, e.closeBtn, e.btn_ck, e.btn_ss, e.btn_shop, e.btn_up, e.btn_get, e.btn_desc, e.btn_tj, e.btn_zl, e.btn_yc)
+    }
+    ,
+    t.prototype.clickHandler = function(e) {
+        var t = this;
+        switch (e.currentTarget) {
+        case t.btn_up:
+            var i = cm.fishpond[gd.fishpond.pondLv]
+              , r = cm.fishpond[gd.fishpond.pondLv + 1];
+            if (!r)
+                return;
+            var a = new CallBack3(t.fqCallBack,t);
+            AlertDialog.showAlertById(225, a, [i.capacity, r.capacity]);
+            break;
+        case t.btn_shop:
+            uim.show(361);
+            break;
+        case t.btn_ss:
+            uim.show(365);
+            break;
+        case t.btn_ck:
+            uim.show(367);
+            break;
+        case t.btn_tj:
+            uim.show(362, new UIData(null,1));
+            break;
+        case t.btn_get:
+            net.FishpondModel.ins().send7();
+            break;
+        case t.btn_desc:
+            uim.show(749, new UIData(444));
+            break;
+        case t.btn_zl:
+            uim.show(368);
+            break;
+        case t.btn_yc:
+            uim.show(369);
+            break;
+        case t.closeBtn:
+            t.closeUI()
+        }
+    }
+    ,
+    t.prototype.fqCallBack = function(e) {
+        e == AlertDialog.AGREE && net.FishpondModel.ins().send1()
+    }
+    ,
+    t.prototype.refr = function() {
+        var t = this;
+        e.prototype.refr.call(this),
+        t.bindSubject(gd.fishpond, gd.angler),
+        t.updateCost(),
+        t.updateRed(),
+        t.checkShowBtn(),
+        t.addeff(),
+        t.showTween2()
+    }
+    ,
+    t.prototype.checkShowBtn = function() {
+        var e = this;
+        e.btn_zl.visible = !1;
+        var t = gd.activity.checkShowTypeOpen(61301);
+        if (t) {
+            var i = gd.activity.buyKaoshangDic[t.id];
+            if (!i)
+                return void (e.btn_zl.visible = !0);
+            var r = gd.activity.KaoshangdDic[t.id];
+            for (var a in r)
+                if (2 != r[a].freeRewardState || 2 != r[a].payRewardState)
+                    return void (e.btn_zl.visible = !0);
+            var n = gd.activity.checkShowTypeOpen(61302);
+            if (n)
+                for (var o = cm.activitygoals[n.id], s = 0, l = o; s < l.length; s++) {
+                    var c = l[s]
+                      , d = gd.activity.getActivityBean(c.id, c.goal, c.type);
+                    if (2 != d.rewardState)
+                        return void (e.btn_zl.visible = !0)
+                }
+        }
+    }
+    ,
+    t.prototype.updateCost = function() {
+        var e = this
+          , t = gd.fishpond.pondLv;
+        e.lv.text = t + "j";
+        var i = cm.fishpond[t];
+        e.txt_ck.text = "鱼塘容量:" + gd.fishpond.pondMax + "/" + i.capacity,
+        e.txt_reward.text = "";
+        var r = "";
+        if (gd.fishpond.rewardList.length > 0)
+            for (var a = 0, n = gd.fishpond.rewardList; a < n.length; a++) {
+                var o = n[a]
+                  , s = cm.item[o.itemId];
+                s && (r += "1分钟:" + Html.str(o.count + "", Logic.getCol(50)) + s[2] + "\n")
+            }
+        e.txt_reward.textFlow = Html.toEle(r),
+        e.showTime();
+        var l = !0;
+        e.btn_up.touchEnabled = !0,
+        e.btn_up.filters = null;
+        var c = i && i.cost;
+        if (c) {
+            var d = c.split("&");
+            for (var p in d) {
+                var u = d[p].split("#")
+                  , g = gd.bag.getCount(Number(u[0]), !0)
+                  , f = Number(u[1]);
+                if (f > g) {
+                    l = !1;
+                    break
+                }
+            }
+            var h = !0
+              , m = new UseConsumptionOb(c,null,null,!1,!0);
+            e.addUseConsumption(m, 275, 460, h),
+            e.updateUIEff(e.btn_up, h && l ? UIEffect.BUTTON_EFF_RED : null)
+        } else
+            e.addUseConsumption(null),
+            e.btn_up.filters = [FilterUtil.FILTER_GRAY()],
+            e.btn_up.touchEnabled = !1,
+            e.updateUIEff(e.btn_up, null)
+    }
+    ,
+    t.prototype.showTime = function() {
+        var e = this;
+        e.clearTime(),
+        e.txt_time.textFlow = Html.toEle("存储上限:" + DateUtil.getTimeStrHMS(28800));
+        var t = gd.fishpond.lastGetTime + 28800
+          , i = Math.floor(DateUtil.serverNow() / 1e3);
+        e.grp_time.visible = !1,
+        gd.fishpond.lastGetTime > 0 && t > i ? (e.checkTime(t - i, t),
+        e.grp_time.visible = !0) : 0 == gd.fishpond.lastGetTime ? (e.txt_time.text = "",
+        e.txt_time0.text = "") : (e.txt_time0.textFlow = Html.toEle(Html.str("到达存储上限", Logic.getCol(49))),
+        e.grp_time.visible = !0)
+    }
+    ,
+    t.prototype.checkTime = function(e, t) {
+        var i = this;
+        void 0 === t && (t = 0);
+        var r = this;
+        if (e > 0) {
+            var a = Math.floor(DateUtil.serverNow() / 1e3);
+            t > 0 && (r.endTime = t,
+            0 == r.timeid && (r.timeid = egret.setInterval(function() {
+                var e = Math.ceil(i.endTime - a);
+                i.checkTime(e)
+            }, r, 1e3))),
+            r.txt_time0.textFlow = Html.toEle(DateUtil.getTimeStrHMS(a - gd.fishpond.lastGetTime));
+            var n = Math.floor((a - gd.fishpond.lastGetTime) / 28800 * 100) / 100;
+            r.img_bar.scaleX = n > 1 ? 1 : n
+        } else
+            r.clearTime(),
+            r.txt_time0.textFlow = Html.toEle(Html.str("到达存储上限", Logic.getCol(49))),
+            r.img_bar.scaleX = 1
+    }
+    ,
+    t.prototype.clearTime = function() {
+        var e = this;
+        e.timeid > 0 && (egret.clearInterval(e.timeid),
+        e.timeid = 0)
+    }
+    ,
+    t.prototype.updateRed = function() {
+        var e = this;
+        e.updateUIEff(e.btn_ss, gd.angler.treasureSSAnger),
+        e.updateUIEff(e.btn_ck, 1 == gd.angler.FishCKHint),
+        e.updateUIEff(e.btn_get, 1 == gd.angler.FishFirstOpen),
+        e.updateUIEff(e.btn_zl, 1 == gd.angler.FishPondAct1)
+    }
+    ,
+    t.prototype.addeff = function() {
+        var e = this;
+        e.model || (e.model = new UISceneEffectAnimation),
+        e.model.init(e.grp_eff, 17100)
+    }
+    ,
+    t.prototype.showTween = function() {
+        var e = this;
+        if (gd.fishpond.rewardList.length <= 0 || 0 == gd.fishpond.lastGetTime)
+            return e.product && (egret.Tween.removeTweens(e.product),
+            e.product.removeSelf(),
+            e.product.dispose(),
+            e.product = null),
+            void (e._timeOutHandler && clearInterval(e._timeOutHandler));
+        var t = function() {
+            e.product || (e.product = new BagEquipRender,
+            e.addChild(e.product));
+            var t = gd.fishpond.rewardList[0].itemId;
+            e.product.data = {
+                itemId: t,
+                config: cm.item[t],
+                hidebg: !0,
+                hideGridEff: !0
+            },
+            e.product.x = 100 + 100 * Math.random(),
+            e.product.y = 200,
+            e.product.visible = !1;
+            var i = egret.Tween.get(e.product);
+            i.wait(100).call(function() {
+                e.product.visible = !0
+            }).to({
+                y: 210
+            }, 300).to({
+                x: 292,
+                y: 320
+            }, 500).call(e.onComplete, e)
+        }
+          , i = 2e3;
+        e._timeOutHandler && clearInterval(e._timeOutHandler),
+        e._timeOutHandler = setInterval(t, i)
+    }
+    ,
+    t.prototype.onComplete = function() {
+        var e = this;
+        e.product && (e.product.visible = !1,
+        egret.Tween.removeTweens(e.product))
+    }
+    ,
+    t.prototype.showTween2 = function() {
+        var e = this;
+        if (gd.fishpond.rewardList.length <= 0 || 0 == gd.fishpond.lastGetTime) {
+            for (var t = 0, i = e.productAll; t < i.length; t++) {
+                var r = i[t];
+                r && (egret.Tween.removeTweens(r),
+                r.removeSelf(),
+                r.dispose(),
+                r = null)
+            }
+            return void (e._timeOutHandler && clearInterval(e._timeOutHandler))
+        }
+        var a = function() {
+            for (var t = function(t) {
+                var i = new BagEquipRender;
+                e.addChild(i),
+                e.productAll.push(i);
+                var r = t.itemId;
+                i.data = {
+                    itemId: r,
+                    config: cm.item[r],
+                    hidebg: !0,
+                    hideGridEff: !0
+                },
+                i.x = 100 + 100 * Math.random(),
+                i.y = 180 + 50 * Math.random(),
+                i.visible = !1;
+                var a = egret.Tween.get(i);
+                a.wait(100).call(function() {
+                    i.visible = !0
+                }).to({
+                    y: i.y + 10
+                }, 300).to({
+                    x: 292,
+                    y: 320
+                }, 500).call(function() {
+                    i.visible = !1,
+                    egret.Tween.removeTweens(i),
+                    i.removeSelf(),
+                    i.dispose(),
+                    i = null
+                })
+            }, i = 0, r = gd.fishpond.rewardList; i < r.length; i++) {
+                var a = r[i];
+                t(a)
+            }
+        }
+          , n = 6e4;
+        e._timeOutHandler && clearInterval(e._timeOutHandler),
+        e._timeOutHandler = setInterval(a, n)
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 108:
+            i.updateRed();
+            break;
+        case 1033:
+            i.updateCost(),
+            i.showTween2(),
+            i.showTime()
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.product && (egret.Tween.removeTweens(t.product),
+        t.product.removeSelf(),
+        t.product.dispose(),
+        t.product = null);
+        for (var i = 0, r = t.productAll; i < r.length; i++) {
+            var a = r[i];
+            a && (egret.Tween.removeTweens(a),
+            a.removeSelf(),
+            a.dispose(),
+            a = null)
+        }
+        t.model && (t.model.die(),
+        t.model = null),
+        t._timeOutHandler && clearInterval(t._timeOutHandler),
+        this.destroyPrivateRes(["y_fishfond-sheet_json", "fishPondFont_fnt"])
+    }
+    ,
+    t
+}(PopUpBase);
+__reflect(FishPondPop.prototype, "FishPondPop");
+var FishPondSSPop = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t._curSelect = 0,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.myCreated = function() {
+        e.prototype.myCreated.call(this);
+        var t = this;
+        t.radioName = ["神兽"]
+    }
+    ,
+    t.prototype.onRadioSelected = function(t, i) {
+        void 0 === i && (i = 0);
+        var r = this;
+        switch (r.currSelectRadioIndex = t,
+        r.page && (r.group_page.removeChild(r.page),
+        r.page.hide(),
+        r.page.preDis(),
+        r.page = null),
+        r.setLabelTitle(r.radioName[t]),
+        t) {
+        case 0:
+            r.page = new FishSSPanel
+        }
+        r.page && e.prototype.onRadioSelected.call(this, t),
+        r._curSelect = t
+    }
+    ,
+    t.prototype.refr = function() {
+        var t = this;
+        e.prototype.refr.call(this),
+        t.updaRedHint(),
+        t.bindSubject(gd.angler)
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this)
+    }
+    ,
+    t
+}(PopCommon);
+__reflect(FishPondSSPop.prototype, "FishPondSSPop");
+var FishSSPanel = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.baowuType = [16, 17, 18, 19, 20, 21],
+        t.currType = 16,
+        t.selectIdx = 0,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("FishPondSSSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.listData = new eui.ArrayCollection,
+        e.list_ss.dataProvider = e.listData,
+        e.list_ss.itemRenderer = fishSSRender,
+        e.addAutoEventListener(e.onClick, e.btn_up),
+        e.list_ss.on(eui.ItemTapEvent.ITEM_TAP, e.onClickList, e)
+    }
+    ,
+    t.prototype.onClickList = function(e) {
+        var t = this;
+        if (t.selectIdx != t.list_ss.selectedIndex) {
+            var i = t.list_ss.selectedItem;
+            if (i) {
+                if (!Logic.checkCondition(i.condition))
+                    return t.list_ss.selectedIndex = t.selectIdx,
+                    void ncm.err(Logic.getConditionListShow(i.condition));
+                t.selectIdx = t.list_ss.selectedIndex,
+                t.currType = i.type,
+                t.showGrpUp(),
+                t.updateCostShow(),
+                t.showMod()
+            }
+        }
+    }
+    ,
+    t.prototype.onClick = function(e) {
+        var t = this;
+        switch (e.currentTarget) {
+        case t.btn_up:
+            t.currCfg.level > 0 ? net.TreasureModel.ins().send3(t.currType) : net.TreasureModel.ins().send4(t.currType)
+        }
+    }
+    ,
+    t.prototype.refr = function() {
+        var e = this;
+        e.bindSubject(gd.trea, gd.bag, gd.angler),
+        e.showList(),
+        e.showGrpUp(),
+        e.updateCostShow(),
+        e.showMod()
+    }
+    ,
+    t.prototype.showList = function() {
+        var e = this;
+        e.listData.removeAll();
+        for (var t in e.baowuType) {
+            var i = e.baowuType[t]
+              , r = cm.treasure[gd.trea.resureIdByType[i]];
+            r && "10999" != r.condition && e.listData.addItem(r)
+        }
+        e.selectIdx = e.list_ss.selectedIndex = 0
+    }
+    ,
+    t.prototype.showMod = function() {
+        var e, t = this;
+        t.currCfg && (e = t.currCfg.effect),
+        e && (t.model || (t.model = new UISceneEffectAnimation),
+        t.model.init(t.grp_mod, parseInt(e)),
+        t.model.x = 0,
+        t.model.y = 0)
+    }
+    ,
+    t.prototype.showGrpUp = function() {
+        var e = this;
+        if (e.updateHint(e.btn_up, !1),
+        e.currCfg = cm.treasure[gd.trea.resureIdByType[e.currType]],
+        e.nextCfg = e.currCfg ? cm.treasure[e.currCfg.newId] : null,
+        e.lv.text = e.currCfg.level + "j",
+        e.img_title.source = ResUrl.url(e.currCfg.name + "_2", 79),
+        e.currCfg || 0 != e.currCfg.level) {
+            var t = "";
+            e.currCfg.attribute && (t += CommonUtils.getAttr(e.currCfg.attribute, !0, Html.New160, Html.New160)),
+            e.currCfg.percentage && (t += "\n" + CommonUtils.getpreceAttr(e.currCfg.percentage, Html.New160, Html.New160)),
+            e.txt_cur.textFlow = Html.toEle(t),
+            e.btn_up.label = "升 级"
+        } else
+            e.txt_cur.text = "无",
+            e.btn_up.label = "激 活";
+        if (e.nextCfg) {
+            var i = "";
+            e.nextCfg.attribute && (i += CommonUtils.getAttr(e.nextCfg.attribute, !1, Html.New161, Html.New161)),
+            e.nextCfg.percentage && (i += "\n" + CommonUtils.getpreceAttr(e.nextCfg.percentage, Html.New161, Html.New161)),
+            e.updateHint(e.btn_up, gd.angler.treasureSSAnger),
+            e.txt_next.textFlow = Html.toEle(i)
+        } else
+            e.btn_up.label = "已满级",
+            e.txt_next.text = "已满级",
+            e.btn_up.touchEnabled = !1,
+            e.btn_up.filters = [FilterUtil.FILTER_GRAY()]
+    }
+    ,
+    t.prototype.updateCostShow = function() {
+        var e = this
+          , t = e.currCfg;
+        if (t && t.cost && e.nextCfg) {
+            var i = new UseConsumptionOb(t.cost,null,null,!1,!0,!1);
+            e.addUseConsumption(i, 0, 0),
+            e.btn_up.filters = null,
+            e.btn_up.touchEnabled = !0,
+            e.btn_up.label = 0 != t.level ? "升 级" : "激 活"
+        } else
+            e.clearUseConsumption(),
+            e.btn_up.touchEnabled = !1,
+            e.btn_up.filters = [FilterUtil.FILTER_GRAY()],
+            e.btn_up.label = "已满级"
+    }
+    ,
+    t.prototype.addUseConsumption = function(e, t, i, r) {
+        void 0 === t && (t = 0),
+        void 0 === i && (i = 0),
+        void 0 === r && (r = !0);
+        var a = this;
+        return e ? (a._useConsumption ? (a._useConsumption.data = e,
+        a._useConsumption.reSetX()) : (a._useConsumption = new UseConsumption,
+        a.grp_cost.addChild(a._useConsumption),
+        a._useConsumption.data = e,
+        a._useConsumption.x = t,
+        a._useConsumption.y = i),
+        void (a._useConsumption && a._useConsumption.visible != r && (a._useConsumption.visible = r))) : void (a._useConsumption && (a._useConsumption.visible = !1))
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        switch (e) {
+        case 678:
+        case 25:
+            i.showGrpUp();
+            break;
+        case 3:
+            i.updateCostShow()
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        var t = this;
+        e.prototype.dispose.call(this),
+        t.model && (t.model.die(),
+        t.model = null),
+        t.list_ss.off(eui.ItemTapEvent.ITEM_TAP, t.onClickList, t)
+    }
+    ,
+    t
+}(UIBase);
+__reflect(FishSSPanel.prototype, "FishSSPanel");
+var fishSSRender = function(e) {
+    function t() {
+        var t = e.call(this) || this
+          , i = t;
+        return i.once(eui.UIEvent.COMPLETE, i.onComplete, i),
+        i.skinName = "fishSSRenderSkin",
+        t
+    }
+    return __extends(t, e),
+    t.prototype.onComplete = function(e) {
+        var t = this;
+        t._init = !0,
+        t.toInitBase()
+    }
+    ,
+    t.prototype.dataChanged = function() {
+        var e = this;
+        e._init && e.data && e.toInitBase()
+    }
+    ,
+    t.prototype.toInitBase = function() {
+        var e = this;
+        if (e._init && e.data) {
+            var t = e.data;
+            e.img.source = ResUrl.url(t.name + "_1", 79),
+            e.img_suo.visible = !Logic.checkCondition(t.condition)
+        }
+    }
+    ,
+    t.prototype.setSelected = function(e) {
+        this.img_select.visible = e
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this)
+    }
+    ,
+    t
+}(ItemRendererBase);
+__reflect(fishSSRender.prototype, "fishSSRender");
+var FishResultPop = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.timeKey = 0,
+        t.time = 3,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.useHomeUIDownClose = !1,
+        this.uiSkin("CatchFishResultPopSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        e.prototype.myCreated.call(this)
+    }
+    ,
+    t.prototype.refr = function() {
+        e.prototype.refr.call(this);
+        var t = this;
+        t.clearCDTime(),
+        t.time = 3,
+        t.txt_time.text = "(" + t.time + ")",
+        t.time > 0 && (t.timeKey = setInterval(function() {
+            t.txt_time.text = "(" + t.time + ")",
+            t.time--,
+            t.time < 0 && (t.txt_time.text = "(0)",
+            t.clearCDTime(),
+            uim.hide(363))
+        }, 1e3))
+    }
+    ,
+    t.prototype.clearCDTime = function() {
+        var e = this;
+        e.timeKey > 0 && (clearInterval(e.timeKey),
+        e.timeKey = 0)
+    }
+    ,
+    t.prototype.clickHandler = function() {
+        this.closeUI()
+    }
+    ,
+    t.prototype.showInfo = function() {
+        var e = this;
+        if (e.opd.data) {
+            e.opd.args[0] && (e.img_bg.source = "resource/jpg/FishResultBg" + e.opd.args[0] + ".png");
+            var t = [];
+            t = CommonUtils.getItemList(e.opd.data),
+            t.length > 6 ? CommonUtils.showItemList(e.showList, t) : CommonUtils.showItemList(e.showList1, t),
+            e.grp_rwd.visible = t.length > 6,
+            e.grp_rwd1.visible = !e.grp_rwd.visible
+        }
+    }
+    ,
+    t.prototype.rollon = function(e) {}
+    ,
+    t.prototype.onResize = function(t, i) {
+        e.prototype.onResize.call(this, t, i)
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this);
+        var t = this;
+        t.clearCDTime()
+    }
+    ,
+    t
+}(FightResultPop);
+__reflect(FishResultPop.prototype, "FishResultPop");
 var ChangeLifePop_cl = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
@@ -161548,7 +165542,7 @@ var ChatAnnounce = function() {
                     if (f.cls && 50 == f.cls) {
                         var m = gd.kuafu.bossList;
                         m && m.forEach(function(e) {
-                            return e.mapId == s && e.sid > 0 ? void (h = "S" + e.sid + "服") : void 0
+                            return e.mapId == s && e.sid > 0 ? void (h = "S" + Logic.checkSidShow(e.sid) + "服") : void 0
                         }, this),
                         d = h + f.name
                     } else
@@ -162433,7 +166427,7 @@ var Cosplay_zb = function(e) {
                 t.tipsData0.buff = i.buffers,
                 t.tipsData0.level = l,
                 t.group_buff.visible = !!i.buffers,
-                uim.hide(746)) : t.type == title_type.dengchang ? d = gd.player.dengChangId : t.type == title_type.qipao && (d = gd.player.qipaoId),
+                uim.hide(746)) : t.type == title_type.dengchang ? d = gd.player.dengChangId : t.type == title_type.qipao ? d = gd.player.qipaoId : t.type == title_type.fish && (d = gd.player.fishId),
                 t.btn_put_take.label = Lang.get(i.id == d ? "卸 下" : "装 备"),
                 i.upgrade && i.upgrade > 0 && l && l < i.upgrade && (t.btn_sj.visible = !0,
                 t.btn_put_take.x = t.btn_sj.visible ? 183 : 240),
@@ -162531,8 +166525,8 @@ var Cosplay_zb = function(e) {
         t.paging = i - 1) : i > 4 && 6 >= i ? (t.type = 3,
         t.paging = i - 4) : 4 == i ? (t.type = 2,
         t.paging = 0) : 15 == i ? t.type = 15 : 17 == i ? (t.type = 7,
-        t.paging = 0) : 16 == i && (t.type = 6,
-        t.paging = 0),
+        t.paging = 0) : 16 == i ? (t.type = 6,
+        t.paging = 0) : 18 == i && (t.type = title_type.fish),
         t.selectId = t.opd && t.opd.data ? t.opd.data : 0,
         t.setdata()
     }
@@ -162542,7 +166536,7 @@ var Cosplay_zb = function(e) {
           , i = gd.player
           , r = i.sex
           , a = i.equipInfo;
-        t.type == title_type.cloth ? t.animal.init2(r, a[1] ? a[1].itemId : 0, 0, a[402] ? a[402].itemId : 0, a[401] ? a[401].itemId : a[4] ? a[4].itemId : 0, a[406] ? a[406].itemId : 0, e, i.weaponId, 1.44) : t.type == title_type.weapon ? t.animal.init2(r, 0, a[5] ? a[5].itemId : 0, a[402] ? a[402].itemId : 0, a[401] ? a[401].itemId : a[4] ? a[4].itemId : 0, a[406] ? a[406].itemId : 0, i.fashionId, e, 1.44) : t.type == title_type.zuoqi ? t.animal.init2(r, a[1] ? a[1].itemId : 0, 0, 0, a[401] ? a[401].itemId : a[4] ? a[4].itemId : 0, a[406] ? a[406].itemId : 0, e, 0, 1.44) : t.type == title_type.foot || t.type == title_type.dengchang || t.type == title_type.qipao || t.animal.init(gd.player, 1.44)
+        t.type == title_type.cloth ? t.animal.init2(r, a[1] ? a[1].itemId : 0, 0, a[402] ? a[402].itemId : 0, a[401] ? a[401].itemId : a[4] ? a[4].itemId : 0, a[406] ? a[406].itemId : 0, e, i.weaponId, 1.44) : t.type == title_type.weapon ? t.animal.init2(r, 0, a[5] ? a[5].itemId : 0, a[402] ? a[402].itemId : 0, a[401] ? a[401].itemId : a[4] ? a[4].itemId : 0, a[406] ? a[406].itemId : 0, i.fashionId, e, 1.44) : t.type == title_type.zuoqi ? t.animal.init2(r, a[1] ? a[1].itemId : 0, 0, 0, a[401] ? a[401].itemId : a[4] ? a[4].itemId : 0, a[406] ? a[406].itemId : 0, e, 0, 1.44) : t.type == title_type.fish ? t.animal.init2(r, a[1] ? a[1].itemId : 0, 0, 0, a[401] ? a[401].itemId : a[4] ? a[4].itemId : 0, a[406] ? a[406].itemId : 0, i.fashionId, e, 1.44) : t.type == title_type.foot || t.type == title_type.dengchang || t.type == title_type.qipao || t.animal.init(gd.player, 1.44)
     }
     ,
     t.prototype.sortbyIndex = function(e, t) {
@@ -162634,7 +166628,7 @@ var Cosplay_zb = function(e) {
                     return !0;
                 a = r.titleId
             } else
-                t.type == title_type.foot ? a = r.footId : t.type == title_type.zuoqi ? a = r.zqId : t.type == title_type.dengchang ? a = r.dengChangId : t.type == title_type.qipao && (a = r.qipaoId);
+                t.type == title_type.foot ? a = r.footId : t.type == title_type.zuoqi ? a = r.zqId : t.type == title_type.dengchang ? a = r.dengChangId : t.type == title_type.qipao ? a = r.qipaoId : t.type == title_type.fish && (a = r.fishId);
             if (a == t.id)
                 return !0
         }
@@ -162770,7 +166764,7 @@ var CosplayPop = function(e) {
     t.prototype.showSelectBoby = function(e) {
         void 0 === e && (e = 0);
         var t = this;
-        if (t.radioName = ["时装（经典）", "时装（霸主）", "幻武（经典）", "幻武（霸主）", "足迹（经典）", "称号（经典）", "称号（霸主）", "时装", "徽记", "战将", "战将助战", "战将升级", "战将升星", "", "", "坐骑（幻化）", "登场（公告）", "气泡（聊天）"],
+        if (t.radioName = ["时装（经典）", "时装（霸主）", "幻武（经典）", "幻武（霸主）", "足迹（经典）", "称号（经典）", "称号（霸主）", "时装", "徽记", "战将", "战将助战", "战将升级", "战将升星", "", "", "坐骑（幻化）", "登场（公告）", "气泡（聊天）", "鱼竿"],
         t.showRadio(),
         1 == Logic.checkShowPageBtn(t.uiType, e))
             t.onRadioSelected(e);
@@ -163600,6 +167594,9 @@ var TitleInfomation = function(e) {
             return t.title.text = "灵谱总属性",
             t.showQXTLSuitAttr(),
             void (t.tipBg.width = t.btn_close.x = 320);
+        if (4 == i.type)
+            return t.title.text = "渔获总属性",
+            void t.showFishAttr();
         if (1 == i.type) {
             var r = "装扮、幻武、称号、足迹、坐骑";
             Logic.checkOpenLevel(545, CosplayPopRadio.dcgg) && (r += "、登场"),
@@ -163759,6 +167756,28 @@ var TitleInfomation = function(e) {
           , f = CommonUtils.getNewAttr(a);
         e.setAttrShow(p, u, g, f, e.txt_attr1, Html.New160, Html.New160),
         this.height = this.tipBg.height = this.txt_attr1.y + this.txt_attr1.height + 20
+    }
+    ,
+    t.prototype.showFishAttr = function() {
+        for (var e = "", t = "", i = 0, r = gd.player.CatchFishTuJianList; i < r.length; i++) {
+            var a = r[i]
+              , n = cm.fish_tujian[a]
+              , o = n.attribute;
+            o && (e = "" == e ? o : CommonUtils.getNewAttr([e, o]));
+            var s = n.percentAttribute;
+            s && (t = "" == t ? s : CommonUtils.getNewAttr([t, s]))
+        }
+        var l = "";
+        if (t)
+            for (var c = CommonUtils.getpreceAttr(t, Logic.getCol(46), Logic.getCol(50)), d = 0, p = c; d < p.length; d++) {
+                var u = p[d];
+                l += "\n" + u.name + u.attribute
+            }
+        this.txt_attr1.textFlow = Html.toEle(CommonUtils.getAttr(e, !0, Logic.getCol(46), Logic.getCol(50), 1, 25) + l),
+        this.height = this.tipBg.height = this.txt_attr1.y + this.txt_attr1.height + 20,
+        "" != e && (this.width = this.txt_attr1.x + this.txt_attr1.width + 26 + 20,
+        this.tipBg.width = this.txt_attr1.x + this.txt_attr1.width + 20,
+        this.btn_close.x = this.txt_attr1.x + this.txt_attr1.width + 20)
     }
     ,
     t.prototype.setAttrShow = function(e, t, i, r, a, n, o) {
@@ -166892,82 +170911,6 @@ var FightPersonResultPop = function(e) {
     t
 }(PopUpBase);
 __reflect(FightPersonResultPop.prototype, "FightPersonResultPop");
-var FightResultPop = function(e) {
-    function t() {
-        var t = null !== e && e.apply(this, arguments) || this;
-        return t.showList = new eui.ArrayCollection,
-        t.showList1 = new eui.ArrayCollection,
-        t
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        this.useHomeUIDownClose = !1,
-        this.uiSkin("FightResultPopSkin")
-    }
-    ,
-    t.prototype.myCreated = function() {
-        var e = this;
-        e.itemList.itemRenderer = BagEquipRender,
-        e.itemList.dataProvider = e.showList,
-        e.itemList1.itemRenderer = BagEquipRender,
-        e.itemList1.dataProvider = e.showList1,
-        e.btn_go.on(TP, e.closeUI, e),
-        mum.resiger(e)
-    }
-    ,
-    t.prototype.refr = function() {
-        e.prototype.refr.call(this),
-        this.showInfo()
-    }
-    ,
-    t.prototype.showInfo = function() {
-        var e = this;
-        if (e.opd.data) {
-            e.opd.data.bossOwnerName && (e.txt_gs.visible = !0,
-            e.txt_gs.textFlow = Html.toEle("归属者：" + Html.str("" + e.opd.data.bossOwnerName, Html.New101)));
-            var t = [];
-            t = e.opd.data.itemBean ? CommonUtils.getItemList(e.opd.data.itemBean) : CommonUtils.getItemList(e.opd.data.itemBeanList),
-            t.length > 6 ? CommonUtils.showItemList(e.showList, t) : CommonUtils.showItemList(e.showList1, t),
-            e.grp_rwd.visible = t.length > 6,
-            e.grp_rwd1.visible = !e.grp_rwd.visible,
-            e.showDesc()
-        }
-    }
-    ,
-    t.prototype.showDesc = function() {
-        var e = this
-          , t = e.opd.data;
-        if (t)
-            switch (t.dropType) {
-            case 1:
-                e.img_gs.source = "word_gsjl";
-                break;
-            case 0:
-                e.img_gs.source = "word_xzjl"
-            }
-    }
-    ,
-    t.prototype.rollon = function(e) {}
-    ,
-    t.prototype.onResize = function(t, i) {
-        e.prototype.onResize.call(this, t, i);
-        mum.ressize()
-    }
-    ,
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        var t = this;
-        t.btn_go.off(TP, t.closeUI, t),
-        t.showList && (t.showList.removeAll(),
-        t.showList = null),
-        t.showList1 && (t.showList1.removeAll(),
-        t.showList1 = null),
-        mum.destory(t.uiType)
-    }
-    ,
-    t
-}(PopUpBase);
-__reflect(FightResultPop.prototype, "FightResultPop");
 var FightResultShiLianPop = function(e) {
     function t() {
         return null !== e && e.apply(this, arguments) || this
@@ -174531,16 +178474,34 @@ var ActivityDaTing = function(e) {
               , y = cm.dailyActivityTime[v.activityid];
             if (y && !PlatformManager.Instance.isCurPlatform(y.platform) && y.reminder && (!y.reminder || 1 === y.reminder)) {
                 var _ = y.fixStartTime
-                  , b = y.fixOverTime;
-                _ && b && (_ > f || f > b) || y.serviceStart > p || y.serviceFinish < p || (102 != y.activityType || gd.tvt.isTvtTipsOpen(y, g)) && e(y) && "1" == v.show && h.push(v)
+                  , b = y.fixOverTime
+                  , I = y.time;
+                if (_ && b && I && alert("cfg_daily_activity_time表配置错误，time字段跟fixStartTime，fixOverTime字段冲突，同时只能存在一种"),
+                _ && b) {
+                    if (_ > f || f > b)
+                        continue
+                } else if (I) {
+                    var w = I.splitNum("#")
+                      , C = new Date(DateUtil.serverNow()).getDate();
+                    if (!C || C < w[0] || C > w[1])
+                        continue
+                }
+                if (!(y.serviceStart > p || y.serviceFinish < p) && (102 != y.activityType || gd.tvt.isTvtTipsOpen(y, g))) {
+                    if (18 == y.activityType) {
+                        var x = cm.global[26314];
+                        if (x && x.value && !Logic.checkWeekOfMonth(parseInt(x.value)))
+                            continue
+                    }
+                    e(y) && "1" == v.show && h.push(v)
+                }
             }
         }
         h.sort(function(e, t) {
             return r.sortHandler(e, t)
         });
-        for (var I = 0; I < h.length; I++)
+        for (var k = 0; k < h.length; k++)
             a.listArr.addItem({
-                cfg: h[I],
+                cfg: h[k],
                 day: a.radioSelect
             });
         a.list.scrollV = 0
@@ -174753,8 +178714,26 @@ var ActivityRemindManager = function() {
             var r = cm.dailyActivityTime[cm.gameactive[i].activityid];
             if (r && void 0 != r && !PlatformManager.Instance.isCurPlatform(r.platform)) {
                 var a = r.fixStartTime
-                  , n = r.fixOverTime;
-                a && n && (a > t || t > n) || DateUtil.checkActivityOpen(r) && (!r.reminder || r.reminder && 1 !== r.reminder || (102 != r.activityType || gd.tvt.isTvtTipsOpen(r)) && 0 == DateUtil.getActivityOpenDay(r) && DateUtil.openSbkAndOther(r) && "1" == cm.gameactive[i].show && e.arr.push(cm.gameactive[i]))
+                  , n = r.fixOverTime
+                  , o = r.time;
+                if (a && n && o && alert("cfg_daily_activity_time表配置错误，time字段跟fixStartTime，fixOverTime字段冲突，同时只能存在一种"),
+                a && n) {
+                    if (a > t || t > n)
+                        continue
+                } else if (o) {
+                    var s = o.splitNum("#")
+                      , l = new Date(DateUtil.serverNow()).getDate();
+                    if (!l || l < s[0] || l > s[1])
+                        continue
+                }
+                if (DateUtil.checkActivityOpen(r) && r.reminder && (!r.reminder || 1 === r.reminder) && (102 != r.activityType || gd.tvt.isTvtTipsOpen(r))) {
+                    if (18 == r.activityType) {
+                        var c = cm.global[26314];
+                        if (c && c.value && !Logic.checkWeekOfMonth(parseInt(c.value)))
+                            continue
+                    }
+                    0 == DateUtil.getActivityOpenDay(r) && DateUtil.openSbkAndOther(r) && "1" == cm.gameactive[i].show && e.arr.push(cm.gameactive[i])
+                }
             }
         }
         if (0 != e.arr.length) {
@@ -174763,36 +178742,36 @@ var ActivityRemindManager = function() {
                   , a = e.getState(i.activityid);
                 return a > r ? -1 : r > a ? 1 : t.sort < i.sort ? -1 : t.sort > i.sort ? 1 : void 0
             });
-            var o = e.arr[0];
-            if (!o)
+            var d = e.arr[0];
+            if (!d)
                 return void console.log("开服时间太长，超过了活动的持续时间");
-            var s = cm.dailyActivityTime[o.activityid];
-            if (s && Logic.checkCondition(s.condition) && (1 !== s.server || gd.kuafu.iskuafu)) {
-                var l = DateUtil.getActivityForeshow(s, 0, !0)
-                  , c = DateUtil.getActivityForeshow(s, 1, !0);
-                if (2 == s.activityType) {
-                    var d = cm.dailyActivityTime[1]
-                      , p = DateUtil.serverNow() / 1e3
-                      , u = gd.union.sbkStartTime;
-                    gd.serv.openDay <= s.serviceStart && gd.serv.openDay === parseInt(d.serviceTime) && (u = gd.serv.curZeroTime / 1e3 + 60 * d.startTime);
-                    var g = u + 3600;
-                    if (g >= p && p >= u)
-                        e.showAdvance(s, 0);
+            var p = cm.dailyActivityTime[d.activityid];
+            if (p && Logic.checkCondition(p.condition) && (1 !== p.server || gd.kuafu.iskuafu)) {
+                var u = DateUtil.getActivityForeshow(p, 0, !0)
+                  , g = DateUtil.getActivityForeshow(p, 1, !0);
+                if (2 == p.activityType) {
+                    var f = cm.dailyActivityTime[1]
+                      , h = DateUtil.serverNow() / 1e3
+                      , m = gd.union.sbkStartTime;
+                    gd.serv.openDay <= p.serviceStart && gd.serv.openDay === parseInt(f.serviceTime) && (m = gd.serv.curZeroTime / 1e3 + 60 * f.startTime);
+                    var v = m + 3600;
+                    if (v >= h && h >= m)
+                        e.showAdvance(p, 0);
                     else {
-                        var f = gd.union.sbkStartTime - DateUtil.serverNow() / 1e3;
-                        e.addShowAdvance(f, s, 1)
+                        var y = gd.union.sbkStartTime - DateUtil.serverNow() / 1e3;
+                        e.addShowAdvance(y, p, 1)
                     }
                 }
-                if (c > 0)
-                    if (l > 0)
-                        if (l <= 60 * s.showTime)
-                            e.showAdvance(s, 0);
+                if (g > 0)
+                    if (u > 0)
+                        if (u <= 60 * p.showTime)
+                            e.showAdvance(p, 0);
                         else {
-                            var h = Math.abs(l - 60 * s.showTime);
-                            e.addShowAdvance(h, s, 1)
+                            var _ = Math.abs(u - 60 * p.showTime);
+                            e.addShowAdvance(_, p, 1)
                         }
                     else
-                        e.showAdvance(s, 1)
+                        e.showAdvance(p, 1)
             }
         }
     }
@@ -179867,6 +183846,8 @@ var InsurePanel = function(e) {
         return t.InsureState = 1,
         t.curGro = 1,
         t.btns = [],
+        t.isSpecial = !1,
+        t.spCostReturn = "",
         t.btnW = 118,
         t
     }
@@ -179935,7 +183916,7 @@ var InsurePanel = function(e) {
                     ncm.err("请选择要解绑的装备");
             break;
         case t.img_desc:
-            uim.showOrHide(749, new UIData(419));
+            t.isSpecial ? uim.showOrHide(749, new UIData(502)) : uim.showOrHide(749, new UIData(419));
             break;
         case t.change_state:
             t.addUseConsumption(null),
@@ -179972,12 +183953,24 @@ var InsurePanel = function(e) {
         var t = this;
         e.prototype.refr.call(this),
         t.bindSubject(gd.insure),
+        t.setSpecial(),
         t.btn_auto.selected = gd.insure.autoTouBaoBoo;
         var i = cm.global[21201];
         i && i.value && (t.global = i.value.split("&")),
         t.showBtns(),
         t.updateInfo(),
         t.updateCost()
+    }
+    ,
+    t.prototype.setSpecial = function() {
+        var e = this
+          , t = gd.player.globalSetInfo[65201];
+        if (t && t.value) {
+            var i = t.value.split("&")
+              , r = -1 != i[0].splitNum("#").indexOf(Vars.platform);
+            e.isSpecial = gd.serv.openDay >= Number(i[1]) && r,
+            e.spCostReturn = i[2]
+        }
     }
     ,
     t.prototype.showBtns = function() {
@@ -180121,9 +184114,13 @@ var InsurePanel = function(e) {
                 e.costNum = parseInt(i[1]);
                 var a = gd.bag.getCount(e.costId);
                 CommonUtils.showCostInfo0(r[2], a, e.costNum, e.cost1, null)
-            } else if (2 == e.InsureState && gd.insure.insureEquip[e.curItem.lid.toString()] && t.costReturn) {
-                var n = new UseConsumptionOb(t.costReturn,"返还");
-                e.addUseConsumption(n, 385, 350)
+            } else if (2 == e.InsureState && gd.insure.insureEquip[e.curItem.lid.toString()]) {
+                var n = t.costReturn;
+                if (e.isSpecial && (n = e.spCostReturn ? e.spCostReturn : ""),
+                n) {
+                    var o = new UseConsumptionOb(n,"返还");
+                    e.addUseConsumption(o, 385, 350)
+                }
             }
         } else
             e.cost1.text = ""
@@ -182995,7 +186992,10 @@ var KuafuCaptureStrongholdPop = function(e) {
             uim.show(754);
             break;
         case t.btn_gz:
-            uim.showOrHide(749, new UIData(1187))
+            var r = cm.global[26315] ? cm.global[26315].value : ""
+              , a = gd.player.globalSetInfo[26315];
+            a && a.value && (r = a.value),
+            uim.showOrHide(749, new UIData(0,r))
         }
     }
     ,
@@ -183197,7 +187197,7 @@ var KuafuCaptureStrongholdRankRender = function(e) {
             e.txt_score.text = t.score + "",
             e.txt_kill.text = t.killCount + "",
             e.txt_rank.text = e.data.rank + "",
-            e.txt_qufu.text = "S." + t.sid,
+            e.txt_qufu.text = "S." + Logic.checkSidShow(t.sid),
             e.img_state.visible = t.escape;
             var i = Logic.getCol(37);
             t.team == gd.honourbattle.qzjdmayinfo.team && (i = Logic.getCol(255)),
@@ -184916,7 +188916,7 @@ var LiPiCangQiongRankRender = function(e) {
             if (e.data.info) {
                 var t = e.data.info;
                 e.rank_num.text = t.rank + "",
-                e.rank_name.text = (t.sid ? "S." + t.sid : "") + t.roleName,
+                e.rank_name.text = (t.sid ? "S." + Logic.checkSidShow(t.sid) : "") + t.roleName,
                 e.rank_damage.text = Html.numToWan3(t.hurt.toNumber())
             } else
                 e.rank_num.text = e.data.num ? e.data.num : "0",
@@ -185268,7 +189268,7 @@ var KuafuWzzbRender = function(e) {
             e.txt_name.text = t.roleName,
             e.txt_power.textFlow = Html.toEle(Html.str("攻击力：", Logic.getCol(47)) + Html.str(Html.numToWan3(t.fightPower.toNumber()), Logic.getCol(47)));
             var i = "";
-            i = t.serverName ? t.serverName : "S." + t.sid,
+            i = t.serverName ? t.serverName : "S." + Logic.checkSidShow(t.sid),
             e.txt_qufu.textFlow = Html.toEle(Html.str("区服：", Logic.getCol(47)) + Html.str(i, Logic.getCol(57))),
             e.bg.source = "kf_wzzb_kBg1",
             e.txt_star.text = "x" + t.stars,
@@ -185576,7 +189576,7 @@ var KuafuWzzbRankRender2 = function(e) {
                 t.rank <= 3 && (e.img_rank.source = "ioc_rank" + t.rank),
                 e.txt_rank.text = t.rank + "",
                 e.txt_name.text = t.roleName,
-                t.serverName ? e.txt_qufu.text = t.serverName : e.txt_qufu.text = "S." + t.sid;
+                t.serverName ? e.txt_qufu.text = t.serverName : e.txt_qufu.text = "S." + Logic.checkSidShow(t.sid);
                 var i = cm.pvpladderRank[t.dan];
                 i && (e.img.source = "kf_wzzb_ch" + i.id,
                 e.txt_level.text = t.star + "星");
@@ -185769,7 +189769,7 @@ var KuafuWzzbResultRender = function(e) {
             e.txt_name.text = t.roleName;
             var i = cm.pvpladderRank[t.dan];
             i && (e.txt_level.text = i.name),
-            t.serverName ? e.txt_qufu.text = t.serverName : e.txt_qufu.text = "S." + t.sid,
+            t.serverName ? e.txt_qufu.text = t.serverName : e.txt_qufu.text = "S." + Logic.checkSidShow(t.sid),
             e.txt_myry.text = t.honorCount + "",
             e.txt_jiacheng.text = t.extraHonor + "",
             e.txt_ry.text = t.totalHonor + "",
@@ -186370,7 +190370,7 @@ var KuafuTvtResultRender = function(e) {
         if (e._init && e.data) {
             var t = e.data;
             e.txt_name.textFlow = Html.toEle(t.roleName + (t.canRobot ? Html.str("(AI)", Logic.getCol(49)) : "")),
-            t.serverName ? e.txt_qfName.text = t.serverName : e.txt_qfName.text = "S." + t.sid,
+            t.serverName ? e.txt_qfName.text = t.serverName : e.txt_qfName.text = "S." + Logic.checkSidShow(t.sid),
             e.txt_kill.text = t.killCount + "";
             var i = gd.tvt.tvtRewardPanelInfo
               , r = i.winCamp;
@@ -187681,7 +191681,7 @@ var KuafuWorldBossRankRender = function(e) {
             if (e.data.info) {
                 var t = e.data.info;
                 e.rank_num.text = t.rank + "",
-                e.rank_name.text = (t.sid ? "S." + t.sid : "") + t.roleName,
+                e.rank_name.text = (t.sid ? "S." + Logic.checkSidShow(t.sid) : "") + t.roleName,
                 e.rank_damage.text = Html.numToWan3(t.hurt.toNumber())
             } else
                 e.rank_num.text = e.data.num ? e.data.num : "0",
@@ -194209,7 +198209,7 @@ var MingWenRecycle = function(e) {
                 var i = [];
                 for (var r in gd.mingwen.recycleListArr)
                     i.push(gd.mingwen.recycleListArr[r].lid);
-                i.length > 0 && net.BagModel.ins().send7(i)
+                i.length > 0 && net.BagModel.ins().send7(i, 1)
             }
         }
     }
@@ -195067,7 +199067,10 @@ var SidebarGuidePanel = function(e) {
     ,
     t.prototype.myCreated = function() {
         var e = this;
-        e.bg.source = "209" == Vars.$channel ? "resource/jpg/sidebar_guide.jpg" : "resource/jpg/sidebar_guide2.jpg",
+        e.bg.source = js_gameVars.sidebarImg ? js_gameVars.sidebarImg : "resource/jpg/sidebar_guide.jpg",
+        js_gameVars.sidebarIcon ? (e.bg.source = "resource/jpg/sidebar_guide.jpg",
+        e.img.visible = !0,
+        e.img.source = ResUrl.url(js_gameVars.sidebarIcon, 81)) : e.img.visible = !1,
         e.list_data = new eui.ArrayCollection,
         e.list_items.itemRenderer = BagEquipRender,
         e.list_items.dataProvider = e.list_data
@@ -195688,8 +199691,9 @@ var MoChaoPanel = function(e) {
         t.selectType = i.selectedValue,
         t.scr_mochao.stopAnimation(),
         t.scr_mochao.viewport.scrollV = 0,
-        t.updateShow(),
-        net.MochaoModel.ins().send1()
+        t.updateShow();
+        var r = 999 == t.selectType ? 0 : t.selectType;
+        net.MochaoModel.ins().send1(r)
     }
     ,
     t.prototype.refr = function() {
@@ -195699,7 +199703,7 @@ var MoChaoPanel = function(e) {
         t.getTypeName(),
         t.updateRadioShow(),
         t.updateShow(),
-        net.MochaoModel.ins().send1()
+        net.MochaoModel.ins().send1(0)
     }
     ,
     t.prototype.getTypeName = function() {
@@ -202504,6 +206508,7 @@ var OperDayCtrl = function(e) {
         case 15:
         case 16:
         case 17:
+        case 39:
         case 14:
             net.PlatformgiftModel.ins().send7(Number(Vars.otherneedmsg))
         }
@@ -202782,6 +206787,37 @@ var OperRewardCtrl = function(e) {
     t
 }(UIBase);
 __reflect(OperRewardCtrl.prototype, "OperRewardCtrl");
+var OperShowImage = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("OperShowImageSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e, t = this;
+        for (var i in cm.supervip) {
+            var r = cm.supervip[i];
+            if (r.channel == parseInt(Vars.$channel) && r.icon5) {
+                e = r;
+                break
+            }
+        }
+        if (e) {
+            var a = e.icon5.split("&")[0];
+            t.bg.source = ResUrl.url(a, 82)
+        }
+    }
+    ,
+    t.prototype.dispose = function() {
+        e.prototype.dispose.call(this)
+    }
+    ,
+    t
+}(UIBase);
+__reflect(OperShowImage.prototype, "OperShowImage");
 var OperStoreGiftCtrl = function(e) {
     function t() {
         return null !== e && e.apply(this, arguments) || this
@@ -203537,7 +207573,7 @@ var YynewRewardCtrl = function(e) {
             24 == i ? t.group == TencentTingPage.sg_pflb ? 1 === r ? net.UserModel.ins().send23() : window.open(t.superVipCfg.link) : net.PlatformgiftModel.ins().send2(t.curCfg.id) : 5 == i ? t.group == TencentTingPage.mrlb_360 ? gd.operData.sendLQ360RewardMsg(t.curCfg.id) : t.group == TencentTingPage.fxlb_360 && (1 === r ? gd.operData.sendLQ360RewardMsg(t.curCfg.id) : window.open(t.superVipCfg.vipLink)) : net.PlatformgiftModel.ins().send2(t.curCfg.id);
             break;
         case t.txt_link:
-            24 == i ? t.group == TencentTingPage.sg_pflb ? window.open(t.superVipCfg.link) : window.open(t.superVipCfg.vipLink) : t.group == TencentTingPage.ty_xslb ? window.open(t.superVipCfg.link3) : 15 == i || 16 == i || 17 == i ? window.open(t.superVipCfg.link) : window.open(t.superVipCfg.vipLink)
+            24 == i ? t.group == TencentTingPage.sg_pflb ? window.open(t.superVipCfg.link) : window.open(t.superVipCfg.vipLink) : t.group == TencentTingPage.ty_xslb ? window.open(t.superVipCfg.link3) : 15 == i || 16 == i || 17 == i || 39 == i ? window.open(t.superVipCfg.link) : window.open(t.superVipCfg.vipLink)
         }
     }
     ,
@@ -203565,6 +207601,7 @@ var YynewRewardCtrl = function(e) {
         case 15:
         case 16:
         case 17:
+        case 39:
         case 14:
             net.PlatformgiftModel.ins().send7(Number(Vars.otherneedmsg));
             break;
@@ -204037,6 +208074,7 @@ var TencentGrownCtrl = function(e) {
         case 15:
         case 16:
         case 17:
+        case 39:
         case 14:
             net.PlatformgiftModel.ins().send7(Number(Vars.otherneedmsg));
             break;
@@ -204181,6 +208219,7 @@ var TencentGrownCtrl = function(e) {
                 i = "虎牙";
                 break;
             case 17:
+            case 39:
                 i = "2345"
             }
             e.txt_link1.textFlow = Html.toEle(Html.str("<u>前往" + i + "游戏平台，了解更多福利</u>", Logic.getCol(50)))
@@ -204284,6 +208323,7 @@ var TencentGrownCtrl = function(e) {
                 l = "虎牙";
                 break;
             case 17:
+            case 39:
                 l = "2345"
             }
             e.btn_xz.label = "成为VIP",
@@ -204837,7 +208877,36 @@ var TencentTingPop = function(e) {
                     p.x = 1,
                     p.y = 41 * n;
                     var f = e.getBtnLabel(d);
-                    100 == p.value || p.value == TencentTingPage.JiuZhou_wei ? f = "微信礼包" : 101 == p.value ? f = "身份验证礼包" : 102 == p.value ? f = "全名福利" : p.value == TencentTingPage.DAILY_GIFT ? f = "每日礼包" : p.value == TencentTingPage.WEEK_GIFT ? f = "每周礼包" : p.value == TencentTingPage.JiuZhou_oper ? f = "平台礼包" : p.value == TencentTingPage.qiandao ? f = "签到" : p.value == TencentTingPage.qqlb ? f = "加群礼包" : p.value == TencentTingPage.wxlbx ? f = e.getBtnTxt_Wxlb() : p.value == TencentTingPage.dylb ? f = "抖音礼包" : p.value == TencentTingPage.qqgroup ? f = "QQ群聊" : p.value == TencentTingPage.gzhyd ? f = "关注有礼" : p.value == TencentTingPage.fpzn && (f = "防骗指南"),
+                    if (100 == p.value || p.value == TencentTingPage.JiuZhou_wei)
+                        f = "微信礼包";
+                    else if (101 == p.value)
+                        f = "身份验证礼包";
+                    else if (102 == p.value)
+                        f = "全名福利";
+                    else if (p.value == TencentTingPage.DAILY_GIFT)
+                        f = "每日礼包";
+                    else if (p.value == TencentTingPage.WEEK_GIFT)
+                        f = "每周礼包";
+                    else if (p.value == TencentTingPage.JiuZhou_oper)
+                        f = "平台礼包";
+                    else if (p.value == TencentTingPage.qiandao)
+                        f = "签到";
+                    else if (p.value == TencentTingPage.qqlb)
+                        f = "加群礼包";
+                    else if (p.value == TencentTingPage.wxlbx)
+                        f = e.getBtnTxt_Wxlb();
+                    else if (p.value == TencentTingPage.dylb)
+                        f = "抖音礼包";
+                    else if (p.value == TencentTingPage.qqgroup)
+                        f = "QQ群聊";
+                    else if (p.value == TencentTingPage.gzhyd)
+                        f = "关注有礼";
+                    else if (p.value == TencentTingPage.fpzn)
+                        f = "防骗指南";
+                    else if (p.value == TencentTingPage.showImage) {
+                        var h = gd.operData.getSuperVipCfg();
+                        h && h.icon5 && (f = h.icon5.split("&")[1])
+                    }
                     p.label = f,
                     e.group_btn.addChild(p),
                     e.radioArr.push(p),
@@ -204974,7 +209043,10 @@ var TencentTingPop = function(e) {
             e.ui = new OperStoreGiftCtrl;
             break;
         case TencentTingPage.qiandao:
-            e.ui = new FuliPopSignin
+            e.ui = new FuliPopSignin;
+            break;
+        case TencentTingPage.showImage:
+            e.ui = new OperShowImage
         }
         e.page > 999 && (e.ui = new TwSjbCtrl),
         e.ui && (e.group_page.addChild(e.ui),
@@ -205115,7 +209187,8 @@ var TencentTingPage;
     e[e.dylb = 111] = "dylb",
     e[e.gzhyd = 112] = "gzhyd",
     e[e.qqgroup = 120] = "qqgroup",
-    e[e.fpzn = 121] = "fpzn"
+    e[e.fpzn = 121] = "fpzn",
+    e[e.showImage = 122] = "showImage"
 }(TencentTingPage || (TencentTingPage = {}));
 var WankaGrownCtrl = function(e) {
     function t() {
@@ -205721,6 +209794,7 @@ var YyGrownCtrl = function(e) {
         case 15:
         case 16:
         case 17:
+        case 39:
         case 14:
             net.PlatformgiftModel.ins().send7(Number(Vars.otherneedmsg))
         }
@@ -211008,37 +215082,52 @@ var RechargePopRenderer = function(e) {
         t.bit_shouchong1.visible = !1,
         t.data) {
             var i = t.data;
-            t.txt_price.text = "￥" + i.rmb;
-            var r = gd.recharge.rechargeIds
-              , a = cm.global[31301]
-              , n = a ? a.value.split("#") : []
-              , o = n.indexOf(Vars.platform + "") > -1;
-            if (-1 == r.indexOf(i.id) && i.give && o) {
+            if (t.txt_price.text = "￥" + i.rmb,
+            js_gameVars.currencyIcon) {
+                t.currencyGrp || (t.currencyGrp = new eui.Group),
+                t.moneyGrp.addChild(t.currencyGrp),
+                t.currencyGrp.verticalCenter = "0",
+                t.currencyGrp.horizontalCenter = "0";
+                var r = new eui.Image(js_gameVars.currencyIcon);
+                t.currencyGrp.addChild(r);
+                var a = new eui.Label;
+                t.currencyGrp.addChild(a),
+                a.style = "234",
+                a.verticalCenter = "0",
+                a.x = 36,
+                a.text = 10 * i.rmb + "",
+                t.txt_price.text = ""
+            }
+            var n = gd.recharge.rechargeIds
+              , o = cm.global[31301]
+              , s = o ? o.value.split("#") : []
+              , l = s.indexOf(Vars.platform + "") > -1;
+            if (-1 == n.indexOf(i.id) && i.give && l) {
                 t.img_bg2.visible = t.list.visible = t.bit_shouchong.visible = t.bit_shouchong0.visible = !0,
                 t.moneyGrp.y = 120,
                 t.icon.verticalCenter = "-30";
-                for (var s = cm.global[31302].value.split("#"), l = gd.serv.openDay, c = 0, d = 0; d < s.length; d++)
-                    if (l < Number(s[d])) {
-                        c = d;
+                for (var c = cm.global[31302].value.split("#"), d = gd.serv.openDay, p = 0, u = 0; u < c.length; u++)
+                    if (d < Number(c[u])) {
+                        p = u;
                         break
                     }
-                var p = i.give.split("|");
-                if (p[c]) {
-                    var u = Number(p[c].split("#")[0])
-                      , g = BoxUtil.getBoxList(u);
-                    g.forEach(function(e, i) {
+                var g = i.give.split("|");
+                if (g[p]) {
+                    var f = Number(g[p].split("#")[0])
+                      , h = BoxUtil.getBoxList(f);
+                    h.forEach(function(e, i) {
                         t.listArr.addItem(e)
                     })
                 }
-                i.members && (1 == i.members ? t.bit_shouchong1.visible = !0 : 2 == i.members && 0 == c && (t.bit_shouchong1.visible = !0))
+                i.members && (1 == i.members ? t.bit_shouchong1.visible = !0 : 2 == i.members && 0 == p && (t.bit_shouchong1.visible = !0))
             } else
                 t.list.visible = t.bit_shouchong.visible = t.bit_shouchong0.visible = !1,
                 t.icon.verticalCenter = "-10",
                 t.moneyGrp.y = 180;
             t.txt_yuanbao.text = i.yuanbao + "",
             t.img_money.x = t.txt_yuanbao.textWidth + 6;
-            var f = t.itemIndex <= 7 ? t.itemIndex : 7;
-            t.icon.source = "vip_rech" + f
+            var m = t.itemIndex <= 7 ? t.itemIndex : 7;
+            t.icon.source = "vip_rech" + m
         }
     }
     ,
@@ -211046,6 +215135,9 @@ var RechargePopRenderer = function(e) {
         var t = this;
         e.prototype.dispose.call(this),
         t.group.off(TP, t.onSqClickHandler, t),
+        t.currencyGrp && (t.currencyGrp.removeChildren(),
+        t.currencyGrp.removeSelf(),
+        t.currencyGrp = null),
         t.listArr.removeAll(),
         t.listArr = null
     }
@@ -212206,317 +216298,6 @@ var SuperRecycleBtnRender = function(e) {
     t
 }(ResolveBtnItemRender);
 __reflect(SuperRecycleBtnRender.prototype, "SuperRecycleBtnRender");
-var ResolvePop = function(e) {
-    function t() {
-        var t = null !== e && e.apply(this, arguments) || this;
-        return t.miny = 0,
-        t.maxy = 0,
-        t.set_list = new eui.ArrayCollection,
-        t.listArr = new eui.ArrayCollection,
-        t.btnList = new eui.ArrayCollection,
-        t.nowselect = null,
-        t.selectlist = null,
-        t.overStarId = 0,
-        t.showList = new eui.ArrayCollection,
-        t
-    }
-    return __extends(t, e),
-    t.prototype.createChildren = function() {
-        this.uiSkin("ResolvePopSkin")
-    }
-    ,
-    t.prototype.myCreated = function() {
-        var e = this;
-        e.list_sel.itemRenderer = ResolveSetRenger,
-        e.list_sel.dataProvider = e.set_list,
-        e.item_list.itemRenderer = BagEquipRender,
-        e.item_list.dataProvider = e.showList,
-        e.list.dataProvider = e.listArr,
-        e.list.itemRenderer = ResolveItem,
-        e.btn_list.itemRenderer = ResolveBtnItemRender,
-        e.btn_list.dataProvider = e.btnList,
-        e.scrol.verticalScrollBar.autoVisibility = !1,
-        e.scrol.horizontalScrollBar.autoVisibility = !1,
-        e.scrol.scrollPolicyH = eui.ScrollPolicy.OFF,
-        e.list.on(eui.ItemTapEvent.ITEM_TAP, e.onSelect, e),
-        e.addAutoEventListener(e.onClick, e.btn, e.item0, e.btn0, e.btn_1, e.btn_close, e.btn_sure, e.btn_set),
-        e.btn_list.on(eui.ItemTapEvent.ITEM_TAP, e.onChange, e),
-        e.resolve_group.visible = !1,
-        e.item0.bgImg.visible = !1,
-        ScrollerManager.ins.init2(e.s, 50)
-    }
-    ,
-    t.prototype.refr = function() {
-        e.prototype.refr.call(this);
-        var t = this;
-        t.bindSubject(gd.bag, gd.forge),
-        t.setGro.visible = !1,
-        t.btn_list.selectedIndex = t.selectValue = 0,
-        t.updateInfo(),
-        t.scrol.scrollPolicyV = eui.ScrollPolicy.AUTO
-    }
-    ,
-    t.prototype.updateInfo = function() {
-        var e = this
-          , t = cm.resolve
-          , i = 0
-          , r = [];
-        e.alllistArr = [];
-        var a = null;
-        for (var n in t) {
-            for (var o in t[n]) {
-                a = t[n][o].condition;
-                break
-            }
-            if (a) {
-                for (var s = a.split("#"), l = !0, c = 0; c < s.length; c++)
-                    if (!Logic.checkCondition(s[c])) {
-                        l = !1;
-                        break
-                    }
-                l && (r.push([{
-                    arrInfo: t[n],
-                    bol: i == e.selectValue
-                }]),
-                e.alllistArr.push(t[n]),
-                i++)
-            } else
-                r.push([{
-                    arrInfo: t[n],
-                    bol: i == e.selectValue
-                }]),
-                e.alllistArr.push(t[n]),
-                i++
-        }
-        r.forEach(function(t) {
-            e.btnList.addItem(t)
-        }),
-        e.updateListInfo()
-    }
-    ,
-    t.prototype.updateListInfo = function(e, t) {
-        void 0 === e && (e = !1),
-        void 0 === t && (t = !1);
-        var i = this;
-        if (e && !t && i.nowselect) {
-            if (i.selectlist != i.nowselect.type)
-                return void (i.nowselect = null);
-            i.nowselect = null
-        }
-        if (i.alllistArr) {
-            i.listArr.removeAll(),
-            i.list.scrollV = 0;
-            var r = []
-              , a = [];
-            i.nowArr = [];
-            var n = gd.bag
-              , o = {};
-            i.opd && i.opd.args && i.opd.args[1] ? i.opd.args[1] : 0;
-            for (var s in n.bagDic) {
-                var l = n.bagDic[s]
-                  , c = cm.item[l.itemId]
-                  , d = l.count
-                  , p = c[8];
-                if ((!p || 17 !== p) && d > 0) {
-                    var u = gd.forge.cloneEquip(l);
-                    u.from = 1,
-                    o[l.gridIndex] = u
-                }
-            }
-            var g = i.alllistArr[i.selectValue];
-            for (var f in g) {
-                i.selectlist = g[f].type,
-                r = [],
-                g[f].txt && (i.show_text.textFlow = Html.toEle(Html.str(g[f].txt, Logic.getCol(187))));
-                for (var h in o)
-                    o[h].config[0] == g[f].itemid && 0 == gd.bag.getStarArmId(o[h].extraType, o[h].extraValue) && r.push(o[h]);
-                if (r.length > 0)
-                    for (var s = 0; s < r.length; s++)
-                        gd.insure.isInsureEquip(r[s].lid) || a.push(r[s]),
-                        i.nowArr.push(r[s])
-            }
-            if (a.length > 0) {
-                var s = cm.item[a[0].itemId][9];
-                a.sort(function(e, t) {
-                    return cm.item[e.itemId][9] < cm.item[t.itemId][9] ? -1 : cm.item[e.itemId][9] > cm.item[t.itemId][9] ? 1 : 0
-                }),
-                a.forEach(function(e) {
-                    i.listArr.addItem(e)
-                })
-            }
-            if (e && t && i.item0.data)
-                for (var s = 0; s < i.listArr.source.length; s++)
-                    i.listArr.source[s].lid == i.item0.data.lid && (i.listArr.source[s].count > i.item0.data.count ? i.listArr.source[s].count = i.listArr.source[s].count - i.item0.data.count : i.listArr.removeItemAt(s))
-        }
-    }
-    ,
-    t.prototype.onChange = function(e) {
-        var t = this;
-        t.selectValue = t.btn_list.selectedIndex,
-        t.selectChange()
-    }
-    ,
-    t.prototype.selectChange = function() {
-        var e = this;
-        e.curCfg = null,
-        e.updateListInfo(!0, !0)
-    }
-    ,
-    t.prototype.onClick = function(e) {
-        var t = this;
-        switch (e.currentTarget) {
-        case t.item0:
-            t.item0.data = null,
-            t.showList.removeAll(),
-            t.resolve_group.visible = !1,
-            t.updateListInfo(!0);
-            break;
-        case t.btn:
-            if (!t.item0.data && !t.nowselect)
-                return void ncm.err("请先放入要分解的道具");
-            1 == t.item0.data.count ? net.DecomposeModel.ins().send1(1, t.nowselect.type, t.nowselect.itemid, t.item0.data.lid, 0) : uim.show(500, new UIData(t.item0.data,t.nowselect.type));
-            break;
-        case t.btn0:
-            if (t.selectlist) {
-                if (t.listArr.length < 1)
-                    return void ncm.err("暂无可分解的道具");
-                gd.bag.allResolve ? net.DecomposeModel.ins().send1(2, t.selectlist, 0, null, 0) : AlertDialog.showAlertById(202, new CallBack3(t.allResCall,t))
-            }
-            break;
-        case t.btn_1:
-            uim.showOrHide(749, new UIData(2096));
-            break;
-        case t.btn_close:
-        case t.btn_sure:
-            t.setGro.visible = !1;
-            break;
-        case t.btn_set:
-            gd.bag.autoRevole && gd.bag.autoRevole > DateUtil.serverNow() / 1e3 ? (t.setGro.visible = !t.setGro.visible,
-            t.setGro.visible && t.showSetGro()) : ncm.err("请激活自动分解卡!")
-        }
-    }
-    ,
-    t.prototype.allResCall = function(e) {
-        var t = this;
-        e == AlertDialog.AGREE ? net.DecomposeModel.ins().send1(2, t.selectlist, 0, null, 0) : e == AlertDialog.AGREE_SELECT && (net.DecomposeModel.ins().send1(2, t.selectlist, 0, null, 0),
-        gd.bag.allResolve = !0)
-    }
-    ,
-    t.prototype.showSetGro = function() {
-        var e = this;
-        e.set_list.removeAll();
-        for (var t in cm.huishou)
-            3 == cm.huishou[t].type && Logic.checkCondition(cm.huishou[t].condition) && e.set_list.addItem(cm.huishou[t].id)
-    }
-    ,
-    t.prototype.onSelect = function(e) {
-        var t = this
-          , i = t.list.selectedItem
-          , r = new ItemGridData
-          , a = (new ItemGridData,
-        null);
-        r.itemId = i.itemId,
-        r.count = i.count,
-        r.config = cm.item[i.itemId],
-        r.lid = i.lid,
-        r.from = 41,
-        t.item0.data = r;
-        var n = cm.resolve;
-        t.showList.removeAll();
-        for (var o in n)
-            for (var s in n[o])
-                if (n[o][s].itemid == i.itemId) {
-                    a = n[o][s].harvest,
-                    t.nowselect = n[o][s];
-                    break
-                }
-        if (a) {
-            for (var l = a.split("&"), c = l[0].split("#"), d = c[0], p = (c[1],
-            0); p < l.length; p++) {
-                var u = l[p].split("#")
-                  , g = new ItemGridData;
-                g.itemId = u[0],
-                g.count = u[1] * r.count,
-                g.config = cm.item[u[0]],
-                t.showList.addItem(g)
-            }
-            var f = String(gd.bag.getCount(d))
-              , h = Logic.getCol(46);
-            t.cost_group.visible = !0,
-            t.img_cost.source = CommonUtils.getMoneyIcon(d),
-            t.showResolveInfo1(f, h, t.txt_price, t.img_cost)
-        }
-        t.resolve_group.visible = !0,
-        t.updateListInfo(!0, !0)
-    }
-    ,
-    t.prototype.showResolveInfo1 = function(e, t, i, r) {
-        var a = Html.str("当前拥有", Logic.getCol(46)) + Html.str("：", Logic.getCol(196)) + "　　" + Html.str("x" + e, t);
-        i.textFlow = Html.toEle(a),
-        i.once(egret.Event.ENTER_FRAME, function() {
-            var e = i.$getLinesArr() ? i.$getLinesArr() : i.$getLinesArr2()
-              , t = 0
-              , a = 0
-              , n = !0;
-            if (e[0]) {
-                for (var o = 0, s = e[0].elements; o < s.length; o++) {
-                    var l = s[o];
-                    n ? t += l.width : a += l.width,
-                    "：" === l.text && (n = !1)
-                }
-                r.x = i.x + t - 3
-            }
-        }, this)
-    }
-    ,
-    t.prototype.update = function(e, t) {
-        var i = this;
-        switch (e) {
-        case 3:
-            i.updateListInfo(!0, !0);
-            break;
-        case 700:
-            i.item0.data = null,
-            i.showList.removeAll(),
-            i.resolve_group.visible = !1,
-            i.updateListInfo(!0);
-            break;
-        case 621:
-            i.showSetGro()
-        }
-    }
-    ,
-    t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        var t = this;
-        t.item0.data = null,
-        t.showList.removeAll(),
-        t.showList = null,
-        t.listArr.removeAll(),
-        t.listArr = null,
-        t.btnList.removeAll(),
-        t.btnList = null,
-        ScrollerManager.ins.dispose(50)
-    }
-    ,
-    t
-}(UIBase);
-__reflect(ResolvePop.prototype, "ResolvePop");
-var ResolveSetRenger = function(e) {
-    function t() {
-        return null !== e && e.apply(this, arguments) || this
-    }
-    return __extends(t, e),
-    t.prototype.dataChanged = function() {
-        e.prototype.dataChanged.call(this);
-        var t = this;
-        t.data && (t.check.selected = !!gd.bag.recycleLog[t.data],
-        t.check.label = "  " + cm.huishou[t.data].name)
-    }
-    ,
-    t
-}(CloudTraderSetRenger);
-__reflect(ResolveSetRenger.prototype, "ResolveSetRenger");
 var DaoWenAlert = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
@@ -222156,6 +225937,7 @@ var Store = function(e) {
             t.storeType == StoreData.Store_QXSC && (i = 10),
             t.storeType == StoreData.Store_157 && (i = 157),
             t.storeType == StoreData.Store_500 && (i = 216),
+            this.storeType == StoreData.Store_Fish && (i = 150),
             TipsManager.Instance.showTips(1, {
                 itemId: i,
                 config: cm.item[i],
@@ -222240,7 +226022,7 @@ var Store = function(e) {
     t.prototype.onClick = function(e) {
         switch (e.currentTarget) {
         case this.btn_cz:
-            this.storeType == StoreData.Store_RYZC ? CommonUtils.quickGetItem(13) : this.storeType == StoreData.Store_RongYu ? CommonUtils.quickGetItem(39) : this.storeType == StoreData.Store_Hanghui ? CommonUtils.quickGetItem(7) : this.storeType == StoreData.Store_Arena || this.storeType == StoreData.Store_61 || this.storeType == StoreData.Store_62 || this.storeType == StoreData.Store_63 ? CommonUtils.quickGetItem(8) : this.storeType == StoreData.Store_zongmen ? CommonUtils.quickGetItem(497) : this.storeType == StoreData.Store_Heaven ? CommonUtils.quickGetItem(43) : this.storeType == StoreData.Store_150 ? CommonUtils.quickGetItem(67) : this.storeType == StoreData.Store_QXSC ? CommonUtils.quickGetItem(10) : this.storeType == StoreData.Store_157 ? CommonUtils.quickGetItem(157) : this.storeType == StoreData.Store_500 ? CommonUtils.quickGetItem(216) : (uim.hide(520),
+            this.storeType == StoreData.Store_RYZC ? CommonUtils.quickGetItem(13) : this.storeType == StoreData.Store_RongYu ? CommonUtils.quickGetItem(39) : this.storeType == StoreData.Store_Hanghui ? CommonUtils.quickGetItem(7) : this.storeType == StoreData.Store_Arena || this.storeType == StoreData.Store_61 || this.storeType == StoreData.Store_62 || this.storeType == StoreData.Store_63 ? CommonUtils.quickGetItem(8) : this.storeType == StoreData.Store_zongmen ? CommonUtils.quickGetItem(497) : this.storeType == StoreData.Store_Heaven ? CommonUtils.quickGetItem(43) : this.storeType == StoreData.Store_150 ? CommonUtils.quickGetItem(67) : this.storeType == StoreData.Store_QXSC ? CommonUtils.quickGetItem(10) : this.storeType == StoreData.Store_157 ? CommonUtils.quickGetItem(157) : this.storeType == StoreData.Store_500 ? CommonUtils.quickGetItem(216) : this.storeType == StoreData.Store_Fish ? CommonUtils.quickGetItem(150) : (uim.hide(520),
             Logic.openPay());
             break;
         case this.btn_get0:
@@ -222291,6 +226073,7 @@ var Store = function(e) {
         e.txt_money1.text = gd.bag.getCount(4742, !0) + "",
         e.txt_money0.text = gd.bag.getCount(20, !0) + "",
         e.storeType == StoreData.Store_RYZC && (e.txt_money0.text = gd.bag.getCount(13, !0) + ""),
+        e.storeType == StoreData.Store_Fish && (e.txt_money0.text = gd.bag.getCount(150, !0) + ""),
         e.storeType == StoreData.Store_RongYu ? e.txt_money0.text = gd.bag.getCount(39, !0) + "" : e.storeType == StoreData.Store_Hanghui && (e.txt_money4.text = gd.bag.getCount(7, !0) + "",
         e.storeList.itemRenderer = UnionStoreItemRender),
         (e.storeType == StoreData.Store_Arena || e.storeType == StoreData.Store_61 || e.storeType == StoreData.Store_62 || e.storeType == StoreData.Store_63) && (e.txt_money4.text = gd.bag.getCount(8, !0) + ""),
@@ -222335,6 +226118,11 @@ var Store = function(e) {
         e.moneyImg2.visible = !1,
         e.txt_money2.visible = !1,
         e.moneyImg0.source = CommonUtils.getMoneyIcon(39)),
+        e.storeType == StoreData.Store_Fish && (e.btn_cz.visible = !1,
+        e.money_bg2.visible = !1,
+        e.moneyImg2.visible = !1,
+        e.txt_money2.visible = !1,
+        e.moneyImg0.source = CommonUtils.getMoneyIcon(150)),
         (e.storeType == StoreData.Store_Arena || e.storeType == StoreData.Store_61 || e.storeType == StoreData.Store_62 || e.storeType == StoreData.Store_63) && (e.grp_coin.visible = !1,
         e.grp_zs.visible = !0,
         e.moneyImg4.source = CommonUtils.getMoneyIcon(8)),
@@ -222553,6 +226341,44 @@ var StoreDianFengPop = function(e) {
     t
 }(PopCommon);
 __reflect(StoreDianFengPop.prototype, "StoreDianFengPop");
+var StoreFishPop = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.myCreated = function() {
+        e.prototype.myCreated.call(this);
+        var t = this;
+        t.radioName = ["渔获"]
+    }
+    ,
+    t.prototype.onRadioSelected = function(t, i) {
+        void 0 === i && (i = 0);
+        var r = this;
+        r.currSelectRadioIndex = t,
+        r.page && (r.group_page.removeChild(r.page),
+        r.page.hide(),
+        r.page.preDis(),
+        r.page = null),
+        r.setLabelTitle(r.radioName[t]);
+        var a;
+        switch (t) {
+        case 0:
+            r.page = new Store,
+            a = StoreData.Store_Fish
+        }
+        r.opd ? r.opd.data = a : r._openData = new UIData(a),
+        e.prototype.onRadioSelected.call(this, t)
+    }
+    ,
+    t.prototype.refr = function() {
+        e.prototype.refr.call(this),
+        this.bindSubject(gd.angler)
+    }
+    ,
+    t
+}(PopCommon);
+__reflect(StoreFishPop.prototype, "StoreFishPop");
 var StoreFoldSelectDialog = function(e) {
     function t() {
         var t = null !== e && e.apply(this, arguments) || this;
@@ -228933,7 +232759,7 @@ var ThorDissolvePop = function(e) {
         return e.forEach(function(e) {
             e.selected && t.push(e.lid)
         }),
-        t.length ? void net.BagModel.ins().send7(t) : void ncm.err("请先选择要分解的装备")
+        t.length ? void net.BagModel.ins().send7(t, 1) : void ncm.err("请先选择要分解的装备")
     }
     ,
     t.prototype.onTabItem = function(e) {
@@ -240268,6 +244094,196 @@ var XingpanPop = function(e) {
 __reflect(XingpanPop.prototype, "XingpanPop");
 var XingpanType;
 !function(e) {}(XingpanType || (XingpanType = {}));
+var Fish_StoragePop = function(e) {
+    function t() {
+        return null !== e && e.apply(this, arguments) || this
+    }
+    return __extends(t, e),
+    t.prototype.myCreated = function() {
+        e.prototype.myCreated.call(this);
+        var t = this;
+        t.radioName = ["渔获背包"]
+    }
+    ,
+    t.prototype.onRadioSelected = function(e) {
+        var t = this;
+        t.setLabelTitle(t.radioName[0]),
+        t.page = new FishPopWarehouse,
+        t.page && (t.group_page.addChild(t.page),
+        t.page.show())
+    }
+    ,
+    t.prototype.showRadio = function() {}
+    ,
+    t
+}(PopCommon);
+__reflect(Fish_StoragePop.prototype, "Fish_StoragePop");
+var FishPopWarehouse = function(e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.showList = new eui.ArrayCollection,
+        t.minlv = 1,
+        t.maxlv = 20,
+        t.clicktime = 0,
+        t
+    }
+    return __extends(t, e),
+    t.prototype.createChildren = function() {
+        this.uiSkin("XunBaoRecoverSkin")
+    }
+    ,
+    t.prototype.myCreated = function() {
+        var e = this;
+        e.listObj.itemRenderer = WareHouseBagEquipRender,
+        e.listObj.dataProvider = e.showList,
+        e.listObj.on(TP, e.onChangeHandler, e),
+        e.addAutoEventListener(e.onClickHandler, e.btn_recovery, e.btn_use, e.btn_huishou, e.btn_plus, e.btn_add),
+        ScrollerManager.ins.init(e.scrollObj, 0, 0, 6)
+    }
+    ,
+    t.prototype.onChangeHandler = function(e) {
+        var t = this
+          , i = (t.listObj.selectedItem,
+        t.showList.getItemAt(t.listObj.selectedIndex));
+        i && t.doubleClick(i, e.stageX, e.stageY)
+    }
+    ,
+    t.prototype.doubleClick = function(e, t, i) {
+        var r = this;
+        if (2 == gd.arpgInst.clickType)
+            return net.HuntModel.ins().send6(1, e.lid, e.itemId, e.count, 0),
+            void DragManager.instance.stopEvent();
+        if (e.lid) {
+            var a = e.lid.toString();
+            if (r.clickId)
+                r.clickId != a ? r.clickId = a : (net.HuntModel.ins().send6(1, e.lid, e.itemId, e.count, 0),
+                r.clickId = null);
+            else {
+                if (DragManager.instance._touchStatus)
+                    return;
+                r.clickId = a
+            }
+            r.tt && (egret.clearTimeout(r.tt),
+            r.tt = null),
+            r.clickId && (r.tt = egret.setTimeout(function() {
+                r.clickId = null,
+                egret.clearTimeout(r.tt),
+                r.tt = null,
+                Capability.mobileUI && gd.bag.clickHandler(e, t, i)
+            }, r, 400))
+        }
+    }
+    ,
+    t.prototype.onClickHandler = function(e) {
+        var t = this;
+        switch (e.currentTarget) {
+        case t.btn_recovery:
+            net.BagModel.ins().send78();
+            break;
+        case t.btn_use:
+            t.useItemsStr && net.HuntModel.ins().send24(1, t.useItemsStr);
+            break;
+        case t.btn_huishou:
+            var i = t.catchFishhouse
+              , r = [];
+            if (i && i.length > 0) {
+                for (var a = 0; a < i.length; a++)
+                    i[a].config[4] <= t.curlv && r.push(i[a].lid);
+                r.length > 0 ? net.BagModel.ins().send7(r, 2) : ncm.err("当前等阶没有可回收的鱼获")
+            } else
+                ncm.err("当前仓库没有可回收的鱼获");
+            break;
+        case t.btn_add:
+            t.curlv += 1,
+            t.curlv > t.maxlv && (t.curlv = t.maxlv),
+            gd.setting.fishCKLv = t.curlv,
+            t.showHsLv();
+            break;
+        case t.btn_plus:
+            t.curlv -= 1,
+            t.curlv < t.minlv && (t.curlv = t.minlv),
+            gd.setting.fishCKLv = t.curlv,
+            t.showHsLv()
+        }
+    }
+    ,
+    t.prototype.refr = function() {
+        var t = this;
+        e.prototype.refr.call(this),
+        t.bindSubject(gd.bag, gd.player),
+        t.curlv = gd.setting.fishCKLv,
+        t.btn_recovery.label = "一键整理",
+        t.showHsLv(),
+        t.showItemList()
+    }
+    ,
+    t.prototype.showHsLv = function() {
+        this.txt_lv.text = gd.setting.fishCKLv + "阶及以下"
+    }
+    ,
+    t.prototype.showItemList = function() {
+        var e = this;
+        e.showList.removeAll();
+        var t = gd.bag
+          , i = t.maxItemGridCountFish;
+        e.catchFishhouse = new Array;
+        var r;
+        for (var a in t.CatchFishDic) {
+            var n = t.CatchFishDic[a];
+            r = new ItemGridData,
+            r.itemId = n.itemId,
+            r.count = n.count,
+            r.lid = n.lid,
+            r.config = cm.item[n.itemId],
+            e.catchFishhouse.push(r)
+        }
+        var o = e.catchFishhouse;
+        o.sort(e.compare);
+        var s = 0
+          , l = !1;
+        o.forEach(function(t) {
+            t.selectedHover = !0,
+            t.from = 58,
+            e.showList.addItem(t),
+            s++,
+            !l && t.config[4] <= e.curlv && (l = !0)
+        }),
+        e.updateUIEff(e.btn_huishou, l ? UIEffect.BUTTON_EFF_RED : null),
+        e.txt_num.text = "仓库容量：" + s + "/" + i;
+        var c = s;
+        for (c; i > c; c++)
+            e.showList.addItem({
+                selectedHover: !0,
+                isNull: !0,
+                showgird: !0
+            });
+        e.useItemsStr = ""
+    }
+    ,
+    t.prototype.compare = function(e, t) {
+        var i = e.config[4]
+          , r = t.config[4];
+        return i - r
+    }
+    ,
+    t.prototype.update = function(e, t) {
+        var i = this;
+        1032 == e && i.showItemList()
+    }
+    ,
+    t.prototype.dispose = function() {
+        var t = this;
+        e.prototype.dispose.call(this),
+        t.isInit() && (t.tt && (egret.clearTimeout(t.tt),
+        t.tt = null),
+        t.clickId = null,
+        t.listObj.off(TP, t.onChangeHandler, t),
+        ScrollerManager.ins.dispose(6))
+    }
+    ,
+    t
+}(UIBase);
+__reflect(FishPopWarehouse.prototype, "FishPopWarehouse");
 var XunLong_StoragePop = function(e) {
     function t() {
         return null !== e && e.apply(this, arguments) || this
@@ -248727,33 +252743,60 @@ var ToolTipsSimple = function(e) {
                     }
                     n.txt_desc.textFlow = Html.toEle(b + d + p)
                 }
+                if (5 == o[8] && 3 == o[1]) {
+                    var x = "";
+                    if (31 == i) {
+                        if (b) {
+                            var k = cm.fish_tujian[n.data.itemId]
+                              , T = ""
+                              , S = b.split("|");
+                            T += Html.str("\n首次激活本图鉴可获得", Logic.getCol(230));
+                            var L = "";
+                            if (k && k.attribute && (L = "\n" + CommonUtils.getTipsAttr(k.attribute, null, o[52])[0]),
+                            k && k.percentAttribute) {
+                                for (var E = CommonUtils.getpreceAttr(k.percentAttribute, Logic.getCol(46), Logic.getCol(50)), A = "", R = 0, B = E; R < B.length; R++) {
+                                    var M = B[R];
+                                    A += ("" == A ? "" : "\n") + M.name + M.attribute
+                                }
+                                L += "\n" + A
+                            }
+                            T += L,
+                            x = S[0] + T + S[1],
+                            n.txt_desc.textFlow = Html.toEle(x + d)
+                        }
+                    } else if (b) {
+                        var S = b.split("|");
+                        x = S[0] + S[1],
+                        n.txt_desc.textFlow = Html.toEle(x + d)
+                    }
+                }
                 u = n.txt_desc.height > 0 ? n.txt_desc.y + n.txt_desc.height + n.h_space : n.txt_desc.y;
-                var x = o[25] ? o[25] : 0
-                  , k = o[24] ? o[24] : 0;
-                if (d = "" + (k > 1 ? k + "级" : "") + (x > 0 && k > 1 ? "或" : "") + Logic.getReinLvStr(x),
+                var D = o[25] ? o[25] : 0
+                  , P = o[24] ? o[24] : 0;
+                if (d = "" + (P > 1 ? P + "级" : "") + (D > 0 && P > 1 ? "或" : "") + Logic.getReinLvStr(D),
                 "" != d) {
-                    var T = o[52] ? "需要职业：" + Logic.getCareerName(o[52]) : "";
-                    n.txt_level.textFlow = Html.toEle(T + Html.str((T ? "\n" : "") + "需要等级：" + d, Logic.itemConditon(o) ? Logic.getCol(46) : Logic.getCol(49))),
+                    var N = o[52] ? "需要职业：" + Logic.getCareerName(o[52]) : "";
+                    n.txt_level.textFlow = Html.toEle(N + Html.str((N ? "\n" : "") + "需要等级：" + d, Logic.itemConditon(o) ? Logic.getCol(46) : Logic.getCol(49))),
                     n.txt_level.y = u,
                     u = n.txt_level.y + n.txt_level.height + n.h_space,
                     n.txt_level.visible = !0
                 } else
                     n.txt_level.visible = !1;
                 if (gd.bag.itemSurplusNum && gd.bag.itemSurplusNum[t.itemId] >= 0) {
-                    var S = gd.bag.itemSurplusNum[t.itemId];
+                    var H = gd.bag.itemSurplusNum[t.itemId];
                     n.txt_syNum.visible = !0,
-                    n.txt_syNum.textFlow = Html.toEle("今日剩余使用次数: " + Html.str(S + "次", S > 0 ? Logic.getCol(50) : Logic.getCol(49))),
+                    n.txt_syNum.textFlow = Html.toEle("今日剩余使用次数: " + Html.str(H + "次", H > 0 ? Logic.getCol(50) : Logic.getCol(49))),
                     n.txt_syNum.y = u,
                     u = n.txt_syNum.y + n.txt_syNum.height + n.h_space
                 } else
                     n.txt_syNum.visible = !1;
                 n.txt_bind.visible = !1;
-                var L = o[0]
-                  , E = 20 == L || 2 == L;
-                if (E) {
+                var U = o[0]
+                  , V = 20 == U || 2 == U;
+                if (V) {
                     n.txt_have.visible = !0;
-                    var A = Html.getItemColor(o[9]);
-                    20 == L ? n.txt_have.textFlow = Html.toEle(Html.str("拥有元宝：" + gd.bag.cqb, A) + Html.str("\n拥有绑定元宝：" + gd.bag.bind_cqb, A)) : n.txt_have.textFlow = Html.toEle(Html.str("拥有灵符：" + gd.bag.money, A) + Html.str("\n拥有绑定灵符：" + gd.bag.binding_money, A)),
+                    var O = Html.getItemColor(o[9]);
+                    20 == U ? n.txt_have.textFlow = Html.toEle(Html.str("拥有元宝：" + gd.bag.cqb, O) + Html.str("\n拥有绑定元宝：" + gd.bag.bind_cqb, O)) : n.txt_have.textFlow = Html.toEle(Html.str("拥有灵符：" + gd.bag.money, O) + Html.str("\n拥有绑定灵符：" + gd.bag.binding_money, O)),
                     n.txt_have.y = u,
                     u = n.txt_have.y + n.txt_have.height + n.h_space
                 } else
@@ -248784,7 +252827,11 @@ var ToolTipsSimple = function(e) {
                 var n = r[a].splitNum("#")
                   , o = n[0];
                 cm.item[o];
-                Logic.checkCondition(n[2]) && t.itemArr.addItem(GridFactory.createItemGridVo(n[0], Long.create(0, 0), n[1]))
+                if (Logic.checkCondition(n[2])) {
+                    var s = GridFactory.createItemGridVo(n[0], Long.create(0, 0), n[1]);
+                    s.from = 59,
+                    t.itemArr.addItem(s)
+                }
             }
             i = t.itemList.height + 26
         }

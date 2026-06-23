@@ -1,4 +1,19 @@
 
+// gd.boss.dupCountData[id]?.count
+
+// case 67006
+// case 67008
+// case 67010:
+// gd.map.prepareToEnterMap(t.mid),
+//     net.MapModel.ins().send12();
+// break;
+// case 67014
+
+//var Main = function(e) {      //debug
+//MtwGame   //debug
+//for (var i = 0, r = this._observers; i < r.length; i++) {  //debug
+
+
 //net.DuplicateModel.ins().send2(32005);//jilin005
 // var PersonalFuBenPop = function(e) {//jilin
 // ShenJianTiaoZhanPop
@@ -152,11 +167,12 @@ if (nowHourPY >= 2142 && nowHourPY < 2152) {
 }
 
 
+//GameSceneManager.Instance.curInstance.relive(para_Relive)
 function f_globalRelive(e) {
     var t = emIns.getEntity(e.lid.toString());
     if (t && t.fighterObject) {
         t.fighterObject.isDead = false;
-        t.fighterObject.delayhp = t.fighterObject.truehp = e.hp;
+        t.fighterObject.delayhp = t.fighterObject.truehp = e.hp.toNumber();
         t.fighterObject.maxInner = t.fighterObject.delayInner = t.fighterObject.trueInner = e.inner;
         t._entityAI.relive(t);
         t.x = e.x * GameDefine.MAP_GRID_WIDTH + 0.5 * GameDefine.MAP_GRID_WIDTH;
@@ -199,15 +215,14 @@ function f_globalRelive(e) {
         }
     }
 }
-var para_Relive = {//var myEntity = emIns.getEntity("1610424320_2128603008");//emIns.firstPlayer.fighterObject.id._string
-    lid: 1610424320_2128603008,  //emIns.firstPlayer.fighterObject.id._string
-    hp: 533724645,//emIns.firstPlayer.fighterObject.maxHp,
-    //hp: { toNumber: () => emIns.firstPlayer.fighterObject.maxHp },
-    inner: 35691100,//emIns.firstPlayer.fighterObject.maxInner,
-    x: 78,
-    y: 16
-}
 
+var para_Relive = {//var myEntity = emIns.getEntity("1610424320_2128603008");//emIns.firstPlayer.fighterObject.id._string
+    lid: emIns.firstPlayer.fighterObject.id._string,
+    hp: { toNumber: () => emIns.firstPlayer.fighterObject.maxHp },
+    inner: emIns.firstPlayer.fighterObject.maxInner,
+    x: emIns.firstPlayer.fighterObject.bornX,   //78
+    y: emIns.firstPlayer.fighterObject.bornY    //16
+}
 
 // let innerPY = false;
 var intervalIdPY = null;
@@ -405,9 +420,10 @@ function beginTimer_f_Hot() {
                         var para_xy = gd.emIns.firstPlayer.fighterObject;
                         if (Math.abs(item.x - para_xy.gridX) > 10 || Math.abs(item.y - para_xy.gridY) > 10) {
                             gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
-                            break;
+                            return true;
                         }
                     }
+                    return false;
                 });
             }
             if (gd.arpgInst.autoFightType == 3) {
@@ -416,7 +432,6 @@ function beginTimer_f_Hot() {
             }
         }
         if (nowDate > 1740 || (nowDate > 1733 && d.map.curMapId == 5618 && gd.map.tombInfo.length == 4)) {
-            // if (nowDate > 1740 ||gd.map.tombInfo.length == 4) {
             stopTimer_f_Hot();
         }
     }, 6000);
@@ -461,7 +476,7 @@ function beginTimer_f_Jilin(id) {
         if (gd.arpgInst.autoFightType == 3) {
             gd.arpgInst.setAutoFight(1);
         }
-        if (new Date() > expireDate || gd.boss.dupCountData[id] == 0) {
+        if (new Date() > expireDate || gd.boss.dupCountData[id]?.count == 0) {
             stopTimer_f_Jilin();
         }
     }, 10000);
@@ -493,23 +508,12 @@ function findMochao(start, end) {//auto-MoChao(Shentai)
 }
 var rewardBool_Mochao = false;
 function findMochao_Occupy() {//auto occupy MoChao(Shentai)              
-    // if (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:02:00' && new Date().toLocaleTimeString() < '10:03:00') {
-    //     var para_Shentai1 = findMochao(810, 850) || findMochao(910, 999);
-    //     net.MochaoModel.ins().send3(para_Shentai1, 0);
-    //     console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
-    // }
     if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date().toLocaleTimeString() >= '10:00:00')) {
         var para_mc = gd.mochao.getMyMoChaoData();
-        // if (!para_mc || Object.keys(para_mc).length > 0) {
-        //     console.log("moChaoTimelog:" + new Date().toLocaleString() + gd.mochao.moChaoInfo[para_mc.moChaoId].occupyRoleName + "----" + para_mc.moChaoId);
-        // }
         if (para_mc == null || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000)) {
             var para_Shentai = findMochao(711, 751) || findMochao(850, 999);//findMochao(704, 751) || findMochao(804, 999);
             if (para_Shentai) {
                 net.MochaoModel.ins().send3(para_Shentai, 0);
-                console.log("moChaoTimeOccupy:" + new Date().toLocaleString());
-            } else {
-                console.log("moChaoTimeOccupy--findMochao is null:" + new Date().toLocaleString());
             }
         }
         if (!rewardBool_Mochao && new Date().getDay() == 0 && new Date().toLocaleTimeString() >= '22:25:00') {
