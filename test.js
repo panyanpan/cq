@@ -1,5 +1,10 @@
+// current index //find ???
+// gd.boss.dupCountData[id]?.count    //exit    == 0 ??
+// gd.inst.sendReqEnterArpgMapMessaged(200069)   //chechi??   87,83   18,18   17,81
 
-// gd.boss.dupCountData[id]?.count
+//var PersonalBossPop = function(e) {
+//cm.deliver[deliverId].toMapId
+//cm.map[gd.map.curMapId]   ??
 
 // case 67006
 // case 67008
@@ -543,4 +548,75 @@ function beginTimer_f_Ronglian() {
         }, 600000);
         p_alert_success('已开始（Ronglian）');
     }
+}
+
+
+
+
+var para_IntervalId_Chechi = null;
+var para_boss_Chechi = [
+    { mid: 41000001, x: 20, y: 18 },
+    { mid: 41000002, x: 88, y: 80 },
+    { mid: 41000003, x: 20, y: 83 }
+];
+function beginTimer_f_Chechi() {
+    console.log("benginTime-Chechi:" + new Date().toLocaleString());
+    if (para_IntervalId_Chechi != null) {
+        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Chechi");
+        p_alert_success('运行中...');
+        return;
+    }
+    para_IntervalId_Chechi = setInterval(async () => {//Chechi 22:00-22:15
+        var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
+        if ((nowDate > 2200 && nowDate < 2215) && para_IntervalId_Chechi != null) {
+            if (para_globalBool == true) {
+                para_globalBool = false;
+            }
+            if (emIns.firstPlayer.fighterObject.delayhp == 0) {
+                await new Promise(resolve => setTimeout(resolve, 400));
+                clickCanvasAt(1130, 400);
+            }
+            if (emIns.firstPlayer.fighterObject.delayhp < emIns.firstPlayer.fighterObject.maxHp * 0.9
+                && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {
+                Logic.deliverToFindNpc(600300);//biqi1  81
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                gd.map.gotoStagePoint(137, 120, gd.map.curMapId, false);
+                await new Promise(resolve => setTimeout(resolve, 4000));
+                net.CureModel.ins().send2(0);    //click cure
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                gd.inst.sendReqEnterArpgMapMessaged(200069)   //gotomap chechi
+
+                await new Promise(resolve => setTimeout(resolve, 400));
+                gd.map.gotoStagePoint(88, 80, gd.map.curMapId, false); //88,80   20,80   20,83
+            }
+            if (gd.map.curMapId != 200069) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+                gd.inst.sendReqEnterArpgMapMessaged(200069)   //gotomap chechi
+
+                await new Promise(resolve => setTimeout(resolve, 400));
+                gd.map.gotoStagePoint(88, 80, gd.map.curMapId, false); //88,80   20,80   20,83
+            }
+            if (gd.arpgInst.autoFightType == 3) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                gd.arpgInst.setAutoFight(1);
+            }
+        }
+        if (nowDate > 2215 || (nowDate > 2205 && gd.map.curMapId == 200069 && gd.map.tombInfo.length == 3)) {
+            stopTimer_f_Chechi();
+        }
+    }, 8000);
+    p_alert_success('开始（车迟）');
+}
+
+function stopTimer_f_Chechi() {
+    para_globalBool = true;
+    if (para_IntervalId_Chechi != null) {
+        clearInterval(para_IntervalId_Chechi);
+        para_IntervalId_Chechi = null;
+        console.log('定时器已关闭time-Chechi:' + new Date().toLocaleString());
+    } else {
+        console.log('暂无运行中的定时器time-Chechi:' + new Date().toLocaleString());
+    }
+    p_alert_success('已关闭');
 }
