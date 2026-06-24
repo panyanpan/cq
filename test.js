@@ -1,10 +1,14 @@
-// current index //find ???
-// gd.boss.dupCountData[id]?.count    //exit    == 0 ??
-// gd.inst.sendReqEnterArpgMapMessaged(200069)   //chechi??   87,83   18,18   17,81
-
-//var PersonalBossPop = function(e) {
-//cm.deliver[deliverId].toMapId
-//cm.map[gd.map.curMapId]   ??
+//var RecoveryRewardDialog = function(e) {
+//var RecoveryRewardDialog2 = function(e) {
+//t[671] = RecyclePop
+//return void net.RoleModel.ins().send23(2006, !1, null, -1, -1);
+// if (gd.bag.recycleLids) {
+//     var e = [];
+//     for (var t in gd.bag.recycleLids)
+//         gd.bag.bagDic[t] && e.push(gd.bag.recycleLids[t]);
+//     e.length > 0 && net.BagModel.ins().send7(e, 1),
+//         gd.bag.recycleLids = {}
+// }
 
 // case 67006
 // case 67008
@@ -19,49 +23,11 @@
 //for (var i = 0, r = this._observers; i < r.length; i++) {  //debug
 
 
-//net.DuplicateModel.ins().send2(32005);//jilin005
-// var PersonalFuBenPop = function(e) {//jilin
-// ShenJianTiaoZhanPop
-// t.prototype.onBtnClick = function(e) {
-//         var t = this;
-//         switch (e.currentTarget) {
-//         case t.btn_go:
-//             var i = t.bossInfo[t.selectBoss];
-//             if (!i || !i[0])
-//                 return;
-//             Logic.deliverToFindNpc(parseInt(i[0].deliver));
-//             break;
-//         case t.btn_desc:
-//             var r = void 0;
-//             switch (this.bossType1) {
-//             case 101:
-//                 r = 8700
-//             }
-//             uim.showOrHide(749, new UIData(r))
-//         }
-//     }
-
-
-function f_CheckPosition_Go(x, y) {
-    if (gd.map.curMapId == 53001) {
-        try {
-            const rewardNum = 0;
-            if (gd.honourbattle.nowqzjdkillnum > 9 && gd.honourbattle.nowqzjdkillnum % 2 != 0) {
-                rewardNum = gd.honourbattle.nowqzjdkillnum - 1;
-            } else {
-                rewardNum = gd.honourbattle.nowqzjdkillnum;
-            }
-            net.CanyonHegemonyModel.ins().send16(rewardNum);
-            console.log("time-Shenmo get reward:" + rewardNum + "----" + new Date().toLocaleString());
-        } catch (error) {
-            console.error('time-shenmo-error:', new Date().toLocaleString() + "--" + error.message);
-        }
-
-        const currentX = emIns.firstPlayer.fighterObject.gridX;
-        const currentY = emIns.firstPlayer.fighterObject.gridY;
-        if (Math.abs(currentX - x) > 10 || Math.abs(currentY - y) > 10) {
-            gd.map.gotoStagePoint(x, y, gd.map.curMapId, false);//center xy
-        }
+function f_CheckPosition_Go(x, y, h = 5) {
+    const currentX = emIns.firstPlayer.fighterObject.gridX;
+    const currentY = emIns.firstPlayer.fighterObject.gridY;
+    if (Math.abs(currentX - x) > h || Math.abs(currentY - y) > h) {
+        gd.map.gotoStagePoint(x, y, gd.map.curMapId, false);//center xy
     }
 }
 
@@ -419,7 +385,9 @@ function beginTimer_f_Hot() {
                 await new Promise(resolve => setTimeout(resolve, 200));
                 net.PlayModel.ins().send3(5618);//5618 5618  
                 await new Promise(resolve => setTimeout(resolve, 400));
-                // gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
+                gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)                
+            }
+            else {
                 para_boss_hot.forEach((item) => {
                     if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
                         var para_xy = gd.emIns.firstPlayer.fighterObject;
