@@ -1,14 +1,119 @@
-//var RecoveryRewardDialog = function(e) {
-//var RecoveryRewardDialog2 = function(e) {
-//t[671] = RecyclePop
-//return void net.RoleModel.ins().send23(2006, !1, null, -1, -1);
-// if (gd.bag.recycleLids) {
-//     var e = [];
-//     for (var t in gd.bag.recycleLids)
-//         gd.bag.bagDic[t] && e.push(gd.bag.recycleLids[t]);
-//     e.length > 0 && net.BagModel.ins().send7(e, 1),
-//         gd.bag.recycleLids = {}
+
+//t.onAgreeClickHandler(null);             
+//gd.arpgInst     //ArpgInstanceData
+//AlertReliveDialog    992
+
+// gd.arpgInst.reliveHandle(t);                 //debug      typeof t
+// t.prototype.reliveHandle = function(e) {     //debug
+//t.prototype.onAgreeClickHandler = function(e) {//debug
+//net.MapModel.ins().send25(2)    //1 canel  2 agree
+
+
+// var a = new UIData({
+//     id: 75,
+//     param: [t],
+//     times: i
+// });
+// Logic.showReliveDialog(a)
+
+// var n = {
+//     id: 182,
+//     param: [t],
+//     times: i,
+//     auto: !0
+// };
+// Logic.showReliveDialog(new UIData(n))
+
+// e.showReliveDialog = function (e) {
+//     uim.show(992, e),
+//         uim.hide(226)
 // }
+
+
+
+
+
+//----------------------------
+// canvas.onclick = function(e) {
+//     console.log('🟢 this 指向:', this);           // 指向 canvas 元素本身
+//     console.log('🟢 e.target:', e.target);       // 实际触发事件的元素
+//     console.log('🟢 e.currentTarget:', e.currentTarget); // 绑定事件的元素
+
+//     // 如果想知道是谁调用了这个函数（函数调用者）
+//     console.log('🟢 调用栈:', new Error().stack);
+
+//     // 你的业务逻辑...
+//     showPopup();
+// };
+
+
+(function () {
+    const OriginalMapPop = window.MapPop;
+
+    if (!OriginalMapPop) {
+        console.error('❌ 找不到 MapPop 类');
+        return;
+    }
+
+    window.__mapPopInstances = [];
+    window.__lastMapPop = null;
+    let counter = 0;
+
+    // 1. 劫持构造函数（同上）
+    window.MapPop = function (...args) {
+        const instance = new OriginalMapPop(...args);
+
+        counter++;
+        instance.__mapPopId = counter;
+        window.__mapPopInstances.push(instance);
+        window.__lastMapPop = instance;
+
+        console.log(`🎯 创建 MapPop #${counter}:`, instance);
+
+        // 劫持实例方法
+        hijackInstanceMethods(instance);
+
+        return instance;
+    };
+    MapPop.prototype = OriginalMapPop.prototype;
+    Object.assign(MapPop, OriginalMapPop);
+
+    // 2. 劫持实例方法
+    function hijackInstanceMethods(instance) {
+        // 常见的弹窗方法名
+        const methods = ['show', 'open', 'close', 'hide', 'destroy',
+            'setContent', 'setTitle', 'render'];
+
+        methods.forEach(methodName => {
+            if (typeof instance[methodName] === 'function') {
+                const original = instance[methodName];
+                const id = instance.__mapPopId;
+
+                instance[methodName] = function (...args) {
+                    console.log(`[方法调用] MapPop #${id}.${methodName}()`, args);
+
+                    // 记录调用历史
+                    if (!this.__callHistory) this.__callHistory = [];
+                    this.__callHistory.push({
+                        method: methodName,
+                        args: args,
+                        time: Date.now()
+                    });
+
+                    // 如果是打开方法，记录当前实例
+                    if (['show', 'open'].includes(methodName)) {
+                        window.__lastMapPop = this;
+                    }
+
+                    return original.apply(this, args);
+                };
+            }
+        });
+    }
+
+    console.log('✅ MapPop 完整劫持成功！');
+})();
+
 
 // case 67006
 // case 67008
