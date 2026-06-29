@@ -1,10 +1,22 @@
 
+600082
+600083
+600084
+
+
+600110
+600111
+600112
+600113
+
+
+
 //t.onAgreeClickHandler(null);             
 //gd.arpgInst     //ArpgInstanceData
 //AlertReliveDialog    992
 
-// gd.arpgInst.reliveHandle(t);                 //debug      typeof t
-// t.prototype.reliveHandle = function(e) {     //debug
+//gd.arpgInst.reliveHandle(t);                 //debug      typeof t
+//t.prototype.reliveHandle = function(e) {     //debug
 //t.prototype.onAgreeClickHandler = function(e) {//debug
 //net.MapModel.ins().send25(2)    //1 canel  2 agree
 
@@ -31,30 +43,143 @@
 
 
 
+// 等待 Logic 挂载到全局（如果加载较晚，用 MutationObserver 或定时器）
+function hijack() {
+    if (typeof window.Logic !== 'undefined' && window.Logic.showReliveDialog) {
+        // 保存原函数引用
+        const originalShow = window.Logic.showReliveDialog;
 
+        // 重写函数
+        window.Logic.showReliveDialog = function (param) {
+            console.log('[劫持] 拦截到 showReliveDialog 调用，参数:', param);
 
-//----------------------------
-// canvas.onclick = function(e) {
-//     console.log('🟢 this 指向:', this);           // 指向 canvas 元素本身
-//     console.log('🟢 e.target:', e.target);       // 实际触发事件的元素
-//     console.log('🟢 e.currentTarget:', e.currentTarget); // 绑定事件的元素
+            // 在这里你可以修改参数、阻止执行或执行自定义逻辑
+            // 例如：参数大于100则不执行原函数
+            if (param > 100) {
+                console.log('[劫持] 参数大于100，阻止执行');
+                return;
+            }
 
-//     // 如果想知道是谁调用了这个函数（函数调用者）
-//     console.log('🟢 调用栈:', new Error().stack);
+            // 调用原函数（维持原有功能）
+            return originalShow.call(this, param);
+        };
 
-//     // 你的业务逻辑...
-//     showPopup();
-// };
+        console.log('[劫持] 成功劫持 Logic.showReliveDialog');
+        return true;
+    }
+    return false;
+}
+
+// 尝试劫持（如果页面加载时 Logic 已存在）
+if (!hijack()) {
+    // 若不存在，使用定时器等待（最多等待5秒）
+    let count = 0;
+    const timer = setInterval(() => {
+        if (hijack() || count++ > 50) {
+            clearInterval(timer);
+        }
+    }, 1000);
+}
 
 
 (function () {
-    const OriginalMapPop = window.MapPop;
+    'use strict';
 
+    console.log('🚀 劫持 showReliveDialog');
+
+    function hijack() {
+        if (typeof Logic === 'undefined') {
+            console.log('⏳ Logic 未加载');
+            return false;
+        }
+        if (typeof Logic.showReliveDialog !== 'function') {
+            console.log('⏳ showReliveDialog 未定义');
+            return false;
+        }
+        const original = Logic.showReliveDialog;
+        Logic.showReliveDialog = function (e) {
+            console.log('🔥 showReliveDialog 参数:', e);
+            // 详细输出
+            if (e && typeof e === 'object') {
+                console.table(e);
+            }
+            // 保存到全局
+            window.__lastParams = e;
+            return original.call(this, e);
+        };
+        console.log('✅ showReliveDialog 劫持成功');
+        return true;
+    }
+
+    // 尝试劫持，如果失败则轮询
+    if (!hijack()) {
+        let attempts = 0;
+        const timer = setInterval(() => {
+            attempts++;
+            if (hijack()) {
+                clearInterval(timer);
+            } else if (attempts >= 30) {
+                clearInterval(timer);
+                console.error('❌ 劫持失败');
+            }
+        }, 2000);
+    }
+
+})();
+
+// 在 Console 中执行
+(function () {
+    // 检查 Logic 是否存在
+    if (typeof Logic === 'undefined') {
+        console.error('❌ Logic 未定义');
+        return;
+    }
+
+    // 检查 showReliveDialog 是否存在
+    if (typeof Logic.showReliveDialog !== 'function') {
+        console.error('❌ Logic.showReliveDialog 不存在');
+        return;
+    }
+
+    console.log('✅ 找到 Logic.showReliveDialog');
+
+    // 保存原始方法
+    const originalShowReliveDialog = Logic.showReliveDialog;
+
+    // 劫持
+    Logic.showReliveDialog = function (e) {
+        console.log('🔥 [劫持] showReliveDialog 被调用');
+        console.log('📌 参数 e:', e);
+        console.log('📌 参数类型:', typeof e);
+        console.log('📌 参数详情:', JSON.stringify(e, null, 2));
+        console.log('📌 调用栈:', new Error().stack);
+
+        // 如果是对象，显示所有属性
+        if (e && typeof e === 'object') {
+            console.log('📌 参数属性:');
+            Object.keys(e).forEach(key => {
+                console.log(`    ${key}:`, e[key]);
+            });
+        }
+
+        // 保存到全局方便调试
+        window.__lastShowReliveDialogParams = e;
+        window.__lastShowReliveDialogTime = new Date();
+
+        // 调用原始方法
+        return originalShowReliveDialog.call(this, e);
+    };
+
+    console.log('✅ 劫持成功！');
+    console.log('📌 使用 window.__lastShowReliveDialogParams 查看最后参数');
+})();
+
+(function () {
+    const OriginalMapPop = window.MapPop;
     if (!OriginalMapPop) {
         console.error('❌ 找不到 MapPop 类');
         return;
     }
-
     window.__mapPopInstances = [];
     window.__lastMapPop = null;
     let counter = 0;
