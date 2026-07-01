@@ -1414,10 +1414,10 @@
                 code += `if (nowHourPY >= ${p_time[0]} && nowHourPY < ${p_time[1]} && gd.map.curMapId != ${p_vaule[0]}) {`
                 if (p_deliverIdNpc != '') {
                     code += `Logic.deliverToFindNpc(${p_deliverIdNpc});`;
-                    code += `(async function() {await new Promise(resolve => setTimeout(resolve, 2000));})();`;
-                    // code += `await new Promise(resolve => setTimeout(resolve, 2000));`
+                    code += `(async function() {await f_Sleep(3000);Logic.deliverToFindNpc(${p_vaule[1]});})();}`;
+                } else {
+                    code += `Logic.deliverToFindNpc(${p_vaule[1]});}`;
                 }
-                code += `Logic.deliverToFindNpc(${p_vaule[1]});}`;
             }
         });
         return code;
