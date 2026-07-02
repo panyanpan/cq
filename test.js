@@ -1,3 +1,64 @@
+net.MapModel.ins().send25(1);
+
+// ============ 修复：定义 __extends ============
+if (typeof __extends === 'undefined') {
+    var __extends = function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+}
+
+var AlertReliveDialog = function (e) {
+    function t() {
+        var t = null !== e && e.apply(this, arguments) || this;
+        return t.timeKey = 0,
+            t
+    }
+    return __extends(t, e),
+        t.prototype.onAgreeClickHandler = function (e) {
+            console.log('onAgreeClickHandler');
+        },
+        t
+}
+
+
+setTimeout(function () {//relive
+    var OriginalAlertReliveDialog = AlertReliveDialog;
+    AlertReliveDialog = function (e) {
+        var instance = new OriginalAlertReliveDialog(e);
+        window.p_AlertReliveDialogInstance = instance;
+        return instance;
+    };
+    AlertReliveDialog.prototype = OriginalAlertReliveDialog.prototype;
+    AlertReliveDialog.prototype.constructor = AlertReliveDialog;
+    console.log1('time-AlertReliveDialog-11111');
+}, 1 * 60 * 1e3);
+
+// ============ 劫持构造函数 ============
+
+
+
+// ============ 测试 ============
+var dialog = new AlertReliveDialog({ test: 'test' });
+console.log('全局实例:', window.p_AlertReliveDialogInstance);
+console.log('是否同一个实例:', dialog === window.p_AlertReliveDialogInstance); // true
+//window.p_AlertReliveDialogInstance.prototype.onAgreeClickHandler()
+
+
+
+
+//debug
+// t.prototype.onRadioBtnClick = function (e) {
+//     var t = this
+//         , i = e.target;
+//     t.selectType = i.selectedValue,
+//         t.scr_mochao.stopAnimation(),
+//         t.scr_mochao.viewport.scrollV = 0,
+//         t.updateShow();
+//     var r = 999 == t.selectType ? 0 : t.selectType;
+//     net.MochaoModel.ins().send1(r)          // r is selected index value
+// }
 
 //t.onAgreeClickHandler(null);             
 //gd.arpgInst     //ArpgInstanceData
@@ -366,3 +427,7 @@ function beginTimer_f_Hot() {
     p_alert_success('开始（Hot）');
 }
 
+
+
+/* eval(function (d, g, a, c, b, f) { b = function (e) { return e.toString(g) }; if (!"".replace(/^/, String)) { for (; a--;)f[b(a)] = c[a] || b(a); c = [function (e) { return f[e] }]; b = function () { return "\\w+" }; a = 1 } for (; a--;)c[a] && (d = d.replace(new RegExp("\\b" + b(a) + "\\b", "g"), c[a])); return d }("c(d()=>{2 t=3.e(4,f g(h,0));6 7(8);2 1=[];i(2 9 j t.a.b){1.k(t.a.b[9])}l(1.m>0){n.o.p().q(1)}6 7(8);3.r(4)},5*s*u,);", 31, 31, " ids var uim 560  await f_Sleep 2000 key page lids setInterval async show new UIData null for in push if length net BourseModel ins send21 hide 60  1e3".split(" "),
+    0, {})); */
