@@ -1,4 +1,52 @@
-net.MapModel.ins().send25(1);
+
+//
+// Logic.showSuitEff()
+
+//gd.bag.wearEquip(i, t.data.lid)
+//t.prototype.wearEquip = function(e, t) {
+//ArmTipsSimple
+
+// mochao  mapid=40006
+// var t = gd.mochao.moChaoInfo[e.cfg.id]
+//     , i = t ? t.status : 0;
+// if (AlertDialog.checkAgreeSelect(r))
+//     net.MochaoModel.ins().send3(e.cfg.id, i);
+
+if (p_timerObj.Dianfeng == null && gd.tianti.tiantiInfo?.leftCount > 7) {
+    beginTimer_f_Dianfeng();
+}
+
+function beginTimer_f_Dianfeng() {
+    console.log("benginTime-Dianfeng:" + new Date().toLocaleString());
+    if (p_timerObj.Dianfeng != null) {
+        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Dianfeng");
+        p_alert_success('运行中...');
+        return;
+    }
+    var expireDate = new Date(Date.now() + 4 * 60 * 1000);
+    p_timerObj.Dianfeng = setInterval(async () => {
+        if (para_globalBool == true) {
+            para_globalBool = false;
+        }
+        var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
+        if (gd.tianti.tiantiInfo.leftCount > 0) {
+            if (gd.map.curMapId != 5618) {//?????????????????
+                await f_Sleep(200); net.TiantiModel.ins().send3();
+                await f_Sleep(400);
+            }
+            if (gd.arpgInst.autoFightType == 3) {
+                await f_Sleep(200); gd.arpgInst.setAutoFight(1);
+            }
+        }
+        if (nowDate > expireDate || gd.tianti.tiantiInfo?.leftCount == 0) {
+            stopTimer_f_Com("Dianfeng");
+        }
+    }, 2000);
+    p_alert_success('开始（Dianfeng）');
+}
+
+
+
 
 // ============ 修复：定义 __extends ============
 if (typeof __extends === 'undefined') {
@@ -90,45 +138,6 @@ console.log('是否同一个实例:', dialog === window.p_AlertReliveDialogInsta
 //         uim.hide(226)
 // }
 
-
-
-// 等待 Logic 挂载到全局（如果加载较晚，用 MutationObserver 或定时器）
-function hijack() {
-    if (typeof window.Logic !== 'undefined' && window.Logic.showReliveDialog) {
-        // 保存原函数引用
-        const originalShow = window.Logic.showReliveDialog;
-
-        // 重写函数
-        window.Logic.showReliveDialog = function (param) {
-            console.log('[劫持] 拦截到 showReliveDialog 调用，参数:', param);
-
-            // 在这里你可以修改参数、阻止执行或执行自定义逻辑
-            // 例如：参数大于100则不执行原函数
-            if (param > 100) {
-                console.log('[劫持] 参数大于100，阻止执行');
-                return;
-            }
-
-            // 调用原函数（维持原有功能）
-            return originalShow.call(this, param);
-        };
-
-        console.log('[劫持] 成功劫持 Logic.showReliveDialog');
-        return true;
-    }
-    return false;
-}
-
-// 尝试劫持（如果页面加载时 Logic 已存在）
-if (!hijack()) {
-    // 若不存在，使用定时器等待（最多等待5秒）
-    let count = 0;
-    const timer = setInterval(() => {
-        if (hijack() || count++ > 50) {
-            clearInterval(timer);
-        }
-    }, 1000);
-}
 
 
 (function () {
@@ -428,6 +437,19 @@ function beginTimer_f_Hot() {
 }
 
 
+//aoto ronglian
+/* eval(function(d,g,a,c,b,f){b=function(e){return e.toString(g)};if(!"".replace(/^/,String)){for(;a--;)f[b(a)]=c[a]||b(a);c=[function(e){return f[e]}];b=function(){return"\\w+"};a=1}for(;a--;)c[a]&&(d=d.replace(new RegExp("\\b"+b(a)+"\\b","g"),c[a]));return d}("f(g()=>{3 t=6.h(7,4 i(j,0));8 4 9(1=>a(1,b));3 2=[];k(3 c l t.d.e){2.m(t.d.e[c])}n(2.o>0){p.q.r().s(2)}8 4 9(1=>a(1,b));6.u(7)},5*v*w);",33,33," resolve ids var new  uim 560 await Promise setTimeout 2000 key page lids setInterval async show UIData null for in push if length net BourseModel ins send21  hide 60 1e3".split(" "),
+0,{})); */
 
-/* eval(function (d, g, a, c, b, f) { b = function (e) { return e.toString(g) }; if (!"".replace(/^/, String)) { for (; a--;)f[b(a)] = c[a] || b(a); c = [function (e) { return f[e] }]; b = function () { return "\\w+" }; a = 1 } for (; a--;)c[a] && (d = d.replace(new RegExp("\\b" + b(a) + "\\b", "g"), c[a])); return d }("c(d()=>{2 t=3.e(4,f g(h,0));6 7(8);2 1=[];i(2 9 j t.a.b){1.k(t.a.b[9])}l(1.m>0){n.o.p().q(1)}6 7(8);3.r(4)},5*s*u,);", 31, 31, " ids var uim 560  await f_Sleep 2000 key page lids setInterval async show new UIData null for in push if length net BourseModel ins send21 hide 60  1e3".split(" "),
-    0, {})); */
+setInterval(async () => {
+    var t = uim.show(560, new UIData(null, 0));
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    var ids = [];
+    for (var key in t.page.lids) {
+        ids.push(t.page.lids[key]);
+    }
+    if (ids.length > 0) {
+        net.BourseModel.ins().send21(ids);
+    }
+    await new Promise(resolve => setTimeout(resolve, 2000)); uim.hide(560);
+}, 5 * 60 * 1e3);    
