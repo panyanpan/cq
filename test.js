@@ -1,7 +1,53 @@
 
-//
-// Logic.showSuitEff()
+//e.updateMyInfoShow() : e.updateMoChaoShow()
+//gd.mochao.myMoChaoInfo.lootCount
+//gd.mochao.myMoChaoInfo.occupyCount
+//gd.mochao.getMyMoChaoData()
+// gd.mochao.moChaoInfo.occupyUnionName=="豪门"
+gd.mochao.moChaoInfo[966]
 
+
+para_mochaoCount++;
+if (para_mochaoCount % 5 == 0) {
+    // var t = uim.show(503, new UIData(null, 3)); await f_Sleep(2000);
+    var t = uim.show(503); await f_Sleep(2000);
+    t.onRadioSelected(3);
+    uim.hide(503); await f_Sleep(2000);
+    findMochao_Occupy();
+}
+function findMochao_Occupy() {
+    if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date() > new Date().setHours(10, 0, 0, 0))) {
+        var para_mc = gd.mochao.getMyMoChaoData();
+        if (para_mc == null || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 8 * 60 * 60 * 1e3)) {
+            var para_Shentai = findMochao(711, 751) || findMochao(811, 999);
+            if (para_Shentai) {
+                net.MochaoModel.ins().send3(para_Shentai, 0);
+            }
+            else {
+                para_Shentai = f_getRandomNumber();
+                if (gd.mao.currentMoChaoId != "") {
+                    para_Shentai = f_getRandomNumber();
+                    //gd.mochao.moChaoInfo.occupyUnionName=="豪门"
+                    para_Shentai = f_getRandomNumber();
+                    //net.MochaoModel.ins().send3(para_Shentai, 1);
+                }
+            }
+        }
+    }
+}
+function findMochao(start, end) {
+    if (gd.mochao.moChaoInfo != null) {
+        for (let i = start; i <= end; i++) {
+            if (gd.mochao.moChaoInfo[i]?.status == 0) { return i; }
+        }
+    }
+    return null;
+}
+function f_getRandomNumber(min = 960, max = 985) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Logic.showSuitEff()
 //gd.bag.wearEquip(i, t.data.lid)
 //t.prototype.wearEquip = function(e, t) {
 //ArmTipsSimple
@@ -11,41 +57,6 @@
 //     , i = t ? t.status : 0;
 // if (AlertDialog.checkAgreeSelect(r))
 //     net.MochaoModel.ins().send3(e.cfg.id, i);
-
-if (p_timerObj.Dianfeng == null && gd.tianti.tiantiInfo?.leftCount > 7) {
-    beginTimer_f_Dianfeng();
-}
-
-function beginTimer_f_Dianfeng() {
-    console.log("benginTime-Dianfeng:" + new Date().toLocaleString());
-    if (p_timerObj.Dianfeng != null) {
-        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Dianfeng");
-        p_alert_success('运行中...');
-        return;
-    }
-    var expireDate = new Date(Date.now() + 4 * 60 * 1000);
-    p_timerObj.Dianfeng = setInterval(async () => {
-        if (para_globalBool == true) {
-            para_globalBool = false;
-        }
-        var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
-        if (gd.tianti.tiantiInfo.leftCount > 0) {
-            if (gd.map.curMapId != 5618) {//?????????????????
-                await f_Sleep(200); net.TiantiModel.ins().send3();
-                await f_Sleep(400);
-            }
-            if (gd.arpgInst.autoFightType == 3) {
-                await f_Sleep(200); gd.arpgInst.setAutoFight(1);
-            }
-        }
-        if (nowDate > expireDate || gd.tianti.tiantiInfo?.leftCount == 0) {
-            stopTimer_f_Com("Dianfeng");
-        }
-    }, 2000);
-    p_alert_success('开始（Dianfeng）');
-}
-
-
 
 
 // ============ 修复：定义 __extends ============

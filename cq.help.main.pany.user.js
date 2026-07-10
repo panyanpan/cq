@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         cq.help.main.pany
 // @namespace    http://tampermonkey.net/
-// @version      1.03
+// @version      1.04
 // @description  try to take over the world!
 // @author       pany
 // @match        *://rk.hlxy.db9x.com/*
@@ -122,7 +122,7 @@
                 if (config != null && config.length > 0) {
                     await eval(p_TimeGotoMap(config).replace(/:/g, ''));
                 }
-                if (new Date().getDay() != 0 || (new Date().getDay() == 0 && nowHourPY < 1800)) {
+                if (new Date().getDay() != 0 || (new Date().getDay() == 0 && nowHourPY < 1750)) {
                     if (p_timerObj.Dianfeng == null && gd.tianti.tiantiInfo?.leftCount > 6) {
                         beginTimer_f_Dianfeng();
                     }
@@ -1009,7 +1009,6 @@
     f_CreateButton(30, 5, "关闭", () => { stopTimer_f_Com("Yiji"); });
     f_CreateButton(55, 5, "关闭", stopTimer_f_Select);
     // f_CreateButton(80, 5, "熔炼", beginTimer_f_Ronglian);
-    // f_CreateButton(105, 5, "relive", f_globalRelive);
 
     f_CreateButton(5, 40, "开始", beginTimer);
     f_CreateButton(30, 40, "遗迹", beginTimer_f_Yiji);
@@ -1230,137 +1229,7 @@
             }
         });
         return code;
-    }
-
-    //模拟Canvas坐标点击
-    window.clickCanvasAt = function (x, y) {
-        const canvas = document.querySelector('canvas');
-        if (!canvas) {
-            console.log('等待Canvas加载...');
-            return;
-        }
-        const rect = canvas.getBoundingClientRect();
-        // x = f_ConvertXY(x, y, canvas.width, canvas.height).x;
-        // y = f_ConvertXY(x, y, canvas.width, canvas.height).y;
-        // if (x == 1130) { x = 1569; y = 478; } //windows-ka
-        // if (x == 1206) { x = 1649; y = 478; } //windows-ka
-        // if (x == 1130) { x = 800; y = 300; } //1024*768  tencent001-windows 
-        // if (x == 1206) { x = 845; y = 300; } //1024*768  tencent001-windows
-        if (x == 1130) { x = 815; y = 305; } //1024*768  aliyun001-linux
-        if (x == 1206) { x = 860; y = 305; } //1024*768  aliyun001-linux
-        const clientX = rect.left + x;
-        const clientY = rect.top + y;
-        canvas.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX, clientY }));
-        canvas.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX, clientY }));
-        canvas.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX, clientY }));
-        //console.log(`模拟点击 Canvas 坐标 (${x}, ${y})`);
-    };
-
-    //坐标转换
-    function f_ConvertXY(x, y, tarW, tarH) {
-        const newX = Math.round(x * (tarW / 2160));
-        const newY = Math.round(y * (tarH / 1149));
-        return { x: newX, y: newY };
-    }
-    // clickCanvasAt(f_ConvertXY(1130, 400, 800, 600).x, f_ConvertXY(1130, 400, 800, 600).y);//main sifang  qunxiong
-    // clickCanvasAt(f_ConvertXY(1206, 400, 800, 600).x, f_ConvertXY(1206, 400, 800, 600).y);//blood  yiji  shenmo
-
-    //aoto relive-------------------------------------------------------------------------------------------------------------testtesttesttest
-    function f_globalRelive() {
-        var para_Relive;
-        if (!para_Relive) {
-            para_Relive = {//var myEntity = emIns.getEntity("1610424320_2128603008");
-                lid: emIns.firstPlayer.fighterObject.id._string,
-                hp: { toNumber: () => emIns.firstPlayer.fighterObject.maxHp },
-                inner: emIns.firstPlayer.fighterObject.maxInner,
-                x: emIns.firstPlayer.fighterObject.bornX,   //78
-                y: emIns.firstPlayer.fighterObject.bornY    //16
-            };
-        }
-        var e = para_Relive;
-        // GameSceneManager.Instance.curInstance.relive(para_Relive);
-        // GameObserverManager.Instance.arpgControl.curInstance.relive(para_Relive);
-        var t = emIns.getEntity(e.lid.toString());
-        if (t && t.fighterObject) {
-            t.fighterObject.isDead = false;
-            t.fighterObject.delayhp = t.fighterObject.truehp = e.hp.toNumber();
-            t.fighterObject.maxInner = t.fighterObject.delayInner = t.fighterObject.trueInner = e.inner;
-            t._entityAI.relive(t);
-            t.x = e.x * GameDefine.MAP_GRID_WIDTH + 0.5 * GameDefine.MAP_GRID_WIDTH;
-            t.y = e.y * GameDefine.MAP_GRID_HEIGHT + 0.5 * GameDefine.MAP_GRID_HEIGHT;
-            t.setPosition(e.x, e.y);
-            if (gd.map.config.cls === 58 || gd.map.config.cls === 88) {
-                var i = gd.honourbattle.myCamp;
-                t.fighterObject.league !== i ? t.setNameColor(Html.New165) : t.setNameColor(14277081);
-            }
-            if (gd.map.config.cls === 36) {
-                t.fighterObject.league !== gd.arpgInst.biqiMyGroup ? t.setNameColor(Html.New165) : t.setNameColor(14277081);
-            }
-            if (t.uid === emIns.firstPlayer.uid) {
-                if (!gd.player.slBuff.shenlong) {
-                    t.fighterObject.droganBuff = false;
-                }
-                if (gd.map.config && gd.map.config.duplicate !== 1) {
-                    var r = cm.global[20001].value;
-                    if (parseInt(r) >= gd.player.level) {
-                        //var a = new CallBack3(context.reliveCallBack, context);
-                        //AlertDialog.showAlertById(98, a);
-                    }
-                }
-                gd.skill.clearNextSkill();
-                if (gd.map.config.cls === 58 || gd.map.config.cls === 88) {
-                    var n = gd.honourbattle.wzzbrolearr;
-                    if (gd.map.config.cls === 88) {
-                        n = gd.tvt.duplicateArr;
-                    }
-                    for (var o in n) {
-                        if (n[o].rid.toString() === gd.player.uid.toString() && n[o].reliveCount === 0) {
-                            gd.honourbattle.sendNotif(469);
-                            break;
-                        }
-                    }
-                }
-                gd.arpgInst.shiftKey = false;
-                Logic.hideReliveDialog();
-                gd.arpgInst.sendNotif(315);
-            }
-        }
-        MtwGame.Instance.doReConnect();
-    }
-
-    /*监听点击事件
-    function listenCanvasClick(canvas) {// 监听点击事件（真正可用的方法）
-        // 全局捕获模式，优先级最高，不会被页面拦截
-        document.addEventListener('click', function(e) {
-            // 判断点击的是不是 canvas
-            if (e.target === canvas || e.composedPath().includes(canvas)) {
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                console.log('time-Canvas 点击位置：'+'X:'+'Y:', x.toFixed(0)+','+y.toFixed(0));
-            }
-        }, true); //关键：true = 最高优先级捕获
-    }
-
-    function watchCanvas() {// 监听 Canvas 出现
-        // 监听页面所有新增元素
-        const observer = new MutationObserver(mutations => {
-            mutations.forEach(m => {
-                m.addedNodes.forEach(node => {
-                    if (node.tagName === 'CANVAS') {
-                        console.log("找到 Canvas，开始监听点击");
-                        listenCanvasClick(node);
-                    }
-                });
-            });
-        });
-        observer.observe(document.documentElement, {
-            childList: true,
-            subtree: true
-        });
-    }
-    watchCanvas();   // 启动
-    */
+    }    
 
 })();
 
