@@ -1,14 +1,26 @@
 
+// var t = uim.show(601);
+// t.currentIndex;
+
+// gd.player.firstPlayer.fighterObject.uid
+// var p_player = gd.player[0]
+// p_player.level
+// p_player.unionId == "haomen"
+
+
+
+// checkMapValid    cm.mapPlay[e] ? !1 : !0
 //e.updateMyInfoShow() : e.updateMoChaoShow()
 //gd.mochao.myMoChaoInfo.lootCount
 //gd.mochao.myMoChaoInfo.occupyCount
 //gd.mochao.getMyMoChaoData()
-// gd.mochao.moChaoInfo.occupyUnionName=="豪门"
+// gd.mochao.moChaoInfo.occupyUnionName=="haomen"
 gd.mochao.moChaoInfo[966]
+// //gd.map.curMapId= 40006
 
 
 para_mochaoCount++;
-if (para_mochaoCount % 5 == 0) {
+if (para_mochaoCount % 30 == 0) {
     // var t = uim.show(503, new UIData(null, 3)); await f_Sleep(2000);
     var t = uim.show(503); await f_Sleep(2000);
     t.onRadioSelected(3);
@@ -17,6 +29,11 @@ if (para_mochaoCount % 5 == 0) {
 }
 function findMochao_Occupy() {
     if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date() > new Date().setHours(10, 0, 0, 0))) {
+        if (gd.mochao.getMyMoChaoData() == null || gd.mochao.moChaoInfo == null) {
+            var t = uim.show(503); await f_Sleep(2000);
+            t.onRadioSelected(3);
+            uim.hide(503); await f_Sleep(2000);
+        }
         var para_mc = gd.mochao.getMyMoChaoData();
         if (para_mc == null || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 8 * 60 * 60 * 1e3)) {
             var para_Shentai = findMochao(711, 751) || findMochao(811, 999);
@@ -27,7 +44,7 @@ function findMochao_Occupy() {
                 para_Shentai = f_getRandomNumber();
                 if (gd.mao.currentMoChaoId != "") {
                     para_Shentai = f_getRandomNumber();
-                    //gd.mochao.moChaoInfo.occupyUnionName=="豪门"
+                    //gd.mochao.moChaoInfo.occupyUnionName=="haomen"
                     para_Shentai = f_getRandomNumber();
                     //net.MochaoModel.ins().send3(para_Shentai, 1);
                 }
@@ -43,7 +60,7 @@ function findMochao(start, end) {
     }
     return null;
 }
-function f_getRandomNumber(min = 960, max = 985) {
+function f_getRandomNumber(min = 950, max = 985) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -51,12 +68,6 @@ function f_getRandomNumber(min = 960, max = 985) {
 //gd.bag.wearEquip(i, t.data.lid)
 //t.prototype.wearEquip = function(e, t) {
 //ArmTipsSimple
-
-// mochao  mapid=40006
-// var t = gd.mochao.moChaoInfo[e.cfg.id]
-//     , i = t ? t.status : 0;
-// if (AlertDialog.checkAgreeSelect(r))
-//     net.MochaoModel.ins().send3(e.cfg.id, i);
 
 
 // ============ 修复：定义 __extends ============
@@ -309,16 +320,6 @@ console.log('是否同一个实例:', dialog === window.p_AlertReliveDialogInsta
 })();
 
 
-//f_globalRelive(emIns.getEntity("1610424320_2128603008"));  //test???   fighterObject
-//gd.arpgInst = new ArpgInstanceData,
-//gd.arpgInst.relive(e);
-//console.log("e 的名称：", e.name);          // 类名
-//console.log("e 完整对象：", e);              // 构造函数
-//console.log("e 的原型：", e.prototype);      // 原型
-//console.log("e 继承自：", Object.getPrototypeOf(e)); // 父类
-//e.constructor.name   // 2. 看构造函数名
-
-
 // t.prototype.useItem = function(e) {
 // e.prototype.initMapData = function() {
 //     var e = cm.mapDatas[this.mapConfig.data];
@@ -326,63 +327,6 @@ console.log('是否同一个实例:', dialog === window.p_AlertReliveDialogInsta
 //     gd.map.readData(e)
 // }
 
-
-//GameSceneManager.Instance.curInstance.relive(para_Relive)
-function f_globalRelive(e) {
-    var t = emIns.getEntity(e.lid.toString());
-    if (t && t.fighterObject) {
-        t.fighterObject.isDead = false;
-        t.fighterObject.delayhp = t.fighterObject.truehp = e.hp.toNumber();
-        t.fighterObject.maxInner = t.fighterObject.delayInner = t.fighterObject.trueInner = e.inner;
-        t._entityAI.relive(t);
-        t.x = e.x * GameDefine.MAP_GRID_WIDTH + 0.5 * GameDefine.MAP_GRID_WIDTH;
-        t.y = e.y * GameDefine.MAP_GRID_HEIGHT + 0.5 * GameDefine.MAP_GRID_HEIGHT;
-        t.setPosition(e.x, e.y);
-        if (gd.map.config.cls === 58 || gd.map.config.cls === 88) {
-            var i = gd.honourbattle.myCamp;
-            t.fighterObject.league !== i ? t.setNameColor(Html.New165) : t.setNameColor(14277081);
-        }
-        if (gd.map.config.cls === 36) {
-            t.fighterObject.league !== gd.arpgInst.biqiMyGroup ? t.setNameColor(Html.New165) : t.setNameColor(14277081);
-        }
-        if (t.uid === emIns.firstPlayer.uid) {
-            if (!gd.player.slBuff.shenlong) {
-                t.fighterObject.droganBuff = false;
-            }
-            if (gd.map.config && gd.map.config.duplicate !== 1) {
-                var r = cm.global[20001].value;
-                if (parseInt(r) >= gd.player.level) {
-                    //var a = new CallBack3(context.reliveCallBack, context);
-                    //AlertDialog.showAlertById(98, a);
-                }
-            }
-            gd.skill.clearNextSkill();
-            if (gd.map.config.cls === 58 || gd.map.config.cls === 88) {
-                var n = gd.honourbattle.wzzbrolearr;
-                if (gd.map.config.cls === 88) {
-                    n = gd.tvt.duplicateArr;
-                }
-                for (var o in n) {
-                    if (n[o].rid.toString() === gd.player.uid.toString() && n[o].reliveCount === 0) {
-                        gd.honourbattle.sendNotif(469);
-                        break;
-                    }
-                }
-            }
-            gd.arpgInst.shiftKey = false;
-            Logic.hideReliveDialog();
-            gd.arpgInst.sendNotif(315);
-        }
-    }
-}
-
-var para_Relive = {//var myEntity = emIns.getEntity("1610424320_2128603008");//emIns.firstPlayer.fighterObject.id._string
-    lid: emIns.firstPlayer.fighterObject.id._string,
-    hp: { toNumber: () => emIns.firstPlayer.fighterObject.maxHp },
-    inner: emIns.firstPlayer.fighterObject.maxInner,
-    x: emIns.firstPlayer.fighterObject.bornX,   //78
-    y: emIns.firstPlayer.fighterObject.bornY    //16
-}
 
 var para_boss_hot = [
     { mid: 9900101, x: 17, y: 87 },
@@ -444,9 +388,18 @@ function beginTimer_f_Hot() {
             stopTimer_f_Hot();
         }
     }, 6000);
-    p_alert_success('开始（Hot）');
+    p_alert_success('begin（Hot）');
 }
 
+for (const item of para_boss_hot) {
+    if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
+        var para_xy = gd.emIns.firstPlayer.fighterObject;
+        if (Math.abs(item.x - para_xy.gridX) > 10 || Math.abs(item.y - para_xy.gridY) > 10) {
+            gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
+            break;
+        }
+    }
+}
 
 //aoto ronglian
 /* eval(function(d,g,a,c,b,f){b=function(e){return e.toString(g)};if(!"".replace(/^/,String)){for(;a--;)f[b(a)]=c[a]||b(a);c=[function(e){return f[e]}];b=function(){return"\\w+"};a=1}for(;a--;)c[a]&&(d=d.replace(new RegExp("\\b"+b(a)+"\\b","g"),c[a]));return d}("f(g()=>{3 t=6.h(7,4 i(j,0));8 4 9(1=>a(1,b));3 2=[];k(3 c l t.d.e){2.m(t.d.e[c])}n(2.o>0){p.q.r().s(2)}8 4 9(1=>a(1,b));6.u(7)},5*v*w);",33,33," resolve ids var new  uim 560 await Promise setTimeout 2000 key page lids setInterval async show UIData null for in push if length net BourseModel ins send21  hide 60 1e3".split(" "),

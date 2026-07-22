@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         cq.help.main.pany
 // @namespace    http://tampermonkey.net/
-// @version      1.04
+// @version      1.05
 // @description  try to take over the world!
 // @author       pany
 // @match        *://rk.hlxy.db9x.com/*
@@ -23,6 +23,7 @@
         }, 5000);
     }
 
+    let GLOBAL_ENABLE = true;  //全局开关
     // 全局日志开关（生产环境改为 false）
     const GLOBAL_LOG_ENABLE = false;
     const originalConsoleLog = console.log;
@@ -73,14 +74,19 @@
                 const nowHourPY = new Date(DateUtil.serverNow()).getHours() * 100 + new Date(DateUtil.serverNow()).getMinutes();
                 console.log("logServerTime:" + new Date(DateUtil.serverNow()).toLocaleString());
                 try {
-                    para_mochaoCount++;
-                    if (para_mochaoCount % 5 == 0) {
-                        uim.show(503, new UIData(null, 3));
-                        await f_Sleep(500); uim.hide(503);
-                        await f_Sleep(500); uim.show(820);
-                        await f_Sleep(500); uim.hide(820);
-                        findMochao_Occupy();
+                    if (gd.mochao.getMyMoChaoData() == null || gd.mochao.moChaoInfo == null) {
+                        var t = uim.show(503); await f_Sleep(2000);
+                        t.onRadioSelected(3);
+                        uim.hide(503); await f_Sleep(2000);
                     }
+                    findMochao_Occupy();
+                    // para_mochaoCount++;
+                    // if (para_mochaoCount % 30 == 0) {
+                    //     uim.show(503, new UIData(null, 3));
+                    //     await f_Sleep(500); uim.hide(503);
+                    //     await f_Sleep(500); uim.show(820);
+                    //     await f_Sleep(500); uim.hide(820);
+                    // }
                 }
                 catch (error) { console.error("time-findMochao_Occupy-error:" + error.message); }  //auto occupy MoChao
                 if (emIns.firstPlayer.fighterObject.delayhp == 0) {
@@ -95,7 +101,7 @@
                     await f_Sleep(15000); net.CureModel.ins().send2(0);    //click cure
                     await f_Sleep(1000);
                 }
-                if (nowHourPY >= 1145 && nowHourPY < 1150 && gd.map.curMapId != 6077 && para_yabiaoCount == 0) {
+                if (GLOBAL_ENABLE && nowHourPY >= 1145 && nowHourPY < 1150 && gd.map.curMapId != 6077 && para_yabiaoCount == 0) {
                     Logic.deliverToFindNpc(506083);
                     if (gd.yabiao.emsNumKf < 2) {
                         await f_Sleep(1000); gd.yabiao.requestStart(18, 2);//gd.yabiao.requestStart(17, 2);
@@ -103,7 +109,7 @@
                         console.log("gotoMapTime-yabiao:" + new Date().toLocaleString());
                     }
                 }
-                if (nowHourPY >= 1150 && nowHourPY < 1155 && para_yabiaoCount == 1) {
+                if (GLOBAL_ENABLE && nowHourPY >= 1150 && nowHourPY < 1155 && para_yabiaoCount == 1) {
                     Logic.deliverToFindNpc(506083);
                     if (gd.yabiao.emsNumKf < 2) {
                         await f_Sleep(1000); gd.yabiao.requestStart(18, 2);//gd.yabiao.requestStart(17, 2);
@@ -114,7 +120,7 @@
                 if ((nowHourPY > 1155 || nowHourPY < 1145) && para_yabiaoCount != 0) {
                     para_yabiaoCount = 0;
                 }
-                if (nowHourPY >= 1200 && nowHourPY < 1205 && p_timerObj.Wzzb == null) {
+                if (GLOBAL_ENABLE && nowHourPY >= 1200 && nowHourPY < 1205 && p_timerObj.Wzzb == null) {
                     beginTimer_f_Wzzb();
                 }
 
@@ -122,8 +128,9 @@
                 if (config != null && config.length > 0) {
                     await eval(p_TimeGotoMap(config).replace(/:/g, ''));
                 }
-                if (new Date().getDay() != 0 || (new Date().getDay() == 0 && nowHourPY < 1750)) {
-                    if (p_timerObj.Dianfeng == null && gd.tianti.tiantiInfo?.leftCount > 6) {
+                if (GLOBAL_ENABLE && ((new Date().getDay() != 0 && (nowHourPY < 1000 || nowHourPY > 1220)) 
+                    || (new Date().getDay() == 0 && nowHourPY < 1750))) {
+                    if (p_timerObj.Dianfeng == null && gd.tianti.tiantiInfo?.leftCount > 7) {
                         beginTimer_f_Dianfeng();
                     }
                 }
@@ -508,14 +515,18 @@
                 para_globalBool = false;
             }
             const nowHourPY = new Date(DateUtil.serverNow()).getHours() * 100 + new Date(DateUtil.serverNow()).getMinutes();
-            if (nowHourPY >= 2131 && nowHourPY < 2135 && gd.map.curMapId != 53001) {
+            if (nowHourPY >= 2131 && nowHourPY < 2135 && gd.map.curMapId != 53001
+                // && 0 == gd.honourbattle.qzjdmatchState && gd.honourbattle.qzjdpanelinfo?.count > 0
+            ) {
                 await f_Sleep(400); net.GamepvpModel.ins().send1(DaKuafuType.qdjd); //gotomap
                 await f_Sleep(10000);
                 if (gd.map.curMapId == 53001) {
                     gd.map.gotoStagePoint(63, 68, gd.map.curMapId, false);//center xy
                 }
             }
-            if (nowHourPY >= 2145 && nowHourPY < 2150 && gd.map.curMapId != 53001) {
+            if (nowHourPY >= 2145 && nowHourPY < 2150 && gd.map.curMapId != 53001
+                // && 0 == gd.honourbattle.qzjdmatchState && gd.honourbattle.qzjdpanelinfo?.count > 0
+            ) {
                 await f_Sleep(400); net.GamepvpModel.ins().send1(DaKuafuType.qdjd); //gotomap
                 await f_Sleep(10000);
                 if (gd.map.curMapId == 53001) {
@@ -663,7 +674,7 @@
                 if (para_globalBool == true) {
                     para_globalBool = false;
                 }
-                if (gd.map.curMapId != mapid) {
+                if (gd.map.curMapId != mapid) {//![31001,31002,31003,31004,31005].includes(gd.map.curMapId)
                     await f_Sleep(200); Logic.deliverToFindNpc(deliverId);
                 }
             }
@@ -671,7 +682,7 @@
                 stopTimer_f_Com("Xian");
             }
         }, 3000);
-        p_alert_success('开始辅助（xian）');
+        p_alert_success('开始（xian）');
     }
 
     function beginTimer_f_Ice3() {
@@ -691,7 +702,9 @@
                     && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {
                     Logic.deliverToFindNpc(600300);//biqi1  81
                     await f_Sleep(1000); gd.map.gotoStagePoint(137, 120, gd.map.curMapId, false);
-                    await f_Sleep(4000); net.CureModel.ins().send2(0);    //click cure
+                    // await f_Sleep(4000); net.CureModel.ins().send2(0);    //click cure
+                    await f_Sleep(1000); net.TianguanModel.ins().send3();    //mapid=70001
+                    await f_Sleep(1000); net.DuplicateModel.ins().send3();   //exit  
                     await f_Sleep(1000);
                     if (emIns.firstPlayer.fighterObject.delayhp > emIns.firstPlayer.fighterObject.maxHp * 0.9) {
                         Logic.deliverToFindNpc(600089);      //bingong3  200052
@@ -737,7 +750,10 @@
                     && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {
                     Logic.deliverToFindNpc(600300);//biqi1  81
                     await f_Sleep(1000); gd.map.gotoStagePoint(137, 120, gd.map.curMapId, false);
-                    await f_Sleep(4000); net.CureModel.ins().send2(0);    //click cure
+                    // await f_Sleep(4000); net.CureModel.ins().send2(0);    //click cure
+                    await f_Sleep(1000); net.TianguanModel.ins().send3();    //mapid=70001
+                    await f_Sleep(1000); net.DuplicateModel.ins().send3();   //exit  
+
                     await f_Sleep(1000); net.PlayModel.ins().send3(5618);      //hot  5618  
                     await f_Sleep(400); gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
                 }
@@ -746,16 +762,15 @@
                     await f_Sleep(400); gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
                 } else {
                     try {
-                        para_boss_hot.forEach((item) => {
+                        for (const item of para_boss_hot) {
                             if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
-                                var para_xy = gd.emIns.firstPlayer.fighterObject;
+                                var para_xy = emIns.firstPlayer.fighterObject;
                                 if (Math.abs(item.x - para_xy.x) > 10 || Math.abs(item.y - para_xy.y) > 10) {
                                     gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
-                                    return true;
+                                    break;
                                 }
                             }
-                            return false;
-                        });
+                        }
                     } catch (error) {
                         console.error(error);
                     }
@@ -841,6 +856,7 @@
                 }
             }
             if (nowDate > expireDate || gd.tianti.tiantiInfo?.leftCount == 0) {
+                await f_Sleep(10 * 1e3);
                 stopTimer_f_Com("Dianfeng");
             }
         }, 2000);
@@ -866,7 +882,7 @@
             if (emIns.firstPlayer.fighterObject.delayhp == 0) {
                 await f_Sleep(400); net.MapModel.ins().send25(1);//clickCanvasAt(1206, 400);
             }
-            if (gd.map.curMapId != id) {
+            if (gd.map.curMapId != id) {//![32001,32002,32003,32004,32005,32006,32007,32008,32009].includes(gd.map.curMapId)
                 uim.show(601);
                 await f_Sleep(2000);
                 if (gd.boss.dupCountData[id]?.count > 0) {
@@ -956,6 +972,7 @@
             case 7: stopTimer_f_Com("Ice3"); break;
             case 8: stopTimer_f_Com("Hot"); break;
             case 9: stopTimer_f_Com("Chechi"); break;
+            case 10: stopTimer_f_Com("Dianfeng"); break;
 
             case 21: stopTimer_f_Com("Xian"); break;
             case 22: stopTimer_f_Com("Xian"); break;
@@ -987,6 +1004,7 @@
             case 7: beginTimer_f_Ice3(); break;
             case 8: beginTimer_f_Hot(); break;
             case 9: beginTimer_f_Chechi(); break;
+            case 10: beginTimer_f_Dianfeng(); break;
 
             case 21: beginTimer_f_Xian(31001, 6101); break;
             case 22: beginTimer_f_Xian(31002, 6102); break;
@@ -1025,6 +1043,7 @@
         { value: 7, text: '冰宫3' },
         { value: 8, text: '炽热' },
         { value: 9, text: '车迟' },
+        { value: 10, text: '巅峰' },
         // { value: 11, text: '猴1' },
         // { value: 12, text: '猴2' },
         // { value: 13, text: '猴3' },
@@ -1158,13 +1177,13 @@
     //提示框success error
     const style = document.createElement('style');
     style.textContent = `
-        .custom-toast {
-            position: fixed;top: 20px;right: 20px;padding: 12px 20px;border-radius: 6px;color: #fff;font-size: 13px;z-index: 999999;opacity: 0;transform: translateY(-20px);transition: all 0.3s ease;max-width: 300px;word-break: break-all;
-        }
-        .custom-toast.show {opacity: 1; transform: translateY(0);}
-        .custom-toast.success {background-color: #00b42a;}
-        .custom-toast.error {background-color: #8605ff;}
-    `;
+            .custom-toast {
+                position: fixed;top: 20px;right: 20px;padding: 12px 20px;border-radius: 6px;color: #fff;font-size: 13px;z-index: 999999;opacity: 0;transform: translateY(-20px);transition: all 0.3s ease;max-width: 300px;word-break: break-all;
+            }
+            .custom-toast.show {opacity: 1; transform: translateY(0);}
+            .custom-toast.success {background-color: #00b42a;}
+            .custom-toast.error {background-color: #8605ff;}
+        `;
     document.head.appendChild(style);
     window.p_alert = function (type, msg) {
         const oldToast = document.querySelector('.custom-toast');// 移除旧的提示
@@ -1187,11 +1206,13 @@
     function beginTimer_f_Ronglian() {
         console.log("beginTimer_f_Ronglian:" + new Date().toLocaleString());
         if (p_timerObj.Ronglian != null) {
+            GLOBAL_ENABLE = true;
             clearInterval(p_timerObj.Ronglian);
             p_timerObj.Ronglian = null;
             p_alert_error('已关闭（Ronglian）');
         }
         else {
+            GLOBAL_ENABLE = false;
             p_timerObj.Ronglian = setInterval(async () => {
                 var t = uim.show(560, new UIData(null, 0));
                 await f_Sleep(2000);
@@ -1229,7 +1250,7 @@
             }
         });
         return code;
-    }    
+    }
 
 })();
 
