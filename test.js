@@ -8,6 +8,7 @@
 // p_player.unionId == "haomen"
 
 
+checkMapValid
 
 // checkMapValid    cm.mapPlay[e] ? !1 : !0
 //e.updateMyInfoShow() : e.updateMoChaoShow()
@@ -22,8 +23,11 @@ gd.mochao.moChaoInfo[966]
 para_mochaoCount++;
 if (para_mochaoCount % 30 == 0) {
     // var t = uim.show(503, new UIData(null, 3)); await f_Sleep(2000);
-    var t = uim.show(503); await f_Sleep(2000);
+    var t = uim.show(503); //await f_Sleep(2000);
     t.onRadioSelected(3);
+    t.page.radioGroup.selectedValue = 8;
+    t.page.selectType = parseInt(8);
+    t.page.updateShow();       //net.MochaoModel.ins().send1(r); //change
     uim.hide(503); await f_Sleep(2000);
     findMochao_Occupy();
 }
@@ -128,36 +132,6 @@ console.log('是否同一个实例:', dialog === window.p_AlertReliveDialogInsta
 //         t.updateShow();
 //     var r = 999 == t.selectType ? 0 : t.selectType;
 //     net.MochaoModel.ins().send1(r)          // r is selected index value
-// }
-
-//t.onAgreeClickHandler(null);             
-//gd.arpgInst     //ArpgInstanceData
-//AlertReliveDialog    992
-
-//gd.arpgInst.reliveHandle(t);                 //debug      typeof t
-//t.prototype.reliveHandle = function(e) {     //debug
-//t.prototype.onAgreeClickHandler = function(e) {//debug
-//net.MapModel.ins().send25(2)    //1 canel  2 agree
-
-
-// var a = new UIData({
-//     id: 75,
-//     param: [t],
-//     times: i
-// });
-// Logic.showReliveDialog(a)
-
-// var n = {
-//     id: 182,
-//     param: [t],
-//     times: i,
-//     auto: !0
-// };
-// Logic.showReliveDialog(new UIData(n))
-
-// e.showReliveDialog = function (e) {
-//     uim.show(992, e),
-//         uim.hide(226)
 // }
 
 
@@ -416,4 +390,5 @@ setInterval(async () => {
         net.BourseModel.ins().send21(ids);
     }
     await new Promise(resolve => setTimeout(resolve, 2000)); uim.hide(560);
-}, 5 * 60 * 1e3);    
+}, 5 * 60 * 1e3);
+
