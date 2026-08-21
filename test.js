@@ -1,7 +1,4 @@
 
-// var t = uim.show(601);
-// t.currentIndex;
-
 // gd.player.firstPlayer.fighterObject.uid
 // var p_player = gd.player[0]
 // p_player.level
