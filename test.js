@@ -1,3 +1,11 @@
+var bool_liupo = false;
+
+var arr_liupomap = [6126, 6127, 6128, 6133, 6134, 6135];
+var arr_liupo = [400104, 400105, 400106, 400111, 400112, 400113];
+if (arr_liupo.includes(Number(p_vaule[1]))) {
+    p_vaule[1] = arr_liupo[Math.floor(Math.random() * arr_liupo.length)];
+}
+
 //DragonShenXuanBoss    //liuer
 
 //uim.show(577);
