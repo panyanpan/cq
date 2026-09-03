@@ -1,19 +1,10 @@
-var bool_liupo = false;
+var t = uim.show(503);
+t.onRadioSelected(3);
+var para_mc = gd.mochao.moChaoInfo[t.page.myMoChaoCfg.id];  //debug
 
-var arr_liupomap = [6126, 6127, 6128, 6133, 6134, 6135];
-var arr_liupo = [400104, 400105, 400106, 400111, 400112, 400113];
-if (arr_liupo.includes(Number(p_vaule[1]))) {
-    p_vaule[1] = arr_liupo[Math.floor(Math.random() * arr_liupo.length)];
-}
+
 
 //DragonShenXuanBoss    //liuer
-
-//uim.show(577);
-//net.NewtianfuModel.ins().send5(1);   //reset
-//uim.show(578, new UIData(null,1,1,1));    //1-8
-//uim.show(578, new UIData(null,1,2,9));    //9-18
-//uim.show(578, new UIData(null,1,3,19));   //19-28
-//net.NewtianfuModel.ins().send1(t.cls, t.group);    //1-8   9-18   19-28    1-3
 
 
 // gd.player.firstPlayer.fighterObject.uid
@@ -28,28 +19,29 @@ if (arr_liupo.includes(Number(p_vaule[1]))) {
 //gd.mochao.getMyMoChaoData()
 // gd.mochao.moChaoInfo.occupyUnionName=="haomen"
 gd.mochao.moChaoInfo[966]
-// //gd.map.curMapId= 40006
-
+//gd.map.curMapId= 40006
 
 para_mochaoCount++;
 if (para_mochaoCount % 30 == 0) {
+    //gd.mochao.getMoChaoCfg(e.myMoChao.moChaoId);
+    //var t = gd.mochao.moChaoInfo[e.myMoChaoCfg.id];
     // var t = uim.show(503, new UIData(null, 3)); await f_Sleep(2000);
     var t = uim.show(503); //await f_Sleep(2000);
     t.onRadioSelected(3);
     t.page.radioGroup.selectedValue = 8;
     t.page.selectType = parseInt(8);
-    t.page.updateShow();       //net.MochaoModel.ins().send1(r); //change
+    t.page.updateShow();       //net.MochaoModel.ins().send1(8); //change  debug debugdebugdebugdebugdebug
     uim.hide(503); await f_Sleep(2000);
     findMochao_Occupy();
 }
 async function findMochao_Occupy() {
     if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date() > new Date().setHours(10, 0, 0, 0))) {
         if (gd.mochao.getMyMoChaoData() == null || gd.mochao.moChaoInfo == null) {
-            var t = uim.show(503); await f_Sleep(1500);
-            t.onRadioSelected(3); await f_Sleep(1500);
+            var t = uim.show(503); await f_Sleep(1000);
+            t.onRadioSelected(3); await f_Sleep(1000);
             t.page.radioGroup.selectedValue = 8;
-            t.page.selectType = parseInt(8);
-            t.page.updateShow(); await f_Sleep(4000);
+            t.page.selectType = parseInt(8); await f_Sleep(500);
+            t.page.updateShow(); await f_Sleep(400);
             uim.hide(503);
         }
         var para_mc = gd.mochao.getMyMoChaoData();
