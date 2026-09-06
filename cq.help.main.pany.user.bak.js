@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         cq.help.main.pany
+// @name         cq.help.main.pany.test
 // @namespace    http://tampermonkey.net/
 // @version      1.10
 // @description  try to take over the world!
