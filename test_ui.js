@@ -28,13 +28,12 @@
         });
     }
 
-    // 修改：不再fixed定位，内部相对布局，返回wrap节点，交给uiDiv
     function p_CreateMapSelector() {
         const wrap = document.createElement("div");
         wrap.style.cssText = `margin-bottom:12px;position:relative;`;
         const btn = document.createElement("div");
         btn.innerText = "请选择";
-        btn.style.cssText = `padding: 6px 12px;background: #ff4444;color: #fff;border-radius: 4px;cursor: pointer;font-size: 12px;user-select: none;display:inline-block; min-width: 150px;`;
+        btn.style.cssText = `padding: 6px 12px;background: #ff4444;color: #fff;border-radius: 4px;cursor: pointer;font-size: 12px;user-select: none;display:inline-block; min-width: 120px;`;
         const panel = document.createElement("div");
         panel.style.cssText = `position: absolute;top: 105%;left:0;background: #fff;border: 1px solid #ddd;border-radius: 4px;padding: 10px;display: none;min-width: 220px;box-shadow: 0 2px 10px rgba(0,0,0,0.1);`;
         const ul = document.createElement("ul");
@@ -155,6 +154,7 @@
             const selected1 = checkboxList.filter(cb => cb.checked).map(cb => cb.value);
             inputBox.innerText = selected.length ? selected.join(",") : "请选择";
             inputBox1.innerText = selected1.length ? selected1.join(",") : "";
+            saveYijiConfig();
         }
         return container;
     }
@@ -217,9 +217,8 @@
     uiDiv.id = "ui_div";
     uiDiv.style.cssText = `
         position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        top: 30px;
+        right: 30px;
         z-index: 99999;
         background:#ffffff;
         border:1px solid #ccc;
@@ -258,11 +257,11 @@
     uiDiv.appendChild(closeUiBtn);
 
     const toggleBtn = document.createElement("button");
-    toggleBtn.innerText = "开关";
+    toggleBtn.innerText = "开";
     toggleBtn.style.cssText = `
         position: fixed;
-        top:12px;
-        right:12px;
+        top:5px;
+        right:5px;
         z-index:999999;
         padding:6px 14px;
         background:#2563eb;
