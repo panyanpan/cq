@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         cq.help.main.pany.test
 // @namespace    http://tampermonkey.net/
-// @version      1.10
+// @version      1.11
 // @description  try to take over the world!
 // @author       pany
 // @match        *://rk.hlxy.db9x.com/*
