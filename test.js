@@ -1,37 +1,14 @@
-var t = uim.show(503);
-t.onRadioSelected(3);
-var para_mc = gd.mochao.moChaoInfo[t.page.myMoChaoCfg.id];  //debug
-
-
-
 //DragonShenXuanBoss    //liuer
 
-
-// gd.player.firstPlayer.fighterObject.uid
-// var p_player = gd.player[0]
-// p_player.level
-// p_player.unionId == "haomen"
-
-
-//e.updateMyInfoShow() : e.updateMoChaoShow()
-//gd.mochao.myMoChaoInfo.lootCount
-//gd.mochao.myMoChaoInfo.occupyCount
-//gd.mochao.getMyMoChaoData()
-// gd.mochao.moChaoInfo.occupyUnionName=="haomen"
-gd.mochao.moChaoInfo[966]
-//gd.map.curMapId= 40006
 
 para_mochaoCount++;
 if (para_mochaoCount % 30 == 0) {
     //gd.mochao.getMoChaoCfg(e.myMoChao.moChaoId);
     //var t = gd.mochao.moChaoInfo[e.myMoChaoCfg.id];
-    // var t = uim.show(503, new UIData(null, 3)); await f_Sleep(2000);
-    var t = uim.show(503); //await f_Sleep(2000);
+    var t = uim.show(503);
     t.onRadioSelected(3);
-    t.page.radioGroup.selectedValue = 8;
-    t.page.selectType = parseInt(8);
-    t.page.updateShow();       //net.MochaoModel.ins().send1(8); //change  debug debugdebugdebugdebugdebug
-    uim.hide(503); await f_Sleep(2000);
+    //net.MochaoModel.ins().send1(8); //change  debug debugdebugdebugdebugdebug
+    uim.hide(503);
     findMochao_Occupy();
 }
 async function findMochao_Occupy() {
@@ -124,22 +101,6 @@ var dialog = new AlertReliveDialog({ test: 'test' });
 console.log('全局实例:', window.p_AlertReliveDialogInstance);
 console.log('是否同一个实例:', dialog === window.p_AlertReliveDialogInstance); // true
 //window.p_AlertReliveDialogInstance.prototype.onAgreeClickHandler()
-
-
-
-
-//debug
-// t.prototype.onRadioBtnClick = function (e) {
-//     var t = this
-//         , i = e.target;
-//     t.selectType = i.selectedValue,
-//         t.scr_mochao.stopAnimation(),
-//         t.scr_mochao.viewport.scrollV = 0,
-//         t.updateShow();
-//     var r = 999 == t.selectType ? 0 : t.selectType;
-//     net.MochaoModel.ins().send1(r)          // r is selected index value
-// }
-
 
 
 (function () {
