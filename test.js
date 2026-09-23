@@ -1,4 +1,7 @@
-
+// debug  
+// net.MochaoModel.ins().send1(0);
+// net.MochaoModel.ins().send1(8);
+// gd.mochao.setMoChaoInfo(t);
 // emIns.getAllPlayer();    // emIns.getEntity(uid);
 function findMochao(start, end) {//auto-MoChao(Shentai)
     if (gd.mochao.moChaoInfo != null) {
@@ -47,11 +50,11 @@ function beginTimer_f_Shentai() {
         // }
         // para_mochaoCount++;
         if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date(DateUtil.serverNow()) > new Date(DateUtil.serverNow()).setHours(10, 0, 0, 0))) {
-            para_mc = f_findMyMoChao();
-            // net.MochaoModel.ins().send1(0);  //8  debug-- gd.mochao.setMoChaoInfo(t);
-            // await f_Sleep(2 * 1e3);
-            // para_mc = gd.mochao.getMyMoChaoData();
-            if (para_mc != null && DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000) {
+            // para_mc = f_findMyMoChao();
+            net.MochaoModel.ins().send1(0);
+            net.MochaoModel.ins().send1(8); await f_Sleep(1000);
+            para_mc = gd.mochao.getMyMoChaoData();
+            if (para_mc?.occupyStartTime != null && DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000) {
                 para_mc = null;
             }
             if (para_mc == null) {
