@@ -1,103 +1,7 @@
-// debug  
-// net.MochaoModel.ins().send1(0);
-// net.MochaoModel.ins().send1(8);
-// gd.mochao.setMoChaoInfo(t);
-// emIns.getAllPlayer();    // emIns.getEntity(uid);
-function findMochao(start, end) {//auto-MoChao(Shentai)
-    if (gd.mochao.moChaoInfo != null) {
-        // for (let i = start; i <= end; i++) {
-        for (let i = end; i >= start; i--) {
-            if (gd.mochao.moChaoInfo[i]?.status == 0) { return i; }
-        }
-    }
-    return null;
-}
-var para_mc = null;
-function findMochao_Occupy() {//auto occupy MoChao(Shentai)                      
-    var para_Shentai = findMochao(711, 751) || findMochao(811, 999);//findMochao(704, 751) || findMochao(804, 999);
-    if (para_Shentai) {
-        net.MochaoModel.ins().send3(para_Shentai, 0);
-    }
-    else {
-        var p_leftCount = gd.mochao.myMoChaoInfo ? gd.mochao.myMoChaoInfo.lootCount : 0;
-        if (p_leftCount > 3) {
-            para_Shentai = f_getRandomNumber();
-            if (gd.mochao.moChaoInfo[para_Shentai].occupyUnionName != "豪") {
-                net.MochaoModel.ins().send3(para_Shentai, 1);
-            }
-        }
-    }
-}
-
-function f_getRandomNumber(min = 950, max = 985) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function beginTimer_f_Shentai() {
-    console.log("benginTime-Shentai:" + new Date().toLocaleString());
-    if (p_timerObj.Shentai != null) {
-        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Shentai");
-        p_alert_success('运行中...');
-        return;
-    }
-    p_timerObj.Shentai = setInterval(async () => {
-        // if (para_mochaoCount % 75 == 0 || DateUtil.serverNow() - para_mc?.occupyStartTime.toNumber() > 28800000) {
-        //     var t = uim.show(503); await f_Sleep(1000);
-        //     t.onRadioSelected(3); await f_Sleep(1000);
-        //     t.page.myMoChao ? para_mc = gd.mochao.moChaoInfo[t.page.myMoChaoCfg.id] : para_mc = null;
-        //     console.log(`Time-para_mc:${new Date().toLocaleString()}--${para_mc ? DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() : 0}`);
-        //     uim.hide(503);
-        // }
-        // para_mochaoCount++;
-        if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date(DateUtil.serverNow()) > new Date(DateUtil.serverNow()).setHours(10, 0, 0, 0))) {
-            // para_mc = f_findMyMoChao();
-            net.MochaoModel.ins().send1(0);
-            net.MochaoModel.ins().send1(8); await f_Sleep(1000);
-            para_mc = gd.mochao.getMyMoChaoData();
-            if (para_mc?.occupyStartTime != null && DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 28800000) {
-                para_mc = null;
-            }
-            if (para_mc == null) {
-                try { findMochao_Occupy(); }
-                catch (error) { console.error("time-findMochao_Occupy-error:" + error.message); }
-            }
-        }
-    }, 5 * 1e3);
-    p_alert_success('B（Shentai）');
-}
-
+// t[519] = NewNestPopC; 
+// net.SpiritmonsterModel.ins().send13(
 
 //DragonShenXuanBoss    //liuer
-
-async function findMochao_Occupy() {
-    if (new Date().getDay() != 1 || (new Date().getDay() == 1 && new Date() > new Date().setHours(10, 0, 0, 0))) {
-        if (gd.mochao.getMyMoChaoData() == null || gd.mochao.moChaoInfo == null) {
-            var t = uim.show(503); await f_Sleep(1000);
-            t.onRadioSelected(3); await f_Sleep(1000);
-            t.page.radioGroup.selectedValue = 8;
-            t.page.selectType = parseInt(8); await f_Sleep(500);
-            t.page.updateShow(); await f_Sleep(400);
-            uim.hide(503);
-        }
-        var para_mc = gd.mochao.getMyMoChaoData();
-        if (para_mc == null || (DateUtil.serverNow() - para_mc.occupyStartTime.toNumber() > 8 * 60 * 60 * 1e3)) {
-            var para_Shentai = findMochao(711, 751) || findMochao(811, 999);
-            if (para_Shentai) {
-                net.MochaoModel.ins().send3(para_Shentai, 0);
-            }
-            else {
-                para_Shentai = f_getRandomNumber();
-                if (gd.mao.currentMoChaoId != "") {
-                    para_Shentai = f_getRandomNumber();
-                    //gd.mochao.moChaoInfo.occupyUnionName=="haomen"
-                    para_Shentai = f_getRandomNumber();
-                    //net.MochaoModel.ins().send3(para_Shentai, 1);
-                    //i = gd.mochao.myMoChaoInfo ? gd.mochao.myMoChaoInfo.lootCount : 0;
-                }
-            }
-        }
-    }
-}
 
 // Logic.showSuitEff()
 //gd.bag.wearEquip(i, t.data.lid)
@@ -324,71 +228,58 @@ var para_boss_hot = [
     { mid: 9900104, x: 77, y: 86 }
 ];
 function beginTimer_f_Hot() {
-    console.log("benginTime-Hot:" + new Date().toLocaleString());
-    if (para_IntervalId_Hot != null) {
-        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Hot");
-        p_alert_success('运行中...');
-        return;
-    }
-    para_IntervalId_Hot = setInterval(async () => {//Hot 17:30-17:40
-        var nowDate = new Date().getHours() * 100 + new Date().getMinutes();
-        if ((nowDate > 1729 && nowDate < 1740) && para_IntervalId_Hot != null) {
-            if (emIns.firstPlayer.fighterObject.delayhp == 0) {
-                await new Promise(resolve => setTimeout(resolve, 400));
-                clickCanvasAt(1130, 400);
-            }
-            if (emIns.firstPlayer.fighterObject.delayhp < emIns.firstPlayer.fighterObject.maxHp * 0.9
-                && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {
-                Logic.deliverToFindNpc(600300);//biqi1  81
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                gd.map.gotoStagePoint(137, 120, gd.map.curMapId, false);
-                await new Promise(resolve => setTimeout(resolve, 4000));
-                net.CureModel.ins().send2(0);    //click cure
+        console.log("benginTime-Hot:" + new Date().toLocaleString());
+        if (p_timerObj.Hot != null) {
+            console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Hot");
+            p_alert_success('运行中...');
+            return;
+        }
+        p_timerObj.Hot = setInterval(async () => {//Hot 17:30-17:40
+            var nowDate = f_getnowHourPY();
+            if ((nowDate >= 1730 && nowDate < 1740) && p_timerObj.Hot != null) {
+                if (para_globalBool == true) {
+                    para_globalBool = false;
+                }
+                if (emIns.firstPlayer.fighterObject.delayhp == 0) {
+                    await f_Sleep(400); net.MapModel.ins().send25(1);//clickCanvasAt(1130, 400);
+                }
+                if (emIns.firstPlayer.fighterObject.delayhp < emIns.firstPlayer.fighterObject.maxHp * 0.9
+                    && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {
+                    Logic.deliverToFindNpc(600300);//biqi1  81
+                    await f_cure();                     
 
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                net.PlayModel.ins().send3(5618);      //hot  5618  
-                await new Promise(resolve => setTimeout(resolve, 400));
-                gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
-            }
-            if (gd.map.curMapId != 5618) {
-                await new Promise(resolve => setTimeout(resolve, 200));
-                net.PlayModel.ins().send3(5618);//5618 5618  
-                await new Promise(resolve => setTimeout(resolve, 400));
-                gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)                
-            }
-            else {
-                para_boss_hot.forEach((item) => {
-                    if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
-                        var para_xy = gd.emIns.firstPlayer.fighterObject;
-                        if (Math.abs(item.x - para_xy.gridX) > 10 || Math.abs(item.y - para_xy.gridY) > 10) {
-                            gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
-                            return true;
+                    await f_Sleep(1000); net.PlayModel.ins().send3(5618);      //hot  5618  
+                    await f_Sleep(400); gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
+                }
+                if (gd.map.curMapId != 5618) {
+                    await f_Sleep(200); net.PlayModel.ins().send3(5618);//5618 5618  
+                    await f_Sleep(400); gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
+                } else {
+                    try {
+                        for (const item of para_boss_hot) {
+                            if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
+                                var para_xy = emIns.firstPlayer.fighterObject;
+                                if (Math.abs(item.x - para_xy.x) > 20 || Math.abs(item.y - para_xy.y) > 20) {
+                                    gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
+                                    break;
+                                }
+                            }
                         }
+                    } catch (error) {
+                        console.error(error);
                     }
-                    return false;
-                });
+                }
+                if (gd.arpgInst.autoFightType == 3) {
+                    await f_Sleep(100); gd.arpgInst.setAutoFight(1);
+                }
             }
-            if (gd.arpgInst.autoFightType == 3) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-                gd.arpgInst.setAutoFight(1);
+            if (nowDate > 1740 || (nowDate > 1732 && gd.map.curMapId == 5618 && gd.map.tombInfo.length == 4)) {
+                stopTimer_f_Com("Hot");
             }
-        }
-        if (nowDate > 1740 || (nowDate > 1733 && d.map.curMapId == 5618 && gd.map.tombInfo.length == 4)) {
-            stopTimer_f_Hot();
-        }
-    }, 6000);
-    p_alert_success('begin（Hot）');
-}
-
-for (const item of para_boss_hot) {
-    if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
-        var para_xy = gd.emIns.firstPlayer.fighterObject;
-        if (Math.abs(item.x - para_xy.gridX) > 10 || Math.abs(item.y - para_xy.gridY) > 10) {
-            gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
-            break;
-        }
+        }, 6000);
+        p_alert_success('开始（Hot）');
     }
-}
+
 
 //aoto ronglian
 /* eval(function(d,g,a,c,b,f){b=function(e){return e.toString(g)};if(!"".replace(/^/,String)){for(;a--;)f[b(a)]=c[a]||b(a);c=[function(e){return f[e]}];b=function(){return"\\w+"};a=1}for(;a--;)c[a]&&(d=d.replace(new RegExp("\\b"+b(a)+"\\b","g"),c[a]));return d}("f(g()=>{3 t=6.h(7,4 i(j,0));8 4 9(1=>a(1,b));3 2=[];k(3 c l t.d.e){2.m(t.d.e[c])}n(2.o>0){p.q.r().s(2)}8 4 9(1=>a(1,b));6.u(7)},5*v*w);",33,33," resolve ids var new  uim 560 await Promise setTimeout 2000 key page lids setInterval async show UIData null for in push if length net BourseModel ins send21  hide 60 1e3".split(" "),
