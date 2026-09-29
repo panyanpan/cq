@@ -1,6 +1,26 @@
 // t[519] = NewNestPopC; 
 // net.SpiritmonsterModel.ins().send13(
 
+var p_arr_yanhuo = 20044;//[20044,20045,20046,20047,20048,20049,20050,20051,20052,20053,20054,20055,20056,20057,20058];
+var p_arr_yanhuo_mapid = 5446;//[5446,5447,5448,5449,5450,5451,5452,5453,5454,5455,5456,5457,5458,5459,5460];
+p_timerObj.Yanhuo = setInterval(async () => {//yanhuo
+    if (para_globalBool == true) {
+        para_globalBool = false;
+    }
+    if (gd.map.curMapId == 200043) {//biqi3.5   !p_arr_yanhuo.includes(gd.map.curMapId) &&
+        // var t = uim.show(519); await f_Sleep(1000);
+        // p_arr_yanhuo = t.page.dupId;     //selIndex;
+        // uim.hide(519); await f_Sleep(1000);
+        uim.show(798, new UIData({ dupId: p_arr_yanhuo, lookOtherTeam: false }));
+        gd.nest.doJionIn(2, p_arr_yanhuo, null);//create team
+        await f_Sleep(1000);
+        net.SpiritmonsterModel.ins().send13(p_arr_yanhuo, gd.nest.teamData.teamId, false);//gotomap
+        await f_Sleep(200);
+        p_arr_yanhuo++;
+        p_arr_yanhuo_mapid++;
+    }
+})
+
 //DragonShenXuanBoss    //liuer
 
 // Logic.showSuitEff()
@@ -228,57 +248,57 @@ var para_boss_hot = [
     { mid: 9900104, x: 77, y: 86 }
 ];
 function beginTimer_f_Hot() {
-        console.log("benginTime-Hot:" + new Date().toLocaleString());
-        if (p_timerObj.Hot != null) {
-            console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Hot");
-            p_alert_success('运行中...');
-            return;
-        }
-        p_timerObj.Hot = setInterval(async () => {//Hot 17:30-17:40
-            var nowDate = f_getnowHourPY();
-            if ((nowDate >= 1730 && nowDate < 1740) && p_timerObj.Hot != null) {
-                if (para_globalBool == true) {
-                    para_globalBool = false;
-                }
-                if (emIns.firstPlayer.fighterObject.delayhp == 0) {
-                    await f_Sleep(400); net.MapModel.ins().send25(1);//clickCanvasAt(1130, 400);
-                }
-                if (emIns.firstPlayer.fighterObject.delayhp < emIns.firstPlayer.fighterObject.maxHp * 0.9
-                    && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {
-                    Logic.deliverToFindNpc(600300);//biqi1  81
-                    await f_cure();                     
+    console.log("benginTime-Hot:" + new Date().toLocaleString());
+    if (p_timerObj.Hot != null) {
+        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Hot");
+        p_alert_success('运行中...');
+        return;
+    }
+    p_timerObj.Hot = setInterval(async () => {//Hot 17:30-17:40
+        var nowDate = f_getnowHourPY();
+        if ((nowDate >= 1730 && nowDate < 1740) && p_timerObj.Hot != null) {
+            if (para_globalBool == true) {
+                para_globalBool = false;
+            }
+            if (emIns.firstPlayer.fighterObject.delayhp == 0) {
+                await f_Sleep(400); net.MapModel.ins().send25(1);//clickCanvasAt(1130, 400);
+            }
+            if (emIns.firstPlayer.fighterObject.delayhp < emIns.firstPlayer.fighterObject.maxHp * 0.9
+                && [81, 200018, 200029, 200043, 200049, 200076, 10000, 9994].includes(gd.map.curMapId)) {
+                Logic.deliverToFindNpc(600300);//biqi1  81
+                await f_cure();
 
-                    await f_Sleep(1000); net.PlayModel.ins().send3(5618);      //hot  5618  
-                    await f_Sleep(400); gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
-                }
-                if (gd.map.curMapId != 5618) {
-                    await f_Sleep(200); net.PlayModel.ins().send3(5618);//5618 5618  
-                    await f_Sleep(400); gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
-                } else {
-                    try {
-                        for (const item of para_boss_hot) {
-                            if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
-                                var para_xy = emIns.firstPlayer.fighterObject;
-                                if (Math.abs(item.x - para_xy.x) > 20 || Math.abs(item.y - para_xy.y) > 20) {
-                                    gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
-                                    break;
-                                }
+                await f_Sleep(1000); net.PlayModel.ins().send3(5618);      //hot  5618  
+                await f_Sleep(400); gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
+            }
+            if (gd.map.curMapId != 5618) {
+                await f_Sleep(200); net.PlayModel.ins().send3(5618);//5618 5618  
+                await f_Sleep(400); gd.map.gotoStagePoint(78, 23, gd.map.curMapId, false); //(78,23)  (78,87) (17,88) (16,25)
+            } else {
+                try {
+                    for (const item of para_boss_hot) {
+                        if (!gd.map.tombInfo.some(p => p.mid === item.mid)) {
+                            var para_xy = emIns.firstPlayer.fighterObject;
+                            if (Math.abs(item.x - para_xy.x) > 20 || Math.abs(item.y - para_xy.y) > 20) {
+                                gd.map.gotoStagePoint(item.x, item.y, gd.map.curMapId, false);
+                                break;
                             }
                         }
-                    } catch (error) {
-                        console.error(error);
                     }
-                }
-                if (gd.arpgInst.autoFightType == 3) {
-                    await f_Sleep(100); gd.arpgInst.setAutoFight(1);
+                } catch (error) {
+                    console.error(error);
                 }
             }
-            if (nowDate > 1740 || (nowDate > 1732 && gd.map.curMapId == 5618 && gd.map.tombInfo.length == 4)) {
-                stopTimer_f_Com("Hot");
+            if (gd.arpgInst.autoFightType == 3) {
+                await f_Sleep(100); gd.arpgInst.setAutoFight(1);
             }
-        }, 6000);
-        p_alert_success('开始（Hot）');
-    }
+        }
+        if (nowDate > 1740 || (nowDate > 1732 && gd.map.curMapId == 5618 && gd.map.tombInfo.length == 4)) {
+            stopTimer_f_Com("Hot");
+        }
+    }, 6000);
+    p_alert_success('开始（Hot）');
+}
 
 
 //aoto ronglian
