@@ -1,16 +1,7 @@
 
-var p_left = gd.boss.arpgBossInfoDic[para_yiji_mapid[i]];
-if (cb_helper && cb_owner && p_left) {
-    if (cb_helper.input.checked && !cb_owner.input.checked && p_left.helperDropCount == 0) {
-        return;
-    }
-    else if (!cb_helper.input.checked && cb_owner.input.checked && p_left.ownerDropCount == 0) {
-        return;
-    }
-    else if (cb_helper.input.checked && cb_owner.input.checked && p_left.helperDropCount == 0 && p_left.ownerDropCount == 0) {
-        return;
-    }
-}
+// var FightResultPop = function(e) {
+// t.prototype.tabSelectPlayer = function(e) {
+
 
 // for (var i in e.instanceTimeDic)
 //     e.instanceTimeDic[i] < 0 ? (e.toOperateInstanceInfo(Number(i)),
