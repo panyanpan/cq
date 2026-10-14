@@ -1,5 +1,6 @@
 
 // var FightResultPop = function(e) {
+// uim.show(789, c),
 // t.prototype.tabSelectPlayer = function(e) {
 
 
