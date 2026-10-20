@@ -1,4 +1,71 @@
+// var KuafuWorldBossPop = function(e) {   //syzf
+// net.DuplicateModel.ins().send2(9001)    //shenhuo
 
+
+if (GLOBAL_ENABLE && nowHourPY >= 1220 && nowHourPY < 1225 && p_timerObj.Shenhuo == null) {
+    beginTimer_f_Shenhuo();
+}
+if (GLOBAL_ENABLE && nowHourPY >= 1720 && nowHourPY < 1725 && p_timerObj.Syzf == null) {
+    beginTimer_f_Syzf();
+}
+
+function beginTimer_f_Shenhuo() {
+    console.log("benginTime-Shenhuo:" + new Date().toLocaleString());
+    if (p_timerObj.Shenhuo != null) {
+        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Shenhuo");
+        p_alert_success('运行中...');
+        return;
+    }
+    var expireDate = new Date(Date.now() + 5 * 60 * 1000);
+    p_timerObj.Shenhuo = setInterval(async () => {
+        if (para_globalBool == true) {
+            para_globalBool = false;
+        }
+        if (gd.map.curMapId != 9001) {
+            await f_Sleep(200); net.DuplicateModel.ins().send2(9001);
+        }
+        if (gd.arpgInst.autoFightType == 3) {
+            await f_Sleep(200); gd.arpgInst.setAutoFight(1);
+        }
+        if (new Date() > expireDate) {
+            await f_Sleep(10 * 1e3);
+            stopTimer_f_Com("Shenhuo");
+        }
+    }, 5000);
+    p_alert_success('开始（Shenhuo）');
+}
+
+
+function beginTimer_f_Syzf() {
+    console.log("benginTime-Syzf:" + new Date().toLocaleString());
+    if (p_timerObj.Syzf != null) {
+        console.log("Time:" + new Date().toLocaleString() + "已有运行中的定时器-Syzf");
+        p_alert_success('运行中...');
+        return;
+    }
+    var expireDate = new Date(Date.now() + 5 * 60 * 1000);
+    p_timerObj.Syzf = setInterval(async () => {
+        if (emIns.firstPlayer.fighterObject.delayhp == 0) {
+            await f_Sleep(400); net.MapModel.ins().send25(1);//clickCanvasAt(1130, 400);
+        }
+        if (para_globalBool == true) {
+            para_globalBool = false;
+        }
+        if (gd.map.curMapId != 4092 && gd.arpgInst.WorldBossCountInfo > 0) {
+            await f_Sleep(200); net.WorldrankModel.ins().send6(4903);
+        }
+        if (gd.arpgInst.autoFightType == 3) {
+            await f_Sleep(200); gd.arpgInst.setAutoFight(1);
+        }
+        if (new Date() > expireDate) {
+            stopTimer_f_Com("Syzf");
+        }
+    }, 5000);
+    p_alert_success('开始（Syzf）');
+}
+
+// var SystemSetPop = function(e) {   
+// var SystemSet_zd = function(e) {
 // var FightResultPop = function(e) {
 // uim.show(789, c),
 // t.prototype.tabSelectPlayer = function(e) {
